@@ -1,0 +1,50 @@
+<section class="my-12">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-text">Ofertas Pendientes</h2>
+    <button class="text-primary font-medium hover:underline">Ver todas</button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div
+      *ngFor="let offer of offers"
+      class="bg-card-bg rounded-2xl p-5 hover:shadow-xl transition-all relative"
+      [class.border-2]="offer.isUrgent"
+      [class.border-yellow-500/50]="offer.isUrgent"
+    >
+      <span
+        *ngIf="offer.isUrgent"
+        class="absolute top-4 right-4 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full"
+      >
+        🔥 URGENTE
+      </span>
+
+      <div class="flex items-start gap-4 mb-4">
+        <div
+          class="w-12 h-12 bg-gradient-to-br rounded-full flex items-center justify-center flex-shrink-0"
+          [ngClass]="offer.color"
+        >
+          <span class="text-lg font-bold text-white">{{ offer.clientInitials }}</span>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-bold text-text">{{ offer.clientName }}</h3>
+          <p class="text-sm text-text-light flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            </svg>
+            {{ offer.distance }} • {{ offer.time }}
+          </p>
+        </div>
+      </div>
+
+      <h4 class="font-semibold text-text mb-2">{{ offer.title }}</h4>
+      <p class="text-sm text-text-light mb-4">
+        {{ offer.description }}
+      </p>
+
+      <div class="flex items-center justify-between">
+        <span class="text-2xl font-bold text-green-500">$ {{ offer.price }}</span>
+        <button class="btn btn-primary btn-sm">Ver Oferta</button>
+      </div>
+    </div>
+  </div>
+</section>

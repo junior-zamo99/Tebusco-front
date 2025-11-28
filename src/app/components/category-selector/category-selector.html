@@ -1,0 +1,180 @@
+<!-- Botón principal con estilo btn-primary -->
+<div class="relative inline-block">
+  <button
+    (click)="openSelector()"
+    class="btn btn-primary"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    Categorías
+  </button>
+
+  <!-- Overlay con fondo oscuro -->
+  <div
+    *ngIf="isOpen"
+    class="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
+    (click)="closeSelector()"
+  ></div>
+
+  <!-- Modal Principal - Tema oscuro -->
+  <div
+    *ngIf="isOpen"
+    class="absolute left-0 top-full mt-2 w-screen sm:w-[900px] lg:w-[1200px] max-w-4xl bg-card-bg border border-border rounded-2xl shadow-2xl z-50 overflow-hidden animate-fadeIn"
+  >
+    <!-- Header - Navy Blue con gradiente -->
+    <div class="flex items-center justify-between p-6 border-b border-border bg-gradient-to-r from-dark-navy to-navy-blue">
+      <div>
+        <h2 class="text-2xl font-bold text-text">
+          {{ currentPath.length === 0 ? 'Todas las categorías' : currentPath[currentPath.length - 1].name }}
+        </h2>
+        <p class="text-sm text-text-light mt-1">
+          <ng-container *ngIf="currentPath.length === 0">
+            Elige una categoría para comenzar
+          </ng-container>
+          <ng-container *ngIf="isAtLevel(1)">
+            Selecciona un área de trabajo
+          </ng-container>
+          <ng-container *ngIf="isAtLevel(2)">
+            Explora las especialidades disponibles
+          </ng-container>
+        </p>
+      </div>
+      <button
+        (click)="closeSelector()"
+        class="text-text-light hover:text-primary transition-colors p-2 hover:bg-navy-blue rounded-lg"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Breadcrumb Navigation -->
+    <div *ngIf="currentPath.length > 0" class="px-6 py-3 border-b border-border bg-card-bg-light flex items-center gap-2">
+      <button
+        (click)="goBack()"
+        class="flex items-center gap-1 text-primary hover:text-accent font-medium transition-colors hover:bg-navy-blue/30 px-2 py-1 rounded-lg"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Volver
+      </button>
+      <div class="flex items-center gap-2 ml-4 text-text-light text-sm">
+        <span *ngFor="let item of currentPath; let last = last" class="flex items-center gap-2">
+          <span class="text-text font-medium">{{ item.name }}</span>
+          <span *ngIf="!last" class="text-border">/</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="px-6 py-4 border-b border-border bg-card-bg">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="filterCategories()"
+        placeholder="Buscar categorías, subcategorías..."
+        class="input-field bg-card-bg-light border-border focus:border-primary focus:ring-primary/30"
+      />
+    </div>
+
+    <!-- Grid de Categorías -->
+    <div class="max-h-[500px] overflow-y-auto p-6">
+      <!-- Grid responsive mejorado con mejor manejo de espacio -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2">
+        <button
+          *ngFor="let category of filteredCategories"
+          (click)="selectCategory(category)"
+          class="card card-hover group text-left h-full"
+        >
+          <div class="relative z-10 flex flex-col h-full">
+            <!-- Encabezado: Icono + Nombre + Badge de Nivel + Flecha -->
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-3 flex-1 min-w-0">
+                <div class="text-3xl flex-shrink-0">{{ getCategoryIcon(category) }}</div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <h3 class="font-bold text-text text-base group-hover:text-primary transition-colors truncate">
+                      {{ category.name }}
+                    </h3>
+                    <!-- Badge de Nivel -->
+                    <span
+                      class="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"
+                      [ngClass]="{
+                        'bg-blue-500/20 text-blue-400': category.level === 1,
+                        'bg-yellow-500/20 text-yellow-400': category.level === 2,
+                        'bg-green-500/20 text-green-400': category.level === 3
+                      }"
+                    >
+                      {{ getLevelLabel(category.level) }}
+                    </span>
+                  </div>
+                  <p class="text-xs text-text-light" *ngIf="hasChildren(category)">
+                    {{ category.childrenCount }} {{ category.level === 1 ? 'áreas' : 'especialidades' }}
+                  </p>
+                </div>
+              </div>
+              <svg
+                *ngIf="hasChildren(category)"
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 text-text-light group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 ml-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+
+            <!-- Descripción -->
+            <p class="text-sm text-text-light mb-3 line-clamp-2 flex-1" *ngIf="category.description">
+              {{ category.description }}
+            </p>
+
+            <!-- Preview de Subcategorías -->
+            <div
+              *ngIf="hasChildren(category) && category.children && category.children.length > 0"
+              class="text-xs text-text-light space-y-1 border-t border-border pt-3 mt-auto"
+            >
+              <div *ngFor="let child of category.children.slice(0, 2)" class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></span>
+                <span class="group-hover:text-primary transition-colors truncate">{{ child.name }}</span>
+              </div>
+              <div *ngIf="category.children.length > 2" class="text-primary font-semibold pt-1">
+                +{{ category.children.length - 2 }} más
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <!-- Sin resultados -->
+      <div *ngIf="filteredCategories.length === 0" class="text-center py-12">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-text-light mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h4 class="text-lg font-semibold text-text mb-2">No se encontraron categorías</h4>
+        <p class="text-text-light">Intenta con otros términos de búsqueda</p>
+      </div>
+    </div>
+
+    <!-- Footer con contador -->
+    <div *ngIf="filteredCategories.length > 0" class="border-t border-border px-6 py-4 bg-card-bg-light flex items-center justify-between">
+      <span class="text-sm text-text-light font-medium">
+        {{ filteredCategories.length }} categor{{ filteredCategories.length !== 1 ? 'ías' : 'ía' }} disponible{{ filteredCategories.length !== 1 ? 's' : '' }}
+      </span>
+      <button
+        routerLink="/categories"
+        (click)="closeSelector()"
+        class="text-primary hover:text-accent font-medium text-sm flex items-center gap-1 transition-colors hover:bg-navy-blue/30 px-3 py-1 rounded-lg"
+      >
+        Ver todas
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

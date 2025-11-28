@@ -1,0 +1,14 @@
+/* Patrón de puntos para el header (color blanco con transparencia sobre el fondo azul) */
+.header-pattern {
+    background-image: radial-gradient(#ffffff 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+}
+
+/* Scrollbar invisible para las tabs en móvil */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

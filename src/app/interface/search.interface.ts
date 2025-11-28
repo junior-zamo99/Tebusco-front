@@ -1,0 +1,99 @@
+export interface CategorySearchResult {
+  id: number;
+  name: string;
+  slug: string;
+  description: string | null;
+  imageUrl: string | null;
+  isTop: boolean;
+  level: number;
+  professionalsCount: number;
+  companiesCount: number;
+  parent: {
+    id: number;
+    name: string;
+  } | null;
+  children: {
+    id: number;
+    name: string;
+    professionalsCount: number;
+  }[];
+  relevanceScore: number;
+}
+
+export interface ProviderSearchResult {
+  type: 'professional' | 'company';
+  id: number;
+  name: string;
+  lastName?: string;
+  fullName: string;
+  photoUrl: string | null;
+  email: string;
+  phone: string | null;
+  categories: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
+  location: {
+    city: string;
+    state: string | null;
+    country: string;
+  } | null;
+  isVerified: boolean;
+  status: string;
+  hasActiveSubscription: boolean;
+  nit?: string;
+  companyName?: string;
+  rating?: number;
+  reviewsCount?: number;
+  relevanceScore: number;
+}
+
+export interface SearchGeneralData {
+  query: string;
+  totalResults: number;
+  executionTime: string;
+  categories: {
+    total: number;
+    results: CategorySearchResult[];
+  };
+  providers: {
+    total: number;
+    professionals: number;
+    companies: number;
+    results: ProviderSearchResult[];
+  };
+  suggestions?: string[];
+}
+
+export interface SearchCategoriesData {
+  query: string;
+  total: number;
+  results: CategorySearchResult[];
+}
+
+export interface SearchProvidersData {
+  query: string;
+  total: number;
+  professionals: number;
+  companies: number;
+  results: ProviderSearchResult[];
+}
+
+export interface SearchGeneralResponse {
+  success: boolean;
+  message: string;
+  data: SearchGeneralData;
+}
+
+export interface SearchCategoriesResponse {
+  success: boolean;
+  message: string;
+  data: SearchCategoriesData;
+}
+
+export interface SearchProvidersResponse {
+  success: boolean;
+  message: string;
+  data: SearchProvidersData;
+}

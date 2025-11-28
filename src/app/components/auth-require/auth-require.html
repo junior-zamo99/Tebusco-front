@@ -1,0 +1,102 @@
+<div class="min-h-screen bg-background flex items-center justify-center px-4 py-8">
+  <div class="max-w-lg w-full">
+    <!-- Card Principal Elegante -->
+    <div class="card animate-fadeIn">
+
+      <!-- Icono y Loader Elegante -->
+      <div class="text-center mb-8">
+        <!-- Círculos Concéntricos Animados (Loader Elegante) -->
+        <div class="relative w-32 h-32 mx-auto mb-6">
+          <!-- Círculo externo con pulso -->
+          <div class="absolute inset-0 rounded-full border-4 border-primary/20 animate-pulse-slow"></div>
+
+          <!-- Círculo medio giratorio -->
+          <div class="absolute inset-3 rounded-full border-4 border-t-primary border-r-transparent border-b-transparent border-l-transparent animate-spin-slow"></div>
+
+          <!-- Círculo interno con icono -->
+          <div class="absolute inset-6 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center backdrop-blur-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Título -->
+        <h1 class="text-3xl font-bold text-text mb-3">
+          Autenticación Requerida
+        </h1>
+
+        <!-- Descripción -->
+        <p class="text-text-light text-lg leading-relaxed mb-6">
+          Para acceder a este contenido necesitas iniciar sesión en tu cuenta de TEBUSCO
+        </p>
+
+        <!-- Línea decorativa dorada -->
+        <div class="flex items-center justify-center gap-2 mb-6">
+          <div class="h-px w-12 bg-gradient-to-r from-transparent to-primary"></div>
+          <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+          <div class="h-px w-12 bg-gradient-to-l from-transparent to-primary"></div>
+        </div>
+
+        <!-- Mensaje de redirección elegante (SIN números) -->
+        <div class="inline-flex items-center gap-3 bg-card-bg-light border border-primary/30 rounded-full px-6 py-3">
+          <!-- Spinner pequeño y elegante -->
+          <svg class="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span class="text-primary font-medium">Redirigiendo al inicio de sesión...</span>
+        </div>
+      </div>
+
+      <!-- Separador -->
+      <div class="border-t border-border my-6"></div>
+
+      <!-- Botones de Acción -->
+      <div class="space-y-3">
+        <!-- Botón Principal -->
+        <button
+          (click)="redirectToLogin()"
+          class="btn btn-primary w-full shadow-gold"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+          </svg>
+          <span>Ir al Login</span>
+        </button>
+
+        <!-- Botón Secundario -->
+        <button
+          (click)="goBack()"
+          class="btn btn-secondary w-full"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          <span>Volver Atrás</span>
+        </button>
+      </div>
+
+      <!-- Info adicional -->
+      <div class="mt-6 pt-6 border-t border-border">
+        <div class="flex items-start gap-3 bg-card-bg-light/50 rounded-lg p-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div class="text-left">
+            <p class="text-sm text-text-light">
+              <strong class="text-text">¿No tienes una cuenta?</strong> Después de iniciar sesión, podrás crear una cuenta nueva.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-6">
+      <p class="text-text-light text-sm">
+        <span class="text-primary font-bold">TEBUSCO</span> — Conectando profesionales con clientes
+      </p>
+    </div>
+  </div>
+</div>

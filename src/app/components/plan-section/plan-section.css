@@ -1,0 +1,20 @@
+/* Estilos adicionales específicos para el componente de planes */
+.card {
+  position: relative;
+  overflow: visible;
+}
+
+/* Animación suave para el cambio de precio */
+.text-4xl {
+  transition: all 0.3s ease;
+}
+
+/* Mejora visual para botones de duración */
+button {
+  user-select: none;
+}
+
+/* Asegurar que las características tengan altura mínima consistente */
+.min-h-\[200px\] {
+  min-height: 200px;
+}

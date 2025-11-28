@@ -1,0 +1,391 @@
+<div class="max-w-6xl mx-auto space-y-6 px-4">
+  <!-- Header -->
+  <div class="text-center space-y-2">
+
+    <h2 class="text-3xl font-bold text-text">
+      Configura tus Áreas de Trabajo
+    </h2>
+    <p class="text-text-light text-base max-w-2xl mx-auto">
+      Agrega detalles profesionales para destacar tu experiencia
+    </p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="bg-card-bg-light/50 border border-border rounded-xl p-12 text-center">
+    <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 mb-4">
+      <div class="animate-spin h-7 w-7 border-3 border-primary border-t-transparent rounded-full"></div>
+    </div>
+    <p class="text-text-light">Cargando áreas de trabajo...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading">
+    <!-- Progress Stats - COMPACTO -->
+    <div class="grid grid-cols-3 gap-3 mb-5">
+      <!-- Total Categories -->
+      <div class="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/30 rounded-xl p-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-2xl font-bold text-text leading-none">{{ totalCategories }}</p>
+            <p class="text-xs text-text-light font-medium mt-1">Áreas totales</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Configured -->
+      <div class="bg-gradient-to-br from-success/10 to-success/5 border border-success/30 rounded-xl p-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-2xl font-bold text-success leading-none">{{ configuredCount }}</p>
+            <p class="text-xs text-text-light font-medium mt-1">Configuradas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending -->
+      <div class="bg-gradient-to-br from-warning/10 to-warning/5 border border-warning/30 rounded-xl p-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <p class="text-2xl font-bold text-warning leading-none">{{ unconfiguredCount }}</p>
+            <p class="text-xs text-text-light font-medium mt-1">Pendientes</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Bar - MEJORADO -->
+    <div class="bg-gradient-to-br from-card-bg to-card-bg-light border border-border rounded-xl p-5 mb-5">
+      <div class="flex justify-between items-center mb-3">
+        <div>
+          <p class="text-sm font-bold text-text">
+            Área {{ currentCategoryIndex + 1 }} de {{ totalCategories }}
+          </p>
+          <p class="text-xs text-text-light mt-0.5">
+            {{ configuredCount }} configuradas de {{ totalCategories }}
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-black text-primary">{{ progress | number:'1.0-0' }}%</span>
+        </div>
+      </div>
+      <div class="w-full bg-card-bg-light rounded-full h-2.5 border border-border overflow-hidden">
+        <div
+          class="bg-gradient-to-r from-success via-success to-success/80 h-full rounded-full transition-all duration-500"
+          [style.width.%]="progress"
+        ></div>
+      </div>
+      <div class="mt-2 flex justify-end">
+        <button
+          *ngIf="unconfiguredCount > 0 && currentCategory?.isConfigured"
+          (click)="skipToUnconfigured()"
+          class="text-primary hover:text-primary-dark font-semibold flex items-center gap-1.5 text-xs transition-colors"
+        >
+          <span>Ir a siguiente pendiente</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Grid Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+      <!-- Left Column - Category Info (1/3) -->
+      <div class="lg:col-span-1 space-y-5">
+
+        <!-- Current Category Card -->
+        <div *ngIf="currentCategory"
+             class="bg-gradient-to-br from-card-bg to-card-bg-light border-2 rounded-xl p-5 shadow-lg sticky top-4"
+             [ngClass]="{
+               'border-success/50': currentCategory.isConfigured,
+               'border-primary/30': !currentCategory.isConfigured
+             }">
+
+          <div class="text-center mb-4">
+            <!-- Category Icon -->
+            <div class="relative inline-block mb-3">
+
+              <!-- Configured Badge -->
+              <div *ngIf="currentCategory.isConfigured"
+                   class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-success flex items-center justify-center border-2 border-background shadow-lg animate-scale-in">
+                <svg class="w-4 h-4 text-background" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Category Info -->
+            <div class="space-y-2 mb-4">
+              <span class="inline-block bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 px-2.5 py-1 rounded-lg text-xs font-bold">
+                Área de trabajo
+              </span>
+              <h3 class="text-xl font-bold text-text">{{ currentCategory.name }}</h3>
+            </div>
+
+            <div *ngIf="currentCategory.isConfigured"
+                 class="inline-flex items-center gap-1.5 bg-success/20 text-success border border-success/30 px-3 py-1.5 rounded-lg text-xs font-bold">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Configurada</span>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <p class="text-text-light text-sm leading-relaxed text-center border-t border-border pt-4">
+            La configuración aplicará a esta área y todas sus especialidades
+          </p>
+
+          <!-- Specialties List -->
+          <div *ngIf="currentSpecialties.length > 0" class="border-t border-border pt-4 mt-4">
+            <div class="flex items-center gap-2 mb-3">
+              <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+              </svg>
+              <p class="font-bold text-text text-sm">
+                {{ currentSpecialties.length }} Especialidad(es):
+              </p>
+            </div>
+            <div class="space-y-1.5 max-h-40 overflow-y-auto">
+              <div *ngFor="let specialty of currentSpecialties"
+                   class="bg-primary/10 border border-primary/30 text-primary px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2">
+                <span>⚡</span>
+                <span class="flex-1 truncate">{{ specialty.name }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tips Card -->
+        <div class="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/30 rounded-xl p-4">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+              <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-bold text-text text-sm mb-2">Consejos</h4>
+              <ul class="space-y-1.5 text-xs text-text-light">
+                <li class="flex items-start gap-1.5">
+                  <span class="text-primary mt-0.5">•</span>
+                  <span>Describe tu experiencia y herramientas que dominas</span>
+                </li>
+                <li class="flex items-start gap-1.5">
+                  <span class="text-primary mt-0.5">•</span>
+                  <span>Menciona logros o proyectos destacados</span>
+                </li>
+                <li class="flex items-start gap-1.5">
+                  <span class="text-primary mt-0.5">•</span>
+                  <span>Define un precio competitivo</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Form (2/3) -->
+      <div class="lg:col-span-2 space-y-5">
+
+        <!-- Success/Error Messages -->
+        <div *ngIf="successMessage" class="bg-success/10 border border-success/30 rounded-xl p-3 animate-fade-in">
+          <div class="flex items-center gap-3">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+              <svg class="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <p class="font-semibold text-success text-sm">{{ successMessage }}</p>
+          </div>
+        </div>
+
+        <div *ngIf="error" class="bg-danger/10 border border-danger/30 rounded-xl p-3 animate-fade-in">
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-danger flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+            <p class="text-danger text-sm font-semibold">{{ error }}</p>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <form [formGroup]="form" class="bg-gradient-to-br from-card-bg to-card-bg-light border border-border rounded-xl p-6 shadow-lg space-y-5">
+
+          <!-- Description -->
+          <div>
+            <label class="flex items-center gap-2 text-sm font-bold text-text mb-2">
+              <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+              Descripción Profesional *
+            </label>
+            <textarea
+              formControlName="description"
+              placeholder="Describe tu experiencia, servicios que ofreces y lo que te diferencia..."
+              rows="4"
+              class="w-full px-4 py-3 border bg-card-bg text-text rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 resize-none text-sm"
+              [ngClass]="{
+                'border-danger': isFieldInvalid('description'),
+                'border-border': !isFieldInvalid('description')
+              }"
+            ></textarea>
+            <div class="flex justify-between mt-1.5">
+              <p class="text-danger text-xs font-medium" *ngIf="isFieldInvalid('description')">
+                ⚠️ Entre 20 y 500 caracteres
+              </p>
+              <p class="text-text-light text-xs font-medium ml-auto"
+                 [ngClass]="{
+                   'text-danger': form.get('description')?.value?.length > 500,
+                   'text-text-light': form.get('description')?.value?.length <= 500
+                 }">
+                {{ form.get('description')?.value?.length || 0 }}/500
+              </p>
+            </div>
+          </div>
+
+          <!-- Experience and Price -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Experience -->
+            <div>
+              <label class="flex items-center gap-2 text-sm font-bold text-text mb-2">
+                <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                </svg>
+                Años de Experiencia *
+              </label>
+              <div class="relative">
+                <input
+                  type="number"
+                  formControlName="experience"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  class="w-full px-4 py-3 pr-14 border bg-card-bg text-text rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 text-sm"
+                  [ngClass]="{
+                    'border-danger': isFieldInvalid('experience'),
+                    'border-border': !isFieldInvalid('experience')
+                  }"
+                  placeholder="0"
+                />
+                <div class="absolute right-3 top-1/2 -translate-y-1/2 text-text-light text-xs font-medium">
+                  años
+                </div>
+              </div>
+              <p class="text-danger text-xs mt-1.5 font-medium" *ngIf="isFieldInvalid('experience')">
+                ⚠️ Entre 0 y 100 años
+              </p>
+            </div>
+
+            <!-- Minimum Price -->
+            <div>
+              <label class="flex items-center gap-2 text-sm font-bold text-text mb-2">
+                <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" />
+                </svg>
+                Precio Mínimo (Bs) *
+              </label>
+              <div class="relative">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2 text-text-light text-sm font-bold">
+                  Bs
+                </div>
+                <input
+                  type="number"
+                  formControlName="priceMin"
+                  min="1"
+                  step="0.01"
+                  class="w-full pl-8 pr-4 py-3 border bg-card-bg text-text rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 text-sm"
+                  [ngClass]="{
+                    'border-danger': isFieldInvalid('priceMin'),
+                    'border-border': !isFieldInvalid('priceMin')
+                  }"
+                  placeholder="50.00"
+                />
+              </div>
+              <p class="text-danger text-xs mt-1.5 font-medium" *ngIf="isFieldInvalid('priceMin')">
+                ⚠️ Precio mínimo requerido
+              </p>
+              <p class="text-text-light text-xs mt-1.5">
+                 Precio base, podrás negociar según proyecto
+              </p>
+            </div>
+          </div>
+
+
+        </form>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between items-center pt-5 border-t border-border gap-4">
+          <!-- Left Side: Category Navigation -->
+          <div class="flex gap-2">
+            <button
+              (click)="previousCategory()"
+              [disabled]="currentCategoryIndex === 0 || isSaving"
+              class="group px-4 py-2.5 bg-card-bg-light border border-border text-text rounded-lg hover:border-primary hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold flex items-center gap-2 text-sm"
+            >
+              <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              <span>Anterior</span>
+            </button>
+            <button
+              (click)="nextCategory()"
+              [disabled]="isLastCategory || isSaving"
+              class="group px-4 py-2.5 bg-card-bg-light border border-border text-text rounded-lg hover:border-primary hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold flex items-center gap-2 text-sm"
+            >
+              <span>Siguiente</span>
+              <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Right Side: Action Buttons -->
+          <div class="flex gap-2">
+            <button
+              (click)="onSkipAll()"
+              [disabled]="isSaving"
+              class="px-5 py-2.5 bg-card-bg-light border border-border text-text rounded-lg hover:border-text-light hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
+            >
+              Después
+            </button>
+            <button
+              (click)="saveCurrentCategory()"
+              [disabled]="form.invalid || isSaving"
+              class="group px-6 py-2.5 bg-gradient-to-r from-success to-success/80 text-background rounded-lg hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-300 font-bold flex items-center gap-2 text-sm"
+            >
+              <span>
+                {{ isLastCategory
+                   ? (isSaving ? 'Finalizando...' : '✓ Finalizar')
+                   : (isSaving ? 'Guardando...' : (currentCategory?.isConfigured ? 'Actualizar' : 'Guardar'))
+                }}
+              </span>
+              <svg *ngIf="!isSaving" class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+              <div *ngIf="isSaving" class="animate-spin h-4 w-4 border-2 border-background border-t-transparent rounded-full"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

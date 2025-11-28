@@ -1,0 +1,115 @@
+<!-- categories.component.html -->
+
+<div class="min-h-screen bg-background py-8">
+  <div class="container-custom">
+
+    <!-- Header (sin cambios) -->
+    <div class="mb-8">
+      <!-- ... tu header actual ... -->
+    </div>
+
+    <!-- Loading: Carga inicial -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto mb-4"></div>
+        <p class="text-text-light text-lg">Cargando categorías...</p>
+      </div>
+    </div>
+
+    <!-- Loading: Cargando subcategorías -->
+    <div *ngIf="!isLoading && isLoadingChildren">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="card animate-pulse">
+          <div class="w-full h-32 bg-gray-700 rounded-lg mb-4"></div>
+          <div class="space-y-3">
+            <div class="h-6 bg-gray-700 rounded w-3/4"></div>
+            <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+            <div class="h-4 bg-gray-700 rounded w-full"></div>
+            <div class="h-4 bg-gray-700 rounded w-5/6"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories Grid/List -->
+    <div *ngIf="!isLoading && !isLoadingChildren">
+
+      <!-- Grid View -->
+      <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <button
+          *ngFor="let category of filteredCategories"
+          (click)="selectCategory(category)"
+          class="card card-hover group text-left h-full"
+        >
+          <!-- Image -->
+          <div
+            *ngIf="category.imageUrl"
+            class="w-full h-48 mb-4 rounded-lg overflow-hidden bg-cover bg-center"
+            [style.background-image]="'url(' + category.imageUrl + ')'"
+          >
+            <div class="w-full h-full bg-gradient-to-t from-dark-navy/80 to-transparent"></div>
+          </div>
+
+          <!-- Icon -->
+          <div *ngIf="!category.imageUrl" class="flex items-center justify-center w-full h-32 mb-4 rounded-lg bg-gradient-to-br from-navy-blue to-dark-navy">
+            <span class="text-6xl">{{ getCategoryIcon(category) }}</span>
+          </div>
+
+          <!-- Content -->
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex-1">
+              <h3 class="font-bold text-text text-lg group-hover:text-primary transition-colors mb-1">
+                {{ category.name }}
+              </h3>
+              <p class="text-xs text-text-light">
+                {{ category.childrenCount }} subcategoría{{ category.childrenCount !== 1 ? 's' : '' }}
+              </p>
+            </div>
+            <svg
+              *ngIf="hasChildren(category)"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-text-light group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+
+          <p class="text-sm text-text-light mb-4 line-clamp-2">
+            {{ category.description }}
+          </p>
+        </button>
+      </div>
+
+      <!-- List View -->
+      <div *ngIf="viewMode === 'list'" class="space-y-4">
+        <!-- ... tu lista actual ... -->
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="filteredCategories.length === 0" class="text-center py-20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-text-light mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h4 class="text-2xl font-semibold text-text mb-2">No se encontraron categorías</h4>
+        <p class="text-text-light mb-6">Intenta con otros términos de búsqueda</p>
+        <button
+          (click)="searchTerm = ''; filterCategories()"
+          class="btn btn-primary"
+        >
+          Limpiar búsqueda
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Footer -->
+    <div *ngIf="!isLoading && !isLoadingChildren && filteredCategories.length > 0" class="mt-12 text-center text-text-light">
+      <p>
+        Mostrando <span class="text-primary font-semibold">{{ filteredCategories.length }}</span>
+        categoría{{ filteredCategories.length !== 1 ? 's' : '' }}
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,366 @@
+/* ============================================
+   TEBUSCO - Professional Detail Styles
+   Diseño moderno y profesional
+   ============================================ */
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Componente principal */
+:host {
+  display: block;
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Cards con animación de entrada */
+.lg\:col-span-2 > div {
+  animation: slideInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+.space-y-6 > div:last-child {
+  animation: slideInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  animation-delay: 0.2s;
+}
+
+/* Tarjetas de perfil - animación escalonada */
+.group[class*="bg-gradient"] {
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+/* Transiciones suaves para elementos interactivos */
+button,
+a,
+.group {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efectos hover mejorados */
+button:hover,
+.group:hover {
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Avatar con efecto de brillo */
+.relative.group > div[class*="blur"] {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+/* Badges premium con shimmer */
+span[class*="bg-gradient-to-r"] {
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+  background-image: linear-gradient(
+    to right,
+    #fbbf24 0%,
+    #f59e0b 50%,
+    #fbbf24 100%
+  );
+}
+
+/* Stats card con efecto glass */
+.bg-white\/10 {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Sombras personalizadas más suaves */
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.hover\:shadow-2xl:hover {
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.3);
+}
+
+/* Sombra azul para botón principal */
+.hover\:shadow-blue-500\/30:hover {
+  box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.3);
+}
+
+/* Loading spinner mejorado */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Transición de tema oscuro */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Bordes con gradiente */
+.border-gradient {
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.border-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  margin: -2px;
+  border-radius: inherit;
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+}
+
+/* Efectos de foco mejorados para accesibilidad */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Mejora de contraste en texto */
+.text-gray-600 {
+  color: rgb(75 85 99);
+}
+
+.dark .text-gray-300 {
+  color: rgb(209 213 219);
+}
+
+/* Iconos con rotación suave */
+svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group:hover svg {
+  transform: scale(1.1);
+}
+
+.group-hover\:rotate-12:hover {
+  transform: rotate(12deg);
+}
+
+/* Especialidades con hover mejorado */
+span[class*="bg-blue-50"] {
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+span[class*="bg-blue-50"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+}
+
+/* Cards de documentos con efecto de profundidad */
+button[class*="bg-gradient-to-r"]:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+}
+
+/* Verificación badge con pulso */
+.bg-green-500 {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .text-3xl {
+    font-size: 1.875rem;
+  }
+
+  .text-4xl {
+    font-size: 2.25rem;
+  }
+
+  /* Reducir padding en móviles */
+  .p-6 {
+    padding: 1rem;
+  }
+}
+
+/* Mejoras de rendimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .bg-gradient-to-br {
+    background: #1e3a8a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  button {
+    display: none;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(96, 165, 250, 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(96, 165, 250, 0.7);
+}
+
+/* Efecto de carga para imágenes */
+img,
+div[style*="background-image"] {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark img,
+.dark div[style*="background-image"] {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Backdrop blur para navegadores que no lo soportan */
+@supports not (backdrop-filter: blur(10px)) {
+  .backdrop-blur-sm {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+
+  .dark .backdrop-blur-sm {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+}
+
+/* Mejoras de accesibilidad */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Estados de carga */
+.loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.06) 25%,
+    rgba(0, 0, 0, 0.15) 50%,
+    rgba(0, 0, 0, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.dark .loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.06) 25%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.06) 75%
+  );
+}

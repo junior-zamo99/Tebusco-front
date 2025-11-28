@@ -1,0 +1,220 @@
+<div class="min-h-screen bg-background py-8">
+  <div class="container-custom">
+    <!-- Breadcrumb y Header -->
+    <div class="mb-8">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-sm mb-4">
+
+        <a
+          class="text-primary hover:text-accent transition-colors font-medium"
+        >
+          Categorías
+        </a>
+        <span class="text-border">/</span>
+        <button
+          *ngIf="parentCategory"
+          (click)="goToParentCategory()"
+          class="text-primary hover:text-accent transition-colors font-medium"
+        >
+          {{ parentCategory.name }}
+        </button>
+        <span *ngIf="parentCategory" class="text-border">/</span>
+        <span class="text-text font-semibold">{{ specialty?.name || 'Cargando...' }}</span>
+      </div>
+
+      <!-- Back Button -->
+      <button
+        (click)="goBack()"
+        class="flex items-center gap-2 text-primary hover:text-accent transition-colors mb-4"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Volver
+      </button>
+
+      <!-- Title -->
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-4xl font-bold text-text">
+            {{ specialty?.name || 'Cargando...' }}
+          </h1>
+          <p class="text-text-light">
+            {{ specialty?.description || '' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div *ngIf="!loading && professionals.length > 0" class="flex items-center gap-4 text-sm text-text-light">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span><strong class="text-primary">{{ pagination.total }}</strong> profesionales encontrados</span>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="text-center py-20">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-danger mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p class="text-text-light">{{ error }}</p>
+      <button
+        (click)="loadProfessionals()"
+        class="mt-4 btn btn-primary"
+      >
+        Reintentar
+      </button>
+    </div>
+
+    <!-- Professionals Grid -->
+    <div *ngIf="!loading && !error">
+      <div *ngIf="professionals.length === 0" class="text-center py-20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-text-light mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h4 class="text-2xl font-semibold text-text mb-2">No se encontraron profesionales</h4>
+        <p class="text-text-light mb-6">No hay profesionales disponibles en esta especialidad</p>
+        <button
+          (click)="goBack()"
+          class="btn btn-primary"
+        >
+          Explorar otras especialidades
+        </button>
+      </div>
+
+      <div *ngIf="professionals.length > 0">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <button
+            *ngFor="let professional of professionals"
+            (click)="goToProfessional(professional)"
+            class="card card-hover text-left group"
+          >
+            <div class="flex items-start gap-4 mb-4">
+              <!-- Avatar -->
+              <div
+                *ngIf="professional.photoUrl"
+                class="w-16 h-16 rounded-full bg-cover bg-center border-2 border-primary/20 flex-shrink-0"
+                [style.background-image]="'url(' + professional.photoUrl + ')'"
+              ></div>
+              <div
+                *ngIf="!professional.photoUrl"
+                class="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center border-2 border-primary/20 flex-shrink-0"
+              >
+                <span class="text-lg font-bold text-white">{{ getInitials(professional.fullName) }}</span>
+              </div>
+
+              <!-- Info -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="font-bold text-text text-lg group-hover:text-primary transition-colors truncate">
+                    {{ professional.fullName }}
+                  </h3>
+                  <svg
+                    *ngIf="professional.isVerified"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 text-success flex-shrink-0"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    title="Verificado"
+                  >
+                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  <span
+                    *ngIf="professional.isPremium"
+                    class="text-xs bg-accent text-white px-2 py-0.5 rounded-full font-semibold flex-shrink-0"
+                  >
+                    PREMIUM
+                  </span>
+                </div>
+
+                <div *ngIf="professional.location" class="flex items-center gap-1 text-text-light text-sm mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {{ professional.location.city }}, {{ professional.location.country }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <p class="text-text-light text-sm mb-4 line-clamp-2">
+              {{ professional.description || 'Sin descripción' }}
+            </p>
+
+            <!-- Specialties -->
+            <div *ngIf="professional.specialties && professional.specialties.length > 0" class="flex flex-wrap gap-2 mb-4">
+              <span
+                *ngFor="let spec of professional.specialties.slice(0, 3)"
+                class="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full border border-primary/20"
+              >
+                {{ spec }}
+              </span>
+              <span
+                *ngIf="professional.specialties.length > 3"
+                class="text-xs text-primary font-medium"
+              >
+                +{{ professional.specialties.length - 3 }} más
+              </span>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center justify-between pt-4 border-t border-border">
+              <div class="text-text font-semibold">
+                Desde Bs. {{ professional.priceMin?.toLocaleString() || 'N/A' }}
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-text-light group-hover:text-primary group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="pagination.totalPages > 1" class="mt-8 flex items-center justify-center gap-2">
+          <button
+            (click)="changePage(pagination.page - 1)"
+            [disabled]="pagination.page === 1"
+            class="btn btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Anterior
+          </button>
+
+          <button
+            *ngFor="let page of getPaginationPages()"
+            (click)="changePage(page)"
+            [class]="page === pagination.page
+              ? 'w-10 h-10 rounded-lg bg-primary text-white font-semibold'
+              : 'w-10 h-10 rounded-lg bg-card-bg border border-border text-text hover:border-primary hover:text-primary transition-colors'"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            (click)="changePage(pagination.page + 1)"
+            [disabled]="pagination.page === pagination.totalPages"
+            class="btn btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Siguiente
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

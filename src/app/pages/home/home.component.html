@@ -1,0 +1,74 @@
+<app-hero></app-hero>
+
+<div class="container-custom">
+
+  <!-- Hero para invitados -->
+
+  <!-- Carousel de categorías -->
+  <app-categories-carousel></app-categories-carousel>
+
+  <!-- Sección: ¿Cómo Funciona? -->
+  <section class="my-16 py-16 bg-card-bg rounded-2xl">
+    <div class="text-center mb-12">
+      <h2 class="section-title mb-4">
+        ¿Cómo Funciona?
+      </h2>
+      <p class="text-text-light text-lg">
+        Conecta con profesionales en 3 simples pasos
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-8">
+      <div class="text-center">
+        <div class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-3xl font-bold text-primary">1</span>
+        </div>
+        <h3 class="text-xl font-bold text-text mb-3">Busca o Publica</h3>
+        <p class="text-text-light">
+          Busca en nuestras categorías o publica tu solicitud de servicio con todos los detalles
+        </p>
+      </div>
+
+      <div class="text-center">
+        <div class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-3xl font-bold text-primary">2</span>
+        </div>
+        <h3 class="text-xl font-bold text-text mb-3">Compara Perfiles</h3>
+        <p class="text-text-light">
+          Revisa perfiles verificados, experiencias y calificaciones de profesionales disponibles
+        </p>
+      </div>
+
+      <div class="text-center">
+        <div class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-3xl font-bold text-primary">3</span>
+        </div>
+        <h3 class="text-xl font-bold text-text mb-3">Contacta Directo</h3>
+        <p class="text-text-light">
+          Contacta al profesional por WhatsApp, teléfono o redes sociales y acuerda los detalles
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA para Profesionales -->
+  <section class="my-16 text-center">
+    <div class="bg-gradient-to-r from-navy-blue to-card-bg rounded-2xl p-12">
+      <h2 class="section-title mb-4">
+        ¿Eres un Profesional?
+      </h2>
+      <p class="text-text-light text-lg mb-8 max-w-2xl mx-auto">
+        Únete a TEBUSCO y expande tu negocio. Miles de clientes potenciales están buscando tus servicios.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button routerLink="/login" class="btn btn-primary">
+          Iniciar Sesión
+        </button>
+        <button routerLink="/register" class="btn btn-secondary">
+          Registrarse
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>

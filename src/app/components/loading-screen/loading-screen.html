@@ -1,0 +1,20 @@
+<div
+  [class.opacity-0]="!isVisible()"
+  [class.opacity-100]="isVisible()"
+  [class.pointer-events-none]="!isVisible()"
+  class="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 transition-opacity duration-300"
+>
+  <div class="text-center">
+    <!-- Contenedor para la animación Lottie (siempre existe) -->
+    <div id="lottie-container" class="w-64 h-64 mx-auto mb-4"></div>
+
+    <!-- Mensaje dinámico -->
+    <h2 class="text-2xl font-bold text-white mt-4 animate-pulse">{{ message() }}</h2>
+    <p class="text-white/80 mt-2">Preparando tu experiencia</p>
+
+    <!-- Spinner de respaldo -->
+    <div class="mt-6">
+      <div class="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-white border-r-transparent"></div>
+    </div>
+  </div>
+</div>

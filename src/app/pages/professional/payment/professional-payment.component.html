@@ -1,0 +1,299 @@
+<div class="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-8 px-4">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-8 text-center">
+      <div class="inline-block mb-4">
+        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+          <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          </svg>
+        </div>
+      </div>
+      <h1 class="text-4xl font-bold text-text mb-2">
+        💳 Confirmar Suscripción
+      </h1>
+      <p class="text-text-light text-lg">
+        Revisa los detalles y completa tu suscripción
+      </p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage"
+         class="bg-danger/10 border border-danger/30 rounded-xl p-4 mb-8 flex items-center gap-3 animate-fade-in">
+      <svg class="w-6 h-6 text-danger" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+      </svg>
+      <p class="text-danger font-medium">{{ errorMessage }}</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary mx-auto mb-4"></div>
+        <p class="text-text-light text-lg">Cargando información del plan...</p>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!isLoading && planInterval" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- Left Column - Details (2/3) -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Plan Summary Card -->
+        <div class="bg-surface rounded-2xl shadow-xl p-6 border border-border">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-text flex items-center gap-2">
+              <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm0 3a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm0 3a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              Detalles del Plan
+            </h3>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Plan Name -->
+            <div class="bg-background border border-border rounded-lg p-4">
+              <p class="text-xs text-text-light font-medium mb-2">Plan Seleccionado</p>
+              <p class="font-bold text-text text-lg">{{ plan?.name }}</p>
+              <p class="text-xs text-text-light mt-1">{{ plan?.description }}</p>
+            </div>
+
+            <!-- Duration -->
+            <div class="bg-background border border-border rounded-lg p-4">
+              <p class="text-xs text-text-light font-medium mb-2">Duración</p>
+              <p class="font-bold text-text text-lg">{{ planInterval.intervalDisplay }}</p>
+              <p class="text-xs text-text-light mt-1">{{ planInterval.daysPerPeriod }} días</p>
+            </div>
+
+            <!-- Start Date -->
+            <div class="bg-background border border-border rounded-lg p-4">
+              <p class="text-xs text-text-light font-medium mb-2 flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                </svg>
+                Inicio
+              </p>
+              <p class="font-semibold text-text text-sm">{{ subscriptionStartDate }}</p>
+            </div>
+
+            <!-- End Date -->
+            <div class="bg-background border border-border rounded-lg p-4">
+              <p class="text-xs text-text-light font-medium mb-2 flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-danger" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                </svg>
+                Vencimiento
+              </p>
+              <p class="font-semibold text-text text-sm">{{ subscriptionEndDate }}</p>
+            </div>
+          </div>
+
+          <!-- Plan Code -->
+          <div class="mt-4 pt-4 border-t border-border">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-text-light font-medium">Código del Plan:</span>
+              <span class="font-mono text-text font-bold bg-background px-3 py-1.5 rounded border border-border">
+                {{ plan?.code }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Features List -->
+        <div class="bg-surface rounded-2xl shadow-xl p-6 border border-border" *ngIf="planInterval.features.length > 0">
+          <h3 class="text-xl font-bold text-text mb-5 flex items-center gap-2">
+            <div class="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            Características Incluidas
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div *ngFor="let feature of planInterval.features"
+                 class="flex items-start gap-3 p-3 rounded-lg bg-background border border-border hover:border-primary/50 transition-colors">
+              <div class="flex-shrink-0 w-5 h-5 rounded-full bg-success/20 flex items-center justify-center mt-0.5">
+                <svg class="w-3.5 h-3.5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="flex-1 flex items-center justify-between gap-2">
+                <span class="text-text font-medium text-sm">{{ feature.featureName }}</span>
+                <span *ngIf="!feature.isUnlimited && feature.limitValue"
+                      class="flex-shrink-0 inline-flex items-center justify-center min-w-[2rem] h-6 px-2 bg-primary/15 border border-primary/30 rounded text-primary font-bold text-xs">
+                  {{ feature.limitValue }}
+                </span>
+                <span *ngIf="feature.isUnlimited"
+                      class="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 bg-success/15 border border-success/30 rounded text-success font-bold text-xs">
+                  ∞
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="bg-surface rounded-2xl shadow-xl p-6 border border-border">
+          <h3 class="text-xl font-bold text-text mb-5 flex items-center gap-2">
+            <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+            </div>
+            Método de Pago
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div *ngFor="let method of paymentMethods"
+                 (click)="selectPaymentMethod(method.id)"
+                 class="relative border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-lg"
+                 [class.border-primary]="isPaymentMethodSelected(method.id)"
+                 [class.bg-primary/5]="isPaymentMethodSelected(method.id)"
+                 [class.border-border]="!isPaymentMethodSelected(method.id)"
+                 [class.hover:border-primary/50]="!isPaymentMethodSelected(method.id)">
+
+              <!-- Selected Check -->
+              <div *ngIf="isPaymentMethodSelected(method.id)"
+                   class="absolute top-2 right-2">
+                <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="text-center">
+                <div class="text-4xl mb-2">{{ getPaymentMethodIcon(method.type) }}</div>
+                <p class="font-semibold text-text text-sm">{{ method.name }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Auto Renew -->
+          <div class="bg-background border border-border rounded-lg p-4">
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                [(ngModel)]="autoRenew"
+                class="w-5 h-5 text-primary rounded focus:ring-2 focus:ring-primary mt-0.5 border-2 border-border">
+              <div class="flex-1">
+                <p class="text-text font-semibold text-sm">Renovar automáticamente</p>
+                <p class="text-text-light text-xs mt-1">
+                  Tu suscripción se renovará automáticamente al final del período. Puedes cancelar en cualquier momento.
+                </p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Terms & Conditions -->
+        <div class="bg-background border border-border rounded-xl p-4">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              [(ngModel)]="agreeTerms"
+              class="w-5 h-5 text-primary rounded focus:ring-2 focus:ring-primary mt-0.5 border-2 border-border">
+            <p class="text-text text-sm flex-1">
+              Acepto los
+              <a href="/terms" class="text-primary hover:underline font-semibold">términos y condiciones</a>
+              y la
+              <a href="/privacy" class="text-primary hover:underline font-semibold">política de privacidad</a>
+            </p>
+          </label>
+        </div>
+
+      </div>
+
+      <!-- Right Column - Price & Action (1/3) -->
+      <div class="lg:col-span-1 space-y-6">
+
+        <!-- Price Card -->
+        <div class="bg-gradient-to-br from-primary via-primary-dark to-primary rounded-2xl p-6 text-center shadow-2xl sticky top-4">
+          <p class="text-white/80 text-xs font-bold uppercase tracking-wider mb-3">
+            Total a Pagar
+          </p>
+          <div class="flex items-baseline justify-center gap-2 mb-3">
+            <span class="text-white/90 text-2xl font-bold">{{ planInterval.currency }}</span>
+            <span class="text-6xl font-black text-white">
+              {{ totalPrice }}
+            </span>
+          </div>
+          <p class="text-white/70 text-sm font-medium mb-6">
+            por {{ planInterval.intervalDisplay }}
+          </p>
+
+          <div class="pt-6 border-t border-white/20">
+            <button
+              (click)="onConfirmPayment()"
+              [disabled]="!agreeTerms || !selectedPaymentMethodId || isProcessing"
+              class="w-full py-4 bg-white text-primary rounded-xl hover:bg-white/95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 font-bold text-base flex items-center justify-center gap-2 group hover:scale-105 disabled:hover:scale-100 shadow-lg">
+              <svg *ngIf="!isProcessing" class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span *ngIf="!isProcessing">Confirmar Pago</span>
+              <span *ngIf="isProcessing" class="flex items-center gap-2">
+                <div class="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full"></div>
+                Procesando...
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="bg-primary/10 border border-primary/30 rounded-xl p-4">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+              <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-bold text-text text-sm mb-2">Información</h4>
+              <p class="text-text-light text-xs leading-relaxed">
+                Al confirmar, tu perfil será activado inmediatamente y podrás comenzar a recibir solicitudes de clientes.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Badge -->
+        <div class="bg-surface border border-border rounded-xl p-4 text-center">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-success/20 mb-3">
+            <svg class="w-6 h-6 text-success" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <p class="text-text font-semibold text-sm mb-1">Pago Seguro</p>
+          <p class="text-text-light text-xs">Transacción encriptada SSL</p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-between pt-8 border-t border-border">
+      <button
+        (click)="onBack()"
+        [disabled]="isProcessing"
+        class="px-6 py-3 border border-border rounded-lg text-text-light hover:bg-surface-hover hover:border-primary/50 transition-all duration-300 font-semibold disabled:opacity-50">
+        ← Volver a Planes
+      </button>
+
+      <div class="flex items-center gap-2 text-text-light text-xs">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+        </svg>
+        <span>Conexión segura SSL</span>
+      </div>
+    </div>
+
+  </div>
+</div>

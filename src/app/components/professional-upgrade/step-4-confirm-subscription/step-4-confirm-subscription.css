@@ -1,0 +1,124 @@
+/* Animaciones */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Shadow gold mejorado */
+.shadow-gold {
+  box-shadow: 0 20px 40px -10px rgba(212, 175, 55, 0.6),
+              0 10px 20px -5px rgba(212, 175, 55, 0.4);
+}
+
+/* Sticky positioning */
+@media (min-width: 1024px) {
+  .sticky {
+    position: sticky;
+  }
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover effects para features */
+.group:hover {
+  transform: translateX(2px);
+}
+
+/* Checkbox personalizado */
+input[type="checkbox"]:checked {
+  background-color: #D4AF37;
+  border-color: #D4AF37;
+}
+
+/* Gradiente animado para el botón principal */
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .lg\:col-span-2,
+  .lg\:col-span-1 {
+    grid-column: span 1;
+  }
+
+  .sticky {
+    position: relative;
+  }
+}
+
+@media (max-width: 640px) {
+  .text-5xl {
+    font-size: 3rem;
+  }
+
+  .text-3xl {
+    font-size: 1.875rem;
+  }
+}
+
+/* Pulse effect para el botón de confirmar */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);
+  }
+}
+
+button:not(:disabled):hover {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+/* Better scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.5);
+}

@@ -1,0 +1,93 @@
+<section class="my-16">
+  <div class="text-center mb-12">
+    <h2 class="section-title mb-4">
+      Planes y Precios
+    </h2>
+    <p class="text-text-light text-lg">
+      Elige el plan perfecto para hacer crecer tu negocio
+    </p>
+  </div>
+
+  <div *ngIf="isLoadingPlans" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    <p class="text-text-light mt-4">Cargando planes...</p>
+  </div>
+
+  <div *ngIf="!isLoadingPlans && groupedPlans.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div
+      *ngFor="let group of groupedPlans"
+      class="card group cursor-pointer hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary relative"
+      [ngClass]="{'border-primary bg-gradient-to-br from-primary/5 to-transparent': group.isRecommended}"
+    >
+      <!-- Badge para plan recomendado -->
+      <div *ngIf="group.isRecommended" class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+        <span class="bg-gradient-to-r from-primary to-accent text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
+          Recomendado
+        </span>
+      </div>
+
+      <div class="text-center mb-6 mt-2">
+        <h3 class="text-2xl font-bold text-text mb-2">{{ group.name }}</h3>
+        <p class="text-text-light text-sm mb-4">{{ group.description }}</p>
+
+        <!-- Selector de duración -->
+        <div class="flex gap-2 justify-center mb-4">
+          <button
+            *ngFor="let duration of group.durations"
+            (click)="selectDuration(group, duration)"
+            class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+            [ngClass]="{
+              'bg-primary text-white': duration.selected,
+              'bg-card-bg text-text-light hover:bg-primary/20': !duration.selected
+            }"
+          >
+            {{ duration.label }}
+          </button>
+        </div>
+
+        <!-- Precio -->
+        <div class="flex items-baseline justify-center gap-2">
+          <span class="text-4xl font-bold text-primary">${{ group.selectedDuration.price }}</span>
+          <span class="text-text-light">
+            /{{ group.selectedDuration.days === 1 ? 'día' : group.selectedDuration.days === 7 ? 'semana' : 'mes' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Características -->
+      <div class="space-y-3 mb-6 min-h-[200px]">
+        <div *ngFor="let feature of group.selectedDuration.features" class="flex items-start gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          <div class="flex-1">
+            <span class="text-text">{{ feature.featureName }}</span>
+            <span *ngIf="feature.limit" class="text-text-light text-sm ml-1">({{ feature.limit }})</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón de acción -->
+      <button
+        routerLink="/plans"
+        class="btn w-full"
+        [ngClass]="group.isRecommended ? 'btn-primary' : 'btn-secondary'"
+      >
+        Seleccionar Plan
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoadingPlans && groupedPlans.length === 0" class="text-center py-12">
+    <p class="text-text-light">No hay planes disponibles en este momento.</p>
+  </div>
+
+  <div class="text-center mt-8">
+    <a routerLink="/plans" class="btn btn-secondary">
+      Ver detalles completos
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </a>
+  </div>
+</section>

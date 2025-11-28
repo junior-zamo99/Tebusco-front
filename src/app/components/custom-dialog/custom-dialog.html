@@ -1,0 +1,35 @@
+<div class="dialog-overlay" (click)="onOverlayClick($event)">
+  <div class="dialog-container animate-fadeIn">
+    <!-- Header con icono -->
+    <div class="dialog-header">
+      <div class="dialog-icon" [ngClass]="getIconClass()">
+        {{ getIcon() }}
+      </div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="dialog-content">
+      <h2 class="dialog-title">{{ config.title }}</h2>
+      <p class="dialog-message">{{ config.message }}</p>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="dialog-actions">
+      <button
+        *ngIf="config.showCancel"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        type="button"
+      >
+        {{ config.cancelText }}
+      </button>
+      <button
+        class="btn btn-primary"
+        (click)="onConfirm()"
+        type="button"
+      >
+        {{ config.confirmText }}
+      </button>
+    </div>
+  </div>
+</div>

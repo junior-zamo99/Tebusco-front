@@ -1,0 +1,59 @@
+<div class="complete-container" [class.show-confetti]="showConfetti">
+  <!-- Confetti Animation -->
+  <div class="confetti" *ngIf="showConfetti">
+    <div class="confetti-piece" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]"></div>
+  </div>
+
+  <!-- Success Content -->
+  <div class="success-card">
+    <div class="success-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+    </div>
+
+    <h1>¡Registro Completado!</h1>
+    <p class="success-message">
+      Tu perfil profesional ha sido creado exitosamente. Ahora puedes empezar a recibir solicitudes y enviar ofertas a clientes.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">📋</div>
+        <h3>Recibe Solicitudes</h3>
+        <p>Los clientes podrán ver tu perfil y enviarte solicitudes de servicio</p>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">💼</div>
+        <h3>Envía Ofertas</h3>
+        <p>Busca solicitudes abiertas y envía tus propuestas de trabajo</p>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">⭐</div>
+        <h3>Construye tu Reputación</h3>
+        <p>Completa trabajos y recibe calificaciones de tus clientes</p>
+      </div>
+    </div>
+
+    <div class="next-steps">
+      <h2>¿Qué sigue?</h2>
+      <ul>
+        <li>✓ Completa tu perfil con más información</li>
+        <li>✓ Verifica que tus categorías estén correctas</li>
+        <li>✓ Comienza a buscar solicitudes disponibles</li>
+        <li>✓ Configura tus notificaciones</li>
+      </ul>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-secondary" (click)="viewProfile()">
+        Ver Mi Perfil
+      </button>
+      <button type="button" class="btn-primary" (click)="goToDashboard()">
+        Ir al Dashboard →
+      </button>
+    </div>
+  </div>
+</div>

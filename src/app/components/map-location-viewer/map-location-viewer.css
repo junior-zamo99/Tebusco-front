@@ -1,0 +1,61 @@
+.map-viewer-container {
+  width: 100%;
+}
+
+#location-viewer-map {
+  min-height: 300px;
+}
+
+/* ✅ Animación para el botón */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Estilos para el popup personalizado */
+:host ::ng-deep .custom-popup .leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+:host ::ng-deep .custom-popup .leaflet-popup-content {
+  margin: 16px;
+  min-width: 200px;
+}
+
+:host ::ng-deep .custom-popup .leaflet-popup-tip {
+  background: white;
+}
+
+/* Ajustes para tema oscuro */
+:host-context(.dark) ::ng-deep .custom-popup .leaflet-popup-content-wrapper {
+  background: #1f2937;
+  color: white;
+}
+
+:host-context(.dark) ::ng-deep .custom-popup .leaflet-popup-tip {
+  background: #1f2937;
+}
+
+/* ✅ Asegurar que el botón esté por encima de los controles del mapa */
+.z-\[1000\] {
+  z-index: 1000;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  #location-viewer-map {
+    min-height: 250px;
+  }
+}

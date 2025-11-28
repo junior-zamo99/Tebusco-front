@@ -1,0 +1,53 @@
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Aplicar gradiente animado */
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+/* Estilos del buscador */
+input[type="text"] {
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+input[type="text"]:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.25);
+}
+
+/* Container del search para resultados */
+.search-container {
+  position: relative;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  section > div > div {
+    padding: 3rem 2rem;
+  }
+}
