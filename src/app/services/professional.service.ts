@@ -51,6 +51,30 @@ export interface UpdateCategoryData {
   specialtyIds?: number[];
 }
 
+export interface Specialty {
+  id: number;
+  name: string;
+}
+
+export interface CategoryProfile {
+  id: number;
+  categoryId: number;
+  categoryName: string;
+  categorySlug: string;
+  categoryImageUrl: string;
+  description: string;
+  slogan: string | null;
+  experience: number;
+  priceMin: number;
+  isActive: boolean;
+  isVerified: boolean;
+  status: string;
+  visible: boolean;
+  specialties: Specialty[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -178,5 +202,28 @@ export class ProfessionalService {
     return this.http.get(`${this.apiUrl}/document-types`, {
       withCredentials: true
     });
+  }
+
+  getMyCategories(): Observable<{ success: boolean; message: string; data: CategoryProfile[] }> {
+    return this.http.get<{ success: boolean; message: string; data: CategoryProfile[] }>(
+      `${this.apiUrl}/me/categories`,
+      { withCredentials: true }
+    );
+  }
+
+  setCategoryVisible(professionalId: number, profileCategoryId: number): Observable<any> {
+    return this.http.patch(
+      `${this.apiUrl}/${professionalId}/categories/${profileCategoryId}/visible`,
+      {},
+      { withCredentials: true }
+    );
+  }
+
+  setCategoryInvisible(professionalId: number, profileCategoryId: number): Observable<any> {
+    return this.http.patch(
+      `${this.apiUrl}/${professionalId}/categories/${profileCategoryId}/invisible`,
+      {},
+      { withCredentials: true }
+    );
   }
 }

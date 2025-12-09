@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, computed } from '@angular/core';
+import { Component, OnInit, HostListener, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -37,7 +37,17 @@ export class NavbarComponent implements OnInit {
     private dialogService: DialogService,
     private loadingService: LoadingService,
     public themeService: ThemeService
-  ) {}
+  ) {
+    effect(() => {
+      const type = this.userType();
+      if (type === 2) {
+        const savedView = localStorage.getItem('current_view') as 'sa' | 'pl';
+        if (savedView) {
+          this.currentView = savedView;
+        }
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.loadCurrentView();
@@ -51,7 +61,6 @@ export class NavbarComponent implements OnInit {
     const savedView = localStorage.getItem('current_view');
     if (savedView === 'sa' || savedView === 'pl') {
       this.currentView = savedView;
-    } else {
       const type = this.userType();
       if (type === 2) {
         this.currentView = 'sa';
@@ -89,7 +98,6 @@ export class NavbarComponent implements OnInit {
     this.currentView = view;
     this.isViewDropdownOpen = false;
     localStorage.setItem('current_view', view);
-    console.log('Vista cambiada a:', view);
 
     setTimeout(() => {
       this.navigateToDashboard(view);
@@ -105,7 +113,6 @@ export class NavbarComponent implements OnInit {
 
     this.currentView = view;
     localStorage.setItem('current_view', view);
-    console.log('Vista cambiada a:', view);
 
     setTimeout(() => {
       this.navigateToDashboard(view);
@@ -151,7 +158,6 @@ export class NavbarComponent implements OnInit {
     return environment.backendUrl + this.authService.currentUser()?.photoUrl;
   }
 
-
   onOffers(): void {
     this.router.navigate(['/offers']);
     this.isUserMenuOpen = false;
@@ -195,12 +201,12 @@ export class NavbarComponent implements OnInit {
   }
 
   onProfile(): void {
-      if(this.currentView === 'pl') {
-        this.router.navigate(['/profile-professional-personal']);
-      } else {
-         this.router.navigate(['/profile']);
-         this.isUserMenuOpen = false;
-      }
+    if (this.currentView === 'pl') {
+      this.router.navigate(['/profile-professional-personal']);
+    } else {
+      this.router.navigate(['/profile']);
+      this.isUserMenuOpen = false;
+    }
   }
 
   onLogout(): void {
@@ -223,7 +229,6 @@ export class NavbarComponent implements OnInit {
       }
     });
   }
-
 
   onRequests(): void {
     this.router.navigate(['/requests']);

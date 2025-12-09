@@ -54,13 +54,14 @@ export class AuthInterceptor implements HttpInterceptor {
           this.isRefreshing = false;
           this.refreshTokenSubject.next(true);
 
-
-          return next.handle(request);
+          const clonedRequest = request.clone({
+            withCredentials: true
+          });
+          return next.handle(clonedRequest);
         }),
         catchError(err => {
           this.isRefreshing = false;
-
-          this.authService.logout();
+          this.authService.logout().subscribe();
           return throwError(() => err);
         })
       );
@@ -69,7 +70,10 @@ export class AuthInterceptor implements HttpInterceptor {
         filter(result => result !== null),
         take(1),
         switchMap(() => {
-          return next.handle(request);
+          const clonedRequest = request.clone({
+            withCredentials: true
+          });
+          return next.handle(clonedRequest);
         })
       );
     }

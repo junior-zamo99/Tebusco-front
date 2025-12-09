@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProfileCategoryService, UpdateCategoryData } from '../../services/profile-category.service';
+import { ProfileCategoryService } from '../../services/profile-category.service';
 import { CategoryService } from '../../services/category.service';
 import { CategoryNode } from '../../models/category.model';
-import { AuthService } from '../../services/auth.service';
 import { StorageService } from '../../services/storage.service';
 
 @Component({
@@ -32,7 +31,6 @@ export class CategoryDetailComponent implements OnInit {
     private router: Router,
     private profileCategoryService: ProfileCategoryService,
     private categoryService: CategoryService,
-    private authService: AuthService,
     private storageService: StorageService
   ) {}
 
@@ -63,12 +61,39 @@ export class CategoryDetailComponent implements OnInit {
         if (res.success) {
           this.categoryData = res.data;
 
-          // Initialize selected specialties
-          if (this.categoryData.specialties) {
-            this.categoryData.specialties.forEach((s: any) => this.selectedSpecialties.add(s.id));
+          // 1. Limpiamos selección previa
+          this.selectedSpecialties.clear();
+
+          // 2. Lógica corregida para leer tu JSON actual
+          if (this.categoryData.specialties && Array.isArray(this.categoryData.specialties)) {
+            this.categoryData.specialties.forEach((s: any) => {
+
+              // TU JSON USA "categoryId" PARA IDENTIFICAR LA ESPECIALIDAD
+              // Probamos en este orden de prioridad:
+
+              let idToAdd = null;
+
+              if (s.categoryId) {
+                 // Caso actual según tu JSON: { id: 295, categoryId: 11, ... }
+                 idToAdd = s.categoryId;
+              } else if (s.specialty && s.specialty.id) {
+                 // Caso objeto anidado: { specialty: { id: 11 } }
+                 idToAdd = s.specialty.id;
+              } else if (s.specialtyId) {
+                 // Caso columna plana: { specialtyId: 11 }
+                 idToAdd = s.specialtyId;
+              }
+
+              // Si encontramos un ID válido, lo agregamos al Set visual
+              if (idToAdd) {
+                this.selectedSpecialties.add(idToAdd);
+              }
+            });
           }
 
-          // Get Public Category Data (for all specialties)
+          console.log('Especialidades cargadas visualmente:', this.selectedSpecialties);
+
+          // 3. Cargar las opciones públicas (Checkboxes)
           this.categoryService.getCategoryById(this.categoryData.categoryId).subscribe({
             next: (catRes) => {
               this.publicCategory = catRes;
@@ -80,12 +105,12 @@ export class CategoryDetailComponent implements OnInit {
             }
           });
         } else {
-          this.error = res.message;
+          this.error = res.message || 'Error al obtener datos.';
           this.loading = false;
         }
       },
       error: (err) => {
-        this.error = 'Error al cargar los detalles de la categoría.';
+        this.error = 'Error de conexión al cargar los detalles.';
         this.loading = false;
         console.error(err);
       }
@@ -104,17 +129,27 @@ export class CategoryDetailComponent implements OnInit {
       return this.selectedSpecialties.has(specialtyId);
   }
 
-  save() {
+ save() {
     if (!this.professionalId || !this.categoryId) return;
 
     this.saving = true;
+
+    const availableSpecialtyIds = this.publicCategory?.children?.map(child => child.id) || [];
+
+    const specialtyIdsArray = Array.from(this.selectedSpecialties)
+        .filter(id => availableSpecialtyIds.includes(id));
+
     const updateData: any = {
+      slogan: this.categoryData.slogan,
       description: this.categoryData.description,
       experience: this.categoryData.experience,
       priceMin: this.categoryData.priceMin,
       visible: this.categoryData.visible,
-      specialtyIds: Array.from(this.selectedSpecialties)
+      specialtyIds: specialtyIdsArray
     };
+
+    console.log('IDs disponibles (UI):', availableSpecialtyIds);
+    console.log('Enviando datos limpios:', updateData);
 
     this.profileCategoryService.updateProfileCategory(this.professionalId, this.categoryId, updateData).subscribe({
       next: (res) => {
@@ -123,8 +158,8 @@ export class CategoryDetailComponent implements OnInit {
       },
       error: (err) => {
         this.saving = false;
-        this.error = 'Error al guardar los cambios.';
-        console.error(err);
+        this.error = 'Error al guardar los cambios. Intente nuevamente.';
+        console.error('Error en update:', err);
       }
     });
   }

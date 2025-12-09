@@ -1,0 +1,118 @@
+<div class="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-12 px-4 sm:px-6 lg:px-8">
+
+  <div class="text-center max-w-3xl mx-auto mb-12">
+    <h1 class="text-4xl font-extrabold text-text tracking-tight sm:text-5xl mb-4">
+      Potencia tu Perfil
+    </h1>
+    <p class="text-lg text-text-light">
+      Elige los paquetes adicionales que necesitas para destacar y llegar a más clientes.
+    </p>
+  </div>
+
+  <div *ngIf="loading()" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 animate-pulse">
+    <div *ngFor="let item of [1,2,3]" class="h-96 bg-surface border border-border rounded-2xl"></div>
+  </div>
+
+  <div *ngIf="error()" class="max-w-2xl mx-auto bg-danger/10 border border-danger/30 p-4 rounded-xl shadow-sm mb-8">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-danger" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <div class="ml-3">
+        <p class="text-sm font-medium text-danger">{{ error() }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading() && !error()" class="max-w-7xl mx-auto">
+
+    <div class="flex flex-wrap justify-center gap-2 mb-10">
+      <button
+        *ngFor="let feature of availableFeatures()"
+        (click)="selectTab(feature)"
+        class="px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ease-in-out border"
+        [ngClass]="{
+          'bg-primary text-white border-primary shadow-lg shadow-primary/30 transform scale-105': selectedFeature() === feature,
+          'bg-surface text-text-light border-border hover:border-primary/50 hover:bg-primary/5 hover:text-text': selectedFeature() !== feature
+        }">
+        {{ feature }}
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <div *ngFor="let pkg of filteredPackages()"
+           class="group relative bg-surface rounded-2xl border border-border shadow-lg hover:shadow-2xl hover:border-primary/50 transition-all duration-300 flex flex-col overflow-hidden hover:-translate-y-1">
+
+        <div class="absolute top-0 right-0 -mt-2 -mr-2 w-24 h-24 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full blur-xl group-hover:bg-primary/20 transition-all"></div>
+
+        <div class="p-8 flex-grow relative z-10">
+          <div class="flex items-center justify-between mb-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+              {{ pkg.feature.displayName }}
+            </span>
+          </div>
+
+          <h2 class="text-2xl font-bold text-text mb-2 group-hover:text-primary transition-colors">
+            {{ pkg.name }}
+          </h2>
+
+          <p class="text-text-light text-sm leading-relaxed mb-6">
+            {{ pkg.description }}
+          </p>
+
+          <div class="flex items-baseline mb-6 py-4 border-y border-border/50">
+            <span class="text-4xl font-black text-text tracking-tight">
+              {{ pkg.price | currency:pkg.currency:'symbol':'1.0-0' }}
+            </span>
+            <span class="ml-1 text-lg font-medium text-text-light">/pago único</span>
+          </div>
+
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start">
+              <div class="flex-shrink-0">
+                <div class="flex items-center justify-center h-6 w-6 rounded-full bg-success/20 text-success">
+                  <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+              <p class="ml-3 text-sm font-medium text-text">
+                <span class="font-bold text-primary">+{{ pkg.quantity }}</span> {{ pkg.feature.displayName }} adicionales
+              </p>
+            </li>
+            <li class="flex items-start">
+              <div class="flex-shrink-0">
+                <div class="flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary">
+                  <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                     <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+              <p class="ml-3 text-sm text-text-light">Activación inmediata</p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="p-6 bg-background/50 border-t border-border group-hover:bg-surface transition-colors">
+          <button (click)="buyPackage(pkg)"
+                  class="w-full py-3 px-6 rounded-xl text-white font-bold text-sm bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 hover:shadow-primary/40 transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+            Obtener Paquete
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div *ngIf="filteredPackages().length === 0" class="text-center py-20 bg-surface rounded-2xl shadow-sm border border-border">
+      <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+         <span class="text-3xl">🔍</span>
+      </div>
+      <p class="text-text font-bold text-xl mb-2">No encontramos paquetes</p>
+      <p class="text-text-light">No hay paquetes disponibles en esta categoría por el momento.</p>
+    </div>
+
+  </div>
+</div>

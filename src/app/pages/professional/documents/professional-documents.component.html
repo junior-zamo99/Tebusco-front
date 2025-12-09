@@ -1,48 +1,42 @@
-<div class="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-8 px-4">
-  <div class="max-w-5xl mx-auto">
+<div class="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-6 px-4">
+  <div class="max-w-4xl mx-auto">
 
     <!-- Header -->
-    <div class="mb-8 text-center">
-      <div class="inline-block mb-4">
-        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-          <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </div>
+    <div class="mb-6 text-center">
+      <div class="inline-block mb-3">
+                  <img src="/assets/img/logo/logo.png" alt="Logo TEBUSCO" class="mx-auto max-w-[150px] max-h-20 object-contain" >
       </div>
-      <h1 class="text-4xl font-bold text-text mb-2">
-        📄 Documentos de Verificación
-      </h1>
-      <p class="text-text-light text-lg">
+
+      <p class="text-text-light text-base">
         Sube los 4 documentos obligatorios para verificar tu identidad
       </p>
     </div>
 
     <!-- Progress Indicator -->
-    <div class="bg-surface rounded-2xl shadow-xl p-6 mb-8">
-      <div class="flex items-center justify-between mb-4">
+    <div class="bg-surface rounded-2xl shadow-xl p-5 mb-6">
+      <div class="flex items-center justify-between mb-3">
         <div>
-          <p class="text-sm font-medium text-text-light">Progreso de Documentos</p>
-          <p class="text-3xl font-bold text-text">
-            {{ uploadedCount }}<span class="text-text-light text-xl">/{{ documents.length }}</span>
+          <p class="text-xs font-medium text-text-light">Progreso de Documentos</p>
+          <p class="text-2xl font-bold text-text">
+            {{ uploadedCount }}<span class="text-text-light text-lg">/{{ documents.length }}</span>
           </p>
         </div>
-        <div class="px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-          <span class="text-2xl font-bold text-primary">{{ progressPercentage | number:'1.0-0' }}%</span>
+        <div class="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+          <span class="text-xl font-bold text-primary">{{ progressPercentage | number:'1.0-0' }}%</span>
         </div>
       </div>
 
       <!-- Progress Bar -->
-      <div class="relative w-full h-3 bg-background rounded-full overflow-hidden">
+      <div class="relative w-full h-2.5 bg-background rounded-full overflow-hidden">
         <div
           class="absolute top-0 left-0 h-full bg-gradient-to-r from-primary via-primary-dark to-primary rounded-full transition-all duration-700"
           [style.width.%]="progressPercentage"
         ></div>
       </div>
 
-      <p class="text-sm text-text-light mt-3">
+      <p class="text-xs text-text-light mt-2">
         <ng-container *ngIf="canContinue">
-          <span class="text-success font-semibold">✓ Todos los documentos subidos</span>
+          <span class="text-success font-semibold"> Todos los documentos subidos</span>
         </ng-container>
         <ng-container *ngIf="!canContinue">
           Faltan {{ documents.length - uploadedCount }} documento(s) por subir
@@ -52,58 +46,58 @@
 
     <!-- Success Message -->
     <div *ngIf="successMessage"
-         class="bg-success/10 border border-success/30 rounded-xl p-4 mb-6 flex items-center gap-3 animate-fade-in">
-      <svg class="w-6 h-6 text-success" fill="currentColor" viewBox="0 0 20 20">
+         class="bg-success/10 border border-success/30 rounded-xl p-3 mb-5 flex items-center gap-2 animate-fade-in">
+      <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
       </svg>
-      <p class="text-success font-medium">{{ successMessage }}</p>
+      <p class="text-success font-medium text-sm">{{ successMessage }}</p>
     </div>
 
     <!-- Error Message -->
     <div *ngIf="errorMessage"
-         class="bg-danger/10 border border-danger/30 rounded-xl p-4 mb-6 flex items-start gap-3 animate-fade-in">
-      <svg class="w-6 h-6 text-danger flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+         class="bg-danger/10 border border-danger/30 rounded-xl p-3 mb-5 flex items-start gap-2 animate-fade-in">
+      <svg class="w-5 h-5 text-danger flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
       </svg>
-      <p class="text-danger text-sm flex-1">{{ errorMessage }}</p>
+      <p class="text-danger text-xs flex-1">{{ errorMessage }}</p>
       <button (click)="errorMessage = ''" class="text-danger hover:text-danger-dark">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
         </svg>
       </button>
     </div>
 
     <!-- Documents Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
       <div *ngFor="let doc of documents"
-           class="bg-surface rounded-xl shadow-lg p-6 border-2 transition-all duration-300"
+           class="bg-surface rounded-xl shadow-lg p-5 border-2 transition-all duration-300"
            [class.border-primary]="doc.status === 'uploaded' || doc.status === 'approved'"
            [class.border-danger]="doc.status === 'rejected'"
            [class.border-border]="doc.status === 'pending'">
 
         <!-- Document Header -->
-        <div class="flex items-start gap-4 mb-4">
-          <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-2xl">
+        <div class="flex items-start gap-3 mb-3">
+          <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-xl">
             {{ doc.icon }}
           </div>
           <div class="flex-1">
-            <h3 class="font-bold text-text text-lg">{{ doc.label }}</h3>
-            <p class="text-sm text-text-light mt-1">{{ doc.description }}</p>
+            <h3 class="font-bold text-text text-base">{{ doc.label }}</h3>
+            <p class="text-xs text-text-light mt-0.5">{{ doc.description }}</p>
           </div>
         </div>
 
         <!-- Rejection Reason -->
         <div *ngIf="doc.rejectionReason"
-             class="bg-danger/10 border border-danger/30 rounded-lg p-3 mb-4 flex items-start gap-2">
-          <svg class="w-5 h-5 text-danger flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+             class="bg-danger/10 border border-danger/30 rounded-lg p-2 mb-3 flex items-start gap-2">
+          <svg class="w-4 h-4 text-danger flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
           </svg>
-          <p class="text-sm text-danger">{{ doc.rejectionReason }}</p>
+          <p class="text-xs text-danger">{{ doc.rejectionReason }}</p>
         </div>
 
         <!-- Upload Area (Pending/Rejected) -->
         <div *ngIf="canUpload(doc)"
-             class="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+             class="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary hover:bg-primary/5 transition-all duration-300 cursor-pointer"
              (drop)="onDrop($event, doc)"
              (dragover)="onDragOver($event)">
 
@@ -111,28 +105,28 @@
             type="file"
             [id]="'file-' + doc.documentType"
             (change)="onFileSelected($event, doc)"
-            accept="image/jpeg,image/jpg,image/png,image/webp"
+            [accept]="getAcceptedFormats(doc.documentType)"
             class="hidden">
 
           <label [for]="'file-' + doc.documentType" class="cursor-pointer">
-            <svg class="w-12 h-12 text-text-light mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-10 h-10 text-text-light mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
-            <p class="text-text font-semibold mb-1">
+            <p class="text-text font-semibold mb-0.5 text-sm">
               {{ doc.status === 'rejected' ? 'Resubir archivo' : 'Haz clic para subir' }}
             </p>
-            <p class="text-sm text-text-light">o arrastra el archivo aquí</p>
-            <p class="text-xs text-text-light mt-2">JPG, PNG, WEBP (máx. 10MB)</p>
+            <p class="text-xs text-text-light">o arrastra el archivo aquí</p>
+            <p class="text-[10px] text-text-light mt-1">{{ getAcceptedFormatsLabel(doc.documentType) }} (máx. 10MB)</p>
           </label>
         </div>
 
         <!-- Uploading State -->
-        <div *ngIf="doc.uploading" class="space-y-3">
-          <div class="flex items-center justify-between text-sm">
+        <div *ngIf="doc.uploading" class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
             <span class="text-text-light font-medium">Subiendo...</span>
             <span class="text-primary font-bold">{{ doc.uploadProgress }}%</span>
           </div>
-          <div class="relative w-full h-2 bg-background rounded-full overflow-hidden">
+          <div class="relative w-full h-1.5 bg-background rounded-full overflow-hidden">
             <div
               class="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all"
               [style.width.%]="doc.uploadProgress"
@@ -143,13 +137,23 @@
         <!-- Uploaded State -->
         <div *ngIf="(doc.status === 'uploaded' || doc.status === 'approved') && !doc.uploading">
           <!-- Preview -->
-          <div class="relative rounded-lg overflow-hidden border border-primary/30 mb-3">
-            <img
+          <div class="relative rounded-lg overflow-hidden border border-primary/30 mb-2 bg-surface-hover">
+            <!-- Image Preview -->
+            <img *ngIf="isImage(doc)"
               [src]="getFileUrl(doc.fileUrl)"
               [alt]="doc.label"
-              class="w-full h-48 object-cover">
-            <div class="absolute top-2 right-2">
-              <span class="px-3 py-1 bg-success/90 text-white rounded-full text-xs font-bold">
+              class="w-full h-32 object-cover">
+
+            <!-- Document Preview (PDF/DOC) -->
+            <div *ngIf="!isImage(doc)" class="w-full h-32 flex flex-col items-center justify-center p-3">
+              <svg class="w-12 h-12 text-primary mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p class="text-xs font-medium text-text truncate max-w-full px-2">{{ doc.fileName || 'Documento subido' }}</p>
+            </div>
+
+            <div class="absolute top-1 right-1">
+              <span class="px-2 py-0.5 bg-success/90 text-white rounded-full text-[10px] font-bold">
                 {{ doc.status === 'approved' ? '✓ Aprobado' : '✓ Subido' }}
               </span>
             </div>
@@ -160,12 +164,12 @@
             <a
               [href]="getFileUrl(doc.fileUrl)"
               target="_blank"
-              class="flex-1 px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-center font-medium text-sm">
+              class="flex-1 px-3 py-1.5 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-center font-medium text-xs">
               Ver completo
             </a>
             <button
               (click)="removeDocument(doc)"
-              class="px-4 py-2 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors font-medium text-sm">
+              class="px-3 py-1.5 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors font-medium text-xs">
               Cambiar
             </button>
           </div>
@@ -175,29 +179,29 @@
     </div>
 
     <!-- Info Box -->
-    <div class="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-8">
-      <div class="flex items-start gap-4">
-        <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-          <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+    <div class="bg-primary/10 border border-primary/30 rounded-xl p-4 mb-6">
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
           </svg>
         </div>
         <div class="flex-1">
-          <h4 class="font-bold text-text mb-2">Recomendaciones</h4>
-          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-text-light">
-            <li class="flex items-center gap-2">
+          <h4 class="font-bold text-text mb-1 text-sm">Recomendaciones</h4>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs text-text-light">
+            <li class="flex items-center gap-1.5">
               <span class="text-primary">✓</span>
               Fotos claras y bien iluminadas
             </li>
-            <li class="flex items-center gap-2">
+            <li class="flex items-center gap-1.5">
               <span class="text-primary">✓</span>
               Documentos vigentes
             </li>
-            <li class="flex items-center gap-2">
+            <li class="flex items-center gap-1.5">
               <span class="text-primary">✓</span>
               Sin reflejos ni sombras
             </li>
-            <li class="flex items-center gap-2">
+            <li class="flex items-center gap-1.5">
               <span class="text-primary">✓</span>
               Revisión en 24-48 horas
             </li>
@@ -207,19 +211,19 @@
     </div>
 
     <!-- Actions -->
-    <div class="flex flex-col sm:flex-row justify-between gap-4 pt-6 border-t border-border">
+    <div class="flex flex-col sm:flex-row justify-between gap-3 pt-5 border-t border-border">
       <button
         (click)="onBack()"
-        class="px-6 py-3 border border-border rounded-lg text-text-light hover:bg-surface-hover hover:border-primary/50 transition-all duration-300 font-semibold">
+        class="px-5 py-2.5 border border-border rounded-lg text-text-light hover:bg-surface-hover hover:border-primary/50 transition-all duration-300 font-semibold text-sm">
         ← Volver
       </button>
 
       <button
         (click)="onContinue()"
         [disabled]="!canContinue || isLoading"
-        class="px-6 py-3 bg-primary text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-300 hover:bg-primary-dark hover:shadow-lg hover:shadow-primary/30">
+        class="px-5 py-2.5 bg-primary text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-300 hover:bg-primary-dark hover:shadow-lg hover:shadow-primary/30 text-sm">
         <span>{{ canContinue ? 'Continuar' : 'Completa los documentos' }}</span>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
         </svg>
       </button>

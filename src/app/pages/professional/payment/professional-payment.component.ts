@@ -78,7 +78,6 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
           this.planIntervalId = parseInt(stored, 10);
         } else {
           // No hay plan seleccionado, redirigir
-          alert('No has seleccionado un plan. Por favor selecciona uno.');
           this.router.navigate(['/professional/plans']);
         }
       }
@@ -217,7 +216,6 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
   onConfirmPayment() {
 
     if (!this.agreeTerms) {
-      alert('Debes aceptar los términos y condiciones');
       return;
     }
 
@@ -250,9 +248,8 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
         this.isProcessing = false;
 
         console.log('✅ Suscripción creada exitosamente:', response);
-        alert('¡Pago procesado exitosamente! Ahora configura tus categorías de servicio.');
 
-        this.router.navigate(['/professional/categories']);
+        this.router.navigate(['/professional/payment-success']);
       },
       error: (error) => {
         this.isProcessing = false;

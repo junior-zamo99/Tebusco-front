@@ -334,7 +334,7 @@ export class ProfessionalCategoriesComponent implements OnInit, OnDestroy {
         localStorage.removeItem('subscriptionId');
         localStorage.removeItem('selectedPlanIntervalId');
 
-        this.router.navigate(['/professional/profile']);
+        this.router.navigate(['/professional/category-success']);
       },
       error: (error) => {
         this.isSaving = false;

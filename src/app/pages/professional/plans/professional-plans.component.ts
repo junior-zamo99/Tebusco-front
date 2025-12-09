@@ -23,7 +23,6 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
   isLoading = false;
   errorMessage = '';
 
-  // 📊 Mapeo de nombres de intervalos
   intervalLabels: { [key: string]: string } = {
     'daily': 'Diario',
     'weekly': 'Semanal',
@@ -96,7 +95,6 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
     const intervalsSet = new Set<'daily' | 'weekly' | 'monthly' | 'yearly'>();
 
     this.plans.forEach(plan => {
-      console.log(`📋 Plan: ${plan.name}, Intervalos:`, plan.intervals.map(i => i.interval));
       plan.intervals.forEach(interval => {
         intervalsSet.add(interval.interval);
       });
@@ -105,7 +103,6 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
     const order: Array<'daily' | 'weekly' | 'monthly' | 'yearly'> = ['daily', 'weekly', 'monthly', 'yearly'];
     this.availableIntervals = order.filter(i => intervalsSet.has(i));
 
-    console.log('✅ Intervalos detectados:', this.availableIntervals);
   }
 
 
@@ -123,7 +120,6 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
 
 
   selectInterval(interval: 'daily' | 'weekly' | 'monthly' | 'yearly') {
-    console.log('🔄 Cambiando intervalo a:', interval);
     this.selectedInterval = interval;
     if (this.selectedPlanInterval) {
       const plan = this.plans.find(p =>
@@ -134,11 +130,9 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
         if (newInterval) {
           this.selectPlanInterval(newInterval);
         } else {
-          // Si no existe en este intervalo, resetear selección
           this.selectedPlanIntervalId = null;
           this.selectedPlanInterval = null;
 
-          // Buscar el primer plan disponible en este intervalo
           for (const p of this.plans) {
             const intervalForPlan = this.getIntervalForPlan(p);
             if (intervalForPlan) {
@@ -180,7 +174,6 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
 
 
   calculateSavings(plan: Plan, currentInterval: PlanInterval): { amount: number; percentage: number } | null {
-    // Solo calcular para intervalos mayores a diario
     if (currentInterval.interval === 'daily') return null;
 
     const dailyInterval = plan.intervals.find(i => i.interval === 'daily');

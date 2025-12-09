@@ -49,7 +49,7 @@ export class MapLocationPickerComponent implements OnInit, OnDestroy {
   }
 
   private setupLeafletIcons(): void {
-    const iconRetinaUrl = 'assets/marker-icon-2x.png';
+    const iconRetinaUrl = 'assets/marker-icon.png';
     const iconUrl = 'assets/marker-icon.png';
     const shadowUrl = '' ;
 

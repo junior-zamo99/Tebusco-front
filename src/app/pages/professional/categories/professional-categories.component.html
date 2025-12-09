@@ -4,14 +4,11 @@
     <!-- Header -->
     <div class="text-center space-y-4">
       <div class="inline-block mb-4">
-        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-          <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-          </svg>
-        </div>
+                  <img src="/assets/img/logo/logo.png" alt="Logo TEBUSCO" class="mx-auto max-w-xs max-h-30 object-contain" >
+
       </div>
       <h1 class="text-5xl font-bold text-text">
-        🎯 Selecciona tus Áreas de Trabajo
+         Selecciona tus Áreas de Trabajo
       </h1>
       <p class="text-text-light text-xl max-w-3xl mx-auto">
         Elige las áreas profesionales donde ofrecerás tus servicios. Puedes configurarlas ahora o más tarde.
@@ -28,7 +25,7 @@
         </div>
         <div class="flex-1">
           <p class="text-text font-semibold text-lg mb-2">
-            📊 Límite de tu plan: <span class="text-primary">{{ categoryLimit }}</span> área(s) de trabajo
+             Límite de tu plan: <span class="text-primary">{{ categoryLimit }}</span> área(s) de trabajo
           </p>
           <p class="text-text-light leading-relaxed">
             Puedes seleccionar hasta <strong class="text-text">{{ categoryLimit }}</strong> área(s) principales.
@@ -86,7 +83,7 @@
           <!-- Breadcrumb Path -->
           <div class="flex items-center gap-2 flex-1 overflow-x-auto">
             <span class="flex items-center gap-2 px-3 py-1.5 bg-background rounded-lg border-2 border-border text-sm font-semibold">
-              🏠 Inicio
+               Inicio
             </span>
             <span *ngFor="let item of currentPath; let last = last" class="flex items-center gap-2 flex-shrink-0">
               <svg class="w-4 h-4 text-text-light" fill="currentColor" viewBox="0 0 20 20">
@@ -118,9 +115,9 @@
               Nivel {{ currentLevelType }}: {{ getLevelLabel(currentLevelType) }}
             </span>
             <span class="text-text-light text-sm">
-              <ng-container *ngIf="currentLevelType === 1">📂 Explora las categorías principales</ng-container>
-              <ng-container *ngIf="currentLevelType === 2">🔧 Selecciona hasta {{ categoryLimit }} área(s)</ng-container>
-              <ng-container *ngIf="currentLevelType === 3">⚡ Marca todas tus especialidades</ng-container>
+              <ng-container *ngIf="currentLevelType === 1"> Explora las categorías principales</ng-container>
+              <ng-container *ngIf="currentLevelType === 2"> Selecciona hasta {{ categoryLimit }} área(s)</ng-container>
+              <ng-container *ngIf="currentLevelType === 3"> Marca todas tus especialidades</ng-container>
             </span>
           </div>
           <span class="text-sm text-text-light font-semibold bg-background px-3 py-1.5 rounded-lg border-2 border-border">
@@ -239,7 +236,7 @@
                 </span>
               </div>
               <button class="text-sm text-primary hover:text-primary-dark font-bold flex items-center gap-1 hover:gap-2 transition-all">
-                <span>{{ getLevel3CountForLevel2(category.id) > 0 ? '✏️ Editar' : '➕ Agregar' }} especialidades</span>
+                <span>{{ getLevel3CountForLevel2(category.id) > 0 ? ' Editar' : ' Agregar' }} especialidades</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
@@ -271,7 +268,7 @@
             <!-- Navigation Arrow -->
             <div *ngIf="category.level === 1 || (category.level === 2 && hasChildren(category))"
                  class="mt-4 flex items-center gap-2 text-primary font-bold group-hover:gap-3 transition-all">
-              <span class="text-sm">{{ category.level === 1 ? '🔍 Explorar' : '👀 Ver especialidades' }}</span>
+              <span class="text-sm">{{ category.level === 1 ? ' Explorar' : ' Ver especialidades' }}</span>
               <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
@@ -305,7 +302,7 @@
         </div>
         <div class="flex-1">
           <h3 class="font-bold text-text text-xl mb-4">
-            ✅ Áreas seleccionadas ({{ selectedLevel2Count }}/{{ categoryLimit }})
+             Áreas seleccionadas ({{ selectedLevel2Count }}/{{ categoryLimit }})
           </h3>
           <div class="space-y-4">
             <div *ngFor="let selected of getSelectedLevel2Array()"
@@ -339,7 +336,7 @@
               </div>
 
               <div *ngIf="selected.selectedLevel3Ids.length === 0" class="text-sm text-text-light italic pt-3 border-t-2 border-border">
-                ℹ️ Sin especialidades - haz clic en el área para agregar
+                ℹ Sin especialidades - haz clic en el área para agregar
               </div>
             </div>
           </div>
@@ -356,7 +353,7 @@
           </svg>
         </div>
         <div class="flex-1">
-          <h4 class="font-bold text-text text-lg mb-3">📖 Cómo funciona</h4>
+          <h4 class="font-bold text-text text-lg mb-3"> Cómo funciona</h4>
           <ul class="space-y-3 text-sm text-text-light">
             <li class="flex items-start gap-3">
               <span class="flex-shrink-0 w-8 h-8 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center font-bold text-lg">1</span>
@@ -381,7 +378,7 @@
         (click)="onSkip()"
         [disabled]="isSaving"
         class="px-6 py-3 border-2 border-border rounded-xl text-text-light hover:text-text hover:border-text-light hover:bg-surface-hover transition-all duration-300 font-semibold disabled:opacity-50">
-        ⏭️ Configurar luego
+        ⏭ Configurar luego
       </button>
 
       <div class="flex gap-4">

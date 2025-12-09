@@ -8,6 +8,10 @@ export interface DialogConfig {
   cancelText?: string;
   showCancel?: boolean;
   icon?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  imageHeight?: string;
+  imageWidth?: string;
 }
 
 export interface DialogResult {

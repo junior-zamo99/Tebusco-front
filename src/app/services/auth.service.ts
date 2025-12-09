@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap, catchError, throwError, finalize } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
-import { LoadingService } from './loading.service'; // ✅ Importar
+import { LoadingService } from './loading.service';
 import {
   Applicant,
   AuthResponse,
@@ -33,7 +33,7 @@ export class AuthService {
     const hasProfessional = this.currentProfessional() !== null;
 
     if (hasApplicant && hasProfessional) {
-      return 2; // Usuario dual
+      return 2;
     } else if (hasApplicant) {
       return 1;
     }
@@ -107,7 +107,7 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    this.loadingService.show('Cerrando sesión...'); // ✅
+    this.loadingService.show('Cerrando sesión...');
 
     return this.http.post(
       `${this.apiUrl}/auth/logout`,
@@ -138,7 +138,7 @@ export class AuthService {
         return throwError(() => error);
       }),
       finalize(() => {
-        setTimeout(() => this.loadingService.hide(), 500); // ✅
+        setTimeout(() => this.loadingService.hide(), 500);
       })
     );
   }
@@ -196,5 +196,10 @@ export class AuthService {
         this.isAuthenticated.set(false);
       }
     });
+  }
+
+  updateProfessionalState(professional: Professional): void {
+    console.log('🔄 Actualizando estado de profesional en AuthService...');
+    this.currentProfessional.set(professional);
   }
 }

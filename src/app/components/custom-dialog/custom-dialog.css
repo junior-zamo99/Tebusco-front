@@ -150,3 +150,24 @@
     width: 100%;
   }
 }
+
+.dialog-image-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 10px;
+}
+
+.dialog-image {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+
+.dialog-container:has(.dialog-image-container).dialog-content {
+  padding-top: 0;
+}

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { ProfessionalService, UpgradeToProfessionalRequest } from '../../../services/professional.service';
 import { StorageService } from '../../../services/storage.service';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector: 'app-professional-upgrade',
@@ -13,7 +14,7 @@ import { StorageService } from '../../../services/storage.service';
   styleUrl: './professional-upgrade.css'
 })
 export class ProfessionalUpgrade implements OnInit {
-  form!: FormGroup;
+  form! : FormGroup;
   isLoading = false;
   errorMessage = '';
   user: any = null;
@@ -22,7 +23,8 @@ export class ProfessionalUpgrade implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private professionalService: ProfessionalService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit() {
@@ -30,23 +32,22 @@ export class ProfessionalUpgrade implements OnInit {
     this.initializeForm();
   }
 
-  /**
-   * 📥 Cargar datos del usuario logueado
-   */
   private loadUserData() {
     if (this.storageService.isUserLoggedIn()) {
       this.user = this.storageService.getUser();
     } else {
-      // Si no está logueado, redirigir al login
-      alert('Debes iniciar sesión para continuar');
-      this.router.navigate(['/login']);
+      this.dialogService.warning(
+        'Sesión Requerida',
+        'Debes iniciar sesión para continuar'
+      ).subscribe(() => {
+        this.router. navigate(['/login']);
+      });
     }
   }
 
-
   private initializeForm() {
-    let formattedBirthDate = this.user?.birthDate || '';
-    if (formattedBirthDate && formattedBirthDate.includes('T')) {
+    let formattedBirthDate = this. user?.birthDate || '';
+    if (formattedBirthDate && formattedBirthDate. includes('T')) {
       formattedBirthDate = formattedBirthDate.split('T')[0];
     }
 
@@ -56,20 +57,19 @@ export class ProfessionalUpgrade implements OnInit {
         [Validators.required, Validators.minLength(2), Validators.maxLength(50)]
       ],
       lastName: [
-        this.user?.lastName || '',
+        this.user?. lastName || '',
         [Validators.required, Validators.minLength(2), Validators.maxLength(50)]
       ],
       phone: [
-        this.user?.phone || '',
+        this.user?. phone || '',
         [Validators.required, Validators.pattern(/^\+?[0-9\s-]{8,15}$/)]
       ],
       birthDate: [
         formattedBirthDate,
-        [Validators.required, this.ageValidator()]
+        [Validators.required, this. ageValidator()]
       ]
     });
   }
-
 
   private ageValidator() {
     return (control: any) => {
@@ -78,7 +78,7 @@ export class ProfessionalUpgrade implements OnInit {
       const birthDate = new Date(control.value);
       const today = new Date();
       let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const monthDiff = today.getMonth() - birthDate. getMonth();
 
       if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
         age--;
@@ -88,10 +88,9 @@ export class ProfessionalUpgrade implements OnInit {
     };
   }
 
-
   isFieldInvalid(fieldName: string): boolean {
     const field = this.form.get(fieldName);
-    return !!(field && field.invalid && field.touched);
+    return ! !(field && field.invalid && field.touched);
   }
 
   getFieldError(fieldName: string): string {
@@ -117,7 +116,7 @@ export class ProfessionalUpgrade implements OnInit {
       return 'Máximo 50 caracteres';
     }
 
-    if (field.errors['pattern']) {
+    if (field. errors['pattern']) {
       return 'Formato de teléfono inválido (ej: +591 71234567)';
     }
 
@@ -131,7 +130,7 @@ export class ProfessionalUpgrade implements OnInit {
   onSubmit() {
     if (this.form.invalid) {
       Object.keys(this.form.controls).forEach(key => {
-        this.form.get(key)?.markAsTouched();
+        this.form.get(key)?. markAsTouched();
       });
       return;
     }
@@ -148,11 +147,15 @@ export class ProfessionalUpgrade implements OnInit {
         console.log('✅ Upgrade iniciado:', response);
 
         const professionalId = response.data.id;
-        localStorage.setItem('professionalId', professionalId.toString());
+        localStorage.setItem('professionalId', professionalId. toString());
 
-        alert('¡Proceso iniciado correctamente! Ahora debes subir tus documentos.');
-
-        this.router.navigate(['/professional/documents']);
+        // ✅ Reemplazar alert() por dialog success
+        this.dialogService.success(
+          '¡Proceso Iniciado!',
+          'Tu solicitud fue procesada correctamente.  Ahora debes subir tus documentos.'
+        ).subscribe(() => {
+          this.router.navigate(['/professional/documents']);
+        });
       },
       error: (error) => {
         this.isLoading = false;
@@ -160,20 +163,37 @@ export class ProfessionalUpgrade implements OnInit {
         console.error('❌ Error en upgrade:', error);
 
         if (error.error?.error === 'ALREADY_PROFESSIONAL') {
-          this.errorMessage = 'Ya eres profesional. Redirigiendo a tu perfil...';
-          setTimeout(() => {
-            this.router.navigate(['/professional/documents']);
-          }, 2000);
+          // ✅ Dialog de información
+          this.dialogService.info(
+            'Ya eres Profesional',
+            'Ya tienes una cuenta profesional activa. Te redirigiremos a tu perfil.'
+          ).subscribe(() => {
+            this.router. navigate(['/professional/documents']);
+          });
         } else if (error.error?.error === 'INVALID_USER_DATA') {
           this.errorMessage = 'Datos de usuario incompletos. Por favor verifica tu perfil.';
+          // ✅ También mostrar dialog
+          this.dialogService.error(
+            'Datos Incompletos',
+            'Los datos de tu perfil están incompletos. Por favor verifica tu información.'
+          );
         } else if (error.error?.error === 'USER_NOT_FOUND') {
-          this.errorMessage = 'Usuario no encontrado. Por favor inicia sesión nuevamente.';
-          setTimeout(() => {
+          // ✅ Dialog de error
+          this.dialogService.error(
+            'Usuario no Encontrado',
+            'No pudimos encontrar tu cuenta. Por favor inicia sesión nuevamente.'
+          ).subscribe(() => {
             this.router.navigate(['/login']);
-          }, 2000);
+          });
         } else {
-            this.router.navigate(['/professional/documents']);
-          this.errorMessage = error.error?.message || 'Error al iniciar el proceso de upgrade. Intenta nuevamente.';
+          this.errorMessage = error.error?.message || 'Error al iniciar el proceso de upgrade.  Intenta nuevamente.';
+          // ✅ Dialog genérico de error
+          this.dialogService. error(
+            'Error en el Proceso',
+            error.error?.message || 'Ocurrió un error al procesar tu solicitud. Por favor intenta nuevamente.'
+          ). subscribe(() => {
+            this.router. navigate(['/professional/documents']);
+          });
         }
       }
     });
@@ -183,16 +203,24 @@ export class ProfessionalUpgrade implements OnInit {
    * ❌ Cancelar y volver al dashboard
    */
   onCancel() {
-    if (confirm('¿Estás seguro de cancelar? Podrás continuar más tarde.')) {
-      this.router.navigate(['/dashboard']);
-    }
+    // ✅ Reemplazar confirm() por dialog. confirm()
+    this.dialogService.confirm(
+      '¿Cancelar Proceso?',
+      'Podrás continuar con el registro más tarde. ¿Estás seguro de salir?',
+      'Sí, salir',
+      'Continuar aquí'
+    ).subscribe((result) => {
+      if (result.confirmed) {
+        this.router.navigate(['/dashboard']);
+      }
+    });
   }
 
   /**
    * 🔄 Resetear formulario
    */
   onReset() {
-    this.initializeForm();
+    this. initializeForm();
     this.errorMessage = '';
   }
 }

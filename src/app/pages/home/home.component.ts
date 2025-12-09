@@ -13,6 +13,8 @@ import { CategorySelectorComponent } from '../../components/category-selector/ca
 import { PlansSectionComponent } from '../../components/plan-section/plan-section';
 import { CategoriesCarouselComponent } from '../../components/categories-carousel/categories-carousel';
 import { LoadingScreen } from '../../components/loading-screen/loading-screen';
+import { HeroSolicitante } from '../../components/hero-solicitante/hero-solicitante';
+import { HeroProfessional } from '../../components/hero-professional/hero-professional';
 
 @Component({
   selector: 'app-home',
@@ -28,7 +30,9 @@ import { LoadingScreen } from '../../components/loading-screen/loading-screen';
     PendingOffers,
     RecentReview,
     ProfessionalCta,
-    LoadingScreen
+    LoadingScreen,
+    HeroSolicitante,
+    HeroProfessional,
 ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']

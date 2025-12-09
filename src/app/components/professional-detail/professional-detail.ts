@@ -5,6 +5,7 @@ import { ProfessionalPublicService } from '../../services/professional-public.se
 import { PublicProfessionalWithSelectedProfiles } from '../../interface/professional-public.interface';
 import { LocationData, MapLocationViewer } from '../map-location-viewer/map-location-viewer';
 import { MapLocationPickerComponent } from '../map-location-picker/map-location-picker';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-professional-detail',
@@ -16,11 +17,11 @@ export class ProfessionalDetailComponent implements OnInit {
   professional: PublicProfessionalWithSelectedProfiles | null = null;
   loading = true;
   error: string | null = null;
-  showContactModal = false; // Nueva propiedad para controlar el modal
+  showContactModal = false;
 
   professionalId! : number;
   categoryIds: number[] = [];
-  backendUrl = 'http://localhost:3000';
+  backendUrl = environment.backendUrl;
   locationData: LocationData | null = null;
 
   constructor(
@@ -148,17 +149,14 @@ export class ProfessionalDetailComponent implements OnInit {
     this. showContactModal = false;
   }
 
-  // Método para abrir enlaces externos
   openLink(url: string): void {
     if (url) {
       window.open(url, '_blank');
     }
   }
 
-  // Método para copiar al portapapeles
   copyToClipboard(text: string, type: string): void {
     navigator.clipboard.writeText(text). then(() => {
-      // Aquí podrías mostrar un toast de confirmación
       console.log(`${type} copiado al portapapeles: ${text}`);
     });
   }
@@ -184,5 +182,39 @@ export class ProfessionalDetailComponent implements OnInit {
 
   photoUrl(){
     return this.backendUrl + this.professional?.photoUrl;
+  }
+
+  openWhatsApp(): void {
+    const info = this.professionalInfo;
+
+    if (!this.professional || !info || !info.whatsappNumber) {
+      return;
+    }
+
+    const profName = this.professional.fullName || 'Profesional';
+
+    const profiles = this.professional.profiles || [];
+    let contextMessage = '';
+
+    console.log("son perfiles",profiles);
+
+    if (profiles.length === 1) {
+      const categoryName = profiles[0].categoryName;
+      contextMessage = ` para servicios de *${categoryName}*`;
+    } else {
+      contextMessage = `, necesito tus servicios`;
+    }
+
+
+    const message = `Hola *${profName}*, te vi en la app *TEBUSCO* ${contextMessage}.¿Podrías darme más información?`;
+
+    const url = this.createWhatsAppLink(info.whatsappNumber, message);
+
+    window.open(url, '_blank');
+  }
+
+  createWhatsAppLink(phone: string, message: string): string {
+    const cleanPhone = phone.replace(/\D/g, '');
+    return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
   }
 }

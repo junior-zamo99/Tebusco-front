@@ -20,7 +20,7 @@ export class LoadingScreen implements AfterViewInit, OnDestroy {
   constructor(public loadingService: LoadingService) {}
 
   ngAfterViewInit(): void {
-    // Ahora el contenedor siempre existe porque no usamos *ngIf
+
     this.loadAnimation();
   }
 
@@ -28,7 +28,7 @@ export class LoadingScreen implements AfterViewInit, OnDestroy {
     const container = document.getElementById('lottie-container');
 
     if (!container) {
-      console.error('❌ Contenedor lottie-container no encontrado');
+      console.error(' Contenedor lottie-container no encontrado');
       return;
     }
 

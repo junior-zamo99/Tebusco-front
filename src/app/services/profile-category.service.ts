@@ -79,13 +79,8 @@ export class ProfileCategoryService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * 📍 PASO 16: Configurar Categorías de Servicio (Bulk)
-   * POST /professionals/{professionalId}/categories/bulk
-   * Guarda múltiples categorías a la vez
-   * @param professionalId ID del profesional
-   * @param categoriesData Array de categorías con subcategorías
-   */
+
+
   saveMultipleCategories(
     professionalId: number,
     categoriesData: CategorySelectionData[]
@@ -97,11 +92,7 @@ export class ProfileCategoryService {
     );
   }
 
-  /**
-   * 📁 Ver Categorías Agrupadas
-   * GET /professionals/{professionalId}/categories/grouped
-   * Obtiene categorías organizadas jerárquicamente (nivel 2 con sus nivel 3)
-   */
+
   getProfileCategoriesGrouped(
     professionalId: number
   ): Observable<{ success: boolean; data: GroupedCategory[] }> {
@@ -111,10 +102,7 @@ export class ProfileCategoryService {
     );
   }
 
-  /**
-   * Ver todas las categorías del profesional (sin agrupar)
-   * GET /professionals/{professionalId}/categories
-   */
+
   getProfileCategories(professionalId: number): Observable<any> {
     return this.http.get(
       `${this.apiUrl}/${professionalId}/categories`,
@@ -122,10 +110,6 @@ export class ProfileCategoryService {
     );
   }
 
-  /**
-   * Ver una categoría específica del perfil
-   * GET /professionals/{professionalId}/categories/{profileCategoryId}
-   */
   getProfileCategoryById(
     professionalId: number,
     profileCategoryId: number
@@ -136,11 +120,7 @@ export class ProfileCategoryService {
     );
   }
 
-  /**
-   * 📍 PASO 17: Actualizar Perfil de Categoría
-   * PUT /professionals/{professionalId}/categories/{profileCategoryId}
-   * Agrega descripción, experiencia y precio a una categoría
-   */
+
   updateProfileCategory(
     professionalId: number,
     profileCategoryId: number,
@@ -164,12 +144,7 @@ export class ProfileCategoryService {
     );
   }
 
-  /**
-   * 🛡️ Validar límite de categorías según plan
-   * @param currentCount Cantidad actual de categorías
-   * @param planLimit Límite del plan
-   * @param newCategories Cantidad de nuevas categorías a agregar
-   */
+
   canAddCategories(
     currentCount: number,
     planLimit: number,
@@ -185,9 +160,7 @@ export class ProfileCategoryService {
     };
   }
 
-  /**
-   * 📊 Validar datos de categoría antes de enviar
-   */
+
   validateCategoryData(data: UpdateCategoryData): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 

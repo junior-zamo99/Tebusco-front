@@ -58,3 +58,69 @@
 .backdrop-blur-xl {
   backdrop-filter: blur(24px);
 }
+
+/* Animación sutil para profesionales cercanos */
+@keyframes nearbyGlow {
+  0%, 100% {
+    border-color: rgba(74, 222, 128, 0.3);
+    background-color: rgba(74, 222, 128, 0.05);
+  }
+  50% {
+    border-color: rgba(74, 222, 128, 0.6);
+    background-color: rgba(74, 222, 128, 0.08);
+  }
+}
+
+.border-green-400 {
+  animation: nearbyGlow 3s ease-in-out infinite;
+}
+
+/* Badges de ubicación - colores mejorados para tema oscuro */
+.bg-green-400\/20 {
+  background-color: rgba(74, 222, 128, 0.2);
+}
+
+.text-green-300 {
+  color: #86efac;
+}
+
+.border-green-400\/30 {
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.bg-blue-400\/20 {
+  background-color: rgba(96, 165, 250, 0.2);
+}
+
+.text-blue-300 {
+  color: #93c5fd;
+}
+
+.border-blue-400\/30 {
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.bg-orange-400\/20 {
+  background-color: rgba(251, 146, 60, 0.2);
+}
+
+.text-orange-300 {
+  color: #fdba74;
+}
+
+.border-orange-400\/30 {
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+.bg-slate-400\/20 {
+  background-color: rgba(148, 163, 184, 0.2);
+}
+
+.text-slate-300 {
+  color: #cbd5e1;
+}
+
+.border-slate-400\/30 {
+  border-color: rgba(148, 163, 184, 0.3);
+}
+

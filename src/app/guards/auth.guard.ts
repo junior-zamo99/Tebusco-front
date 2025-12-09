@@ -12,11 +12,11 @@ export const authGuard = () => {
   }
   return authService.getMe().pipe(
     map(response => {
-      console.log('✅ Sesión válida - acceso permitido');
+      console.log(' Sesión válida - acceso permitido');
       return true;
     }),
     catchError(error => {
-      console.log('❌ Sesión inválida o expirada - redirigiendo a /auth-required');
+      console.log(' Sesión inválida o expirada - redirigiendo a /auth-required');
       router.navigate(['/auth-required']);
       return of(false);
     })

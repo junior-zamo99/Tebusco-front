@@ -1,0 +1,38 @@
+/* No custom CSS needed, using Tailwind classes */
+ .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-ping-slow {
+      animation: ping 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* Confetti Styles */
+  .confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+  }
+  .is-orange { background-color: #FF5722; /* Tu color primary */ }
+  .is-blue { background-color: #3B82F6; }
+
+  .animate-confetti-slow { animation: confetti-fall 4s ease-out infinite both; }
+  .animate-confetti-medium { animation: confetti-fall 3s ease-out infinite both; }
+  .animate-confetti-fast { animation: confetti-fall 2.5s ease-out infinite both; }
+
+  @keyframes confetti-fall {
+    0% {
+      opacity: 1;
+      transform: translateY(-20px) rotate(0deg) scale(0.8);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(150px) rotate(360deg) scale(1);
+    }
+  }

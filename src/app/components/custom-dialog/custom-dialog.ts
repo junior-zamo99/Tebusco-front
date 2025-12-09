@@ -17,6 +17,7 @@ export class CustomDialog {
     this.config.confirmText = this.config.confirmText || 'Aceptar';
     this.config.cancelText = this.config.cancelText || 'Cancelar';
     this.config.showCancel = this.config.showCancel ?? (this.config.type === 'confirm');
+     this.config.imageAlt = this.config.imageAlt || 'Dialog image';
   }
 
   onConfirm(): void {
@@ -50,5 +51,19 @@ export class CustomDialog {
 
   getIconClass(): string {
     return `icon-${this.config.type}`;
+  }
+   hasImage(): boolean {
+    return !!this.config.imageUrl;
+  }
+
+  getImageStyles(): any {
+    const styles: any = {};
+    if (this.config.imageHeight) {
+      styles.height = this. config.imageHeight;
+    }
+    if (this.config. imageWidth) {
+      styles. width = this.config.imageWidth;
+    }
+    return styles;
   }
 }

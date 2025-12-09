@@ -1,10 +1,20 @@
 <div class="dialog-overlay" (click)="onOverlayClick($event)">
   <div class="dialog-container animate-fadeIn">
-    <!-- Header con icono -->
-    <div class="dialog-header">
+    <!-- Header con icono (solo si no hay imagen) -->
+    <div class="dialog-header" *ngIf="!hasImage()">
       <div class="dialog-icon" [ngClass]="getIconClass()">
         {{ getIcon() }}
       </div>
+    </div>
+
+    <!-- Imagen personalizada (si existe) -->
+    <div class="dialog-image-container" *ngIf="hasImage()">
+      <img
+        [src]="config. imageUrl"
+        [alt]="config.imageAlt"
+        [ngStyle]="getImageStyles()"
+        class="dialog-image"
+      />
     </div>
 
     <!-- Contenido -->

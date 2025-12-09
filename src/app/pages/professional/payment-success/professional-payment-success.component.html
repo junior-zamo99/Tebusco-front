@@ -1,0 +1,60 @@
+<div class="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050A18] to-[#020510] text-white py-8 px-4 font-sans selection:bg-primary/30 selection:text-white flex items-center justify-center overflow-hidden relative">
+
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-96 bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+  <div class="max-w-xl w-full relative z-10">
+
+    <div class="bg-[#111625]/80 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden shadow-2xl shadow-black/50">
+
+      <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div class="confetti-piece is-orange rounded-full top-10 left-1/4 animate-confetti-slow"></div>
+        <div class="confetti-piece is-blue rounded-sm top-20 right-1/3 animate-confetti-medium delay-100"></div>
+        <div class="confetti-piece is-orange rotate-45 top-1/3 left-10 animate-confetti-fast delay-200"></div>
+        <div class="confetti-piece is-blue rounded-full bottom-1/4 right-10 animate-confetti-slow delay-300"></div>
+        <div class="confetti-piece is-orange rounded-sm bottom-10 left-1/3 animate-confetti-medium delay-500"></div>
+         <svg class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+            <circle cx="10%" cy="30%" r="2" fill="#FF5722" class="animate-ping-slow"/>
+            <circle cx="80%" cy="20%" r="3" fill="#3B82F6" class="animate-ping-slow delay-300"/>
+            <circle cx="50%" cy="80%" r="2" fill="#FF5722" class="animate-ping-slow delay-700"/>
+         </svg>
+      </div>
+
+      <div class="relative z-20 flex flex-col items-center">
+        <div class="mb-8 transition-transform hover:scale-105">
+          <img src="/assets/img/logo/logo.png" alt="Logo TEBUSCO" class="h-10 md:h-14 object-contain opacity-90">
+        </div>
+
+        <div class="relative w-40 h-40 mx-auto mb-8 animate-float">
+           <div class="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-110"></div>
+           <img src="/assets/feliz.png" alt="Éxito" class="relative w-full h-full object-contain drop-shadow-xl z-10" onerror="this.src='/assets/img/logo/logo-icon.png'">
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-200">
+          ¡Pago Exitoso!
+        </h1>
+        <p class="text-slate-300 text-lg mb-10 max-w-md mx-auto leading-relaxed">
+          Tu suscripción se ha activado correctamente. El siguiente paso es configurar tus servicios para empezar.
+        </p>
+
+        <div class="w-full max-w-sm flex flex-col gap-4">
+          <button (click)="onContinue()"
+                  class="group w-full px-8 py-4 bg-gradient-to-r from-primary to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-orange-500/30 hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden">
+            <span class="absolute inset-0 w-full h-full bg-white/20 group-hover:scale-x-100 scale-x-0 transition-transform origin-left duration-500"></span>
+            <span class="relative z-10">Continuar a Configuración</span>
+            <svg class="w-6 h-6 relative z-10 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+
+          <button (click)="onDashboard()"
+                  class="w-full px-8 py-3 text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 hover:bg-slate-800/50 rounded-xl font-semibold text-base transition-all duration-300 flex items-center justify-center gap-2">
+            Ir al Dashboard
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+

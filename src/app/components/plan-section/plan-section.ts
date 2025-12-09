@@ -1,21 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { PlansService } from '../../services/plans.service';
-import { Plan } from '../../models/plan.model';
-
-interface GroupedPlan {
-  type: string;
-  name: string;
-  description: string;
-  isRecommended: boolean;
-  durations: {
-    plan: Plan;
-    label: string;
-    selected: boolean;
-  }[];
-  selectedDuration: Plan;
-}
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+// Asegúrate de importar tu servicio e interfaces desde la ruta correcta
+import { PlansService, Plan, PlanInterval } from '../../services/plans.service';
 
 @Component({
   selector: 'app-plans-section',
@@ -24,98 +13,107 @@ interface GroupedPlan {
   templateUrl: './plan-section.html',
   styleUrls: ['./plan-section.css']
 })
-export class PlansSectionComponent implements OnInit {
-  groupedPlans: GroupedPlan[] = [];
-  isLoadingPlans = true;
+export class PlansSectionComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
 
-  constructor(private plansService: PlansService) {}
+  plans: Plan[] = [];
+  availableIntervals: Array<'daily' | 'weekly' | 'monthly' | 'yearly'> = [];
+  selectedInterval: 'daily' | 'weekly' | 'monthly' | 'yearly' = 'monthly';
+  isLoading = false;
+  errorMessage = '';
 
-  ngOnInit(): void {
+  intervalLabels: { [key: string]: string } = {
+    'daily': 'Diario',
+    'weekly': 'Semanal',
+    'monthly': 'Mensual',
+    'yearly': 'Anual'
+  };
+
+  constructor(
+    private plansService: PlansService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
     this.loadPlans();
   }
 
-  loadPlans(): void {
-
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  private groupPlansByType(plans: Plan[]): GroupedPlan[] {
-    const planTypes: { [key: string]: GroupedPlan } = {};
-
-    plans.forEach(plan => {
-      const typeMatch = plan.code.match(/^([A-Z]+)-/);
-      if (!typeMatch) return;
-
-      const type = typeMatch[1];
-
-      if (!planTypes[type]) {
-        planTypes[type] = {
-          type,
-          name: this.getTypeName(type),
-          description: this.getBaseDescription(plan.description),
-          isRecommended: type === 'ENTERPRISE',
-          durations: [],
-          selectedDuration: plan
-        };
-      }
-
-      const duration = this.getDurationInfo(plan);
-      planTypes[type].durations.push({
-        plan,
-        label: duration.label,
-        selected: duration.isDefault
+  private loadPlans() {
+    this.isLoading = true;
+    this.plansService.getAllPlans()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.plans = response.data || [];
+          this.detectAvailableIntervals();
+          this.selectDefaultInterval();
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error loading plans', error);
+          this.errorMessage = 'No se pudieron cargar los precios en este momento.';
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
       });
-
-      if (duration.isDefault) {
-        planTypes[type].selectedDuration = plan;
-      }
-    });
-
-    Object.values(planTypes).forEach(group => {
-      group.durations.sort((a, b) => a.plan.days - b.plan.days);
-    });
-
-    return Object.values(planTypes).sort((a, b) => {
-      const order = { 'BASIC': 1, 'PREMIUM': 2, 'ENTERPRISE': 3 };
-      return order[a.type as keyof typeof order] - order[b.type as keyof typeof order];
-    });
   }
 
-  private getTypeName(type: string): string {
-    const names: { [key: string]: string } = {
-      'BASIC': 'Plan Básico',
-      'PREMIUM': 'Plan Premium',
-      'ENTERPRISE': 'Plan Enterprise'
+  private detectAvailableIntervals() {
+    const intervalsSet = new Set<'daily' | 'weekly' | 'monthly' | 'yearly'>();
+    this.plans.forEach(plan => {
+      plan.intervals.forEach(interval => intervalsSet.add(interval.interval));
+    });
+    const order: Array<'daily' | 'weekly' | 'monthly' | 'yearly'> = ['daily', 'weekly', 'monthly', 'yearly'];
+    this.availableIntervals = order.filter(i => intervalsSet.has(i));
+  }
+
+  private selectDefaultInterval() {
+    if (this.availableIntervals.includes('monthly')) this.selectedInterval = 'monthly';
+    else if (this.availableIntervals.includes('yearly')) this.selectedInterval = 'yearly';
+    else if (this.availableIntervals.length > 0) this.selectedInterval = this.availableIntervals[0];
+  }
+
+  selectInterval(interval: 'daily' | 'weekly' | 'monthly' | 'yearly') {
+    this.selectedInterval = interval;
+  }
+
+  getIntervalForPlan(plan: Plan): PlanInterval | undefined {
+    return plan.intervals.find(i => i.interval === this.selectedInterval);
+  }
+
+  isRecommended(plan: Plan): boolean {
+    return plan.code === 'PREMIUM'; // O la lógica que prefieras para destacar
+  }
+
+  // Calcula ahorro visual (ej: "Ahorras 20%")
+  calculateSavings(plan: Plan, currentInterval: PlanInterval): { percentage: number } | null {
+    if (currentInterval.interval === 'daily') return null;
+    const dailyInterval = plan.intervals.find(i => i.interval === 'daily');
+
+    // Si no hay tarifa diaria para comparar, intentamos comparar anual vs mensual
+    if (!dailyInterval) {
+        if(currentInterval.interval === 'yearly') {
+            const monthly = plan.intervals.find(i => i.interval === 'monthly');
+            if(monthly) {
+                const totalYearlyByMonth = monthly.pricePerPeriod * 12;
+                const savings = totalYearlyByMonth - currentInterval.pricePerPeriod;
+                const percentage = (savings / totalYearlyByMonth) * 100;
+                return savings > 0 ? { percentage: Math.round(percentage) } : null;
+            }
+        }
+        return null;
     };
-    return names[type] || type;
-  }
 
-  private getBaseDescription(description: string): string {
-    return description.replace(/Plan (básico|premium|empresarial) (semanal|mensual|de prueba por 1 día)/i, 'Plan profesional');
-  }
+    const equivalentDailyCost = dailyInterval.pricePerPeriod * currentInterval.daysPerPeriod;
+    const savings = equivalentDailyCost - currentInterval.pricePerPeriod;
+    const percentage = (savings / equivalentDailyCost) * 100;
 
-  private getDurationInfo(plan: Plan): { label: string; isDefault: boolean } {
-    if (plan.days === 1) {
-      return { label: '1 Día', isDefault: false };
-    } else if (plan.days === 7) {
-      return { label: '1 Semana', isDefault: false };
-    } else if (plan.days === 30) {
-      return { label: '1 Mes', isDefault: true };
-    }
-    return { label: `${plan.days} días`, isDefault: false };
-  }
-
-  selectDuration(group: GroupedPlan, duration: { plan: Plan; label: string; selected: boolean }): void {
-    group.durations.forEach(d => d.selected = false);
-    duration.selected = true;
-    group.selectedDuration = duration.plan;
-  }
-
-  getFeaturesList(plan: Plan): string[] {
-    return plan.features.slice(0, 5).map(f => {
-      if (f.limit) {
-        return `${f.featureName}: ${f.limit}`;
-      }
-      return f.featureName;
-    });
+    return savings > 0 ? { percentage: Math.round(percentage) } : null;
   }
 }

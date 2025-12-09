@@ -34,3 +34,4 @@ export class SearchService {
     return this.http.get<SearchProvidersResponse>(`${this.apiUrl}/providers`, { params });
   }
 }
+

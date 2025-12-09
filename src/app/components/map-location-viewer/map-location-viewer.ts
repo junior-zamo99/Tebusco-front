@@ -28,7 +28,6 @@ export class MapLocationViewer implements OnInit, OnDestroy, AfterViewInit {
   private map: L.Map | null = null;
   private marker: L.Marker | null = null;
 
-  // ✅ Nueva propiedad para controlar la visibilidad del botón
   showRecenterButton = false;
 
   ngOnInit(): void {
@@ -46,7 +45,7 @@ export class MapLocationViewer implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private setupLeafletIcons(): void {
-    const iconRetinaUrl = 'assets/marker-icon-2x.png';
+    const iconRetinaUrl = 'assets/marker-icon.png';
     const iconUrl = 'assets/marker-icon.png';
     const shadowUrl = '';
 
@@ -93,7 +92,6 @@ export class MapLocationViewer implements OnInit, OnDestroy, AfterViewInit {
 
     this.addMarker();
 
-    // ✅ Detectar cuando el usuario mueve el mapa
     this.map.on('movestart', () => {
       this.showRecenterButton = true;
     });
@@ -130,15 +128,15 @@ export class MapLocationViewer implements OnInit, OnDestroy, AfterViewInit {
     const parts: string[] = [];
 
     if (this.location.label) {
-      parts.push(`<p class="font-bold text-gray-900 mb-2 text-base">📍 ${this.location.label}</p>`);
+      parts.push(`<p class="font-bold text-gray-500 mb-2 text-base"> ${this.location.label}</p>`);
     } else {
-      parts.push(`<p class="font-bold text-gray-900 mb-2 text-base">📍 Ubicación</p>`);
+      parts.push(`<p class="font-bold text-gray-500 mb-2 text-base"> Ubicación</p>`);
     }
 
     if (this.showFullAddress && this.location.fullAddress) {
-      parts.push(`<p class="text-sm text-gray-700 mb-2">${this.location.fullAddress}</p>`);
+      parts.push(`<p class="text-sm text-gray-200 mb-2">${this.location.fullAddress}</p>`);
     } else if (this.showFullAddress && this.location.address) {
-      parts.push(`<p class="text-sm text-gray-700 mb-2">${this.location.address}</p>`);
+      parts.push(`<p class="text-sm text-gray-200 mb-2">${this.location.address}</p>`);
     }
 
     const locationParts: string[] = [];
@@ -147,15 +145,13 @@ export class MapLocationViewer implements OnInit, OnDestroy, AfterViewInit {
     if (this.location.country) locationParts.push(this.location.country);
 
     if (locationParts.length > 0) {
-      parts.push(`<p class="text-sm text-gray-600 mb-2">${locationParts.join(', ')}</p>`);
+      parts.push(`<p class="text-sm text-gray-100 mb-2">${locationParts.join(', ')}</p>`);
     }
 
-    parts.push(`<p class="text-xs text-gray-500 mt-2">Lat: ${this.location.lat.toFixed(6)}, Lng: ${this.location.lng.toFixed(6)}</p>`);
 
     return `<div class="text-center" style="min-width: 200px;">${parts.join('')}</div>`;
   }
 
-  // ✅ Método público para re-centrar el mapa
   public recenterMap(): void {
     if (!this.map || !this.location) return;
 
@@ -164,16 +160,13 @@ export class MapLocationViewer implements OnInit, OnDestroy, AfterViewInit {
       duration: 0.5
     });
 
-    // Reabrir el popup
     if (this.marker) {
       this.marker.openPopup();
     }
 
-    // Ocultar el botón después de re-centrar
     this.showRecenterButton = false;
   }
 
-  // ✅ Verificar si está cerca de la ubicación original
   private isNearOriginalLocation(center: L.LatLng): boolean {
     if (!this.location) return false;
 

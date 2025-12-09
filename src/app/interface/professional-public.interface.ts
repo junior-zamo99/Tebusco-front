@@ -59,6 +59,7 @@ export interface ProfileCategory {
   categoryImageUrl: string | null;
   description: string | null;
   experience: number | null;
+  slogan: string | null;
   priceMin: number | null;
   isVerified: boolean;
   specialties: Specialty[];
@@ -103,6 +104,7 @@ export interface ProfessionalListItem {
   reviewsCount?: number;
   location: LocationListItem | null;
   mainCategory: MainCategory;
+  slogan: string | null;
   priceMin: number | null;
   isPremium: boolean;
   specialties: string[];

@@ -1,173 +1,223 @@
-<div class="min-h-screen bg-[#0B0E14] text-slate-300 font-sans pb-20">
+<div class="min-h-screen bg-[#0B0E14] text-slate-300 font-sans pb-24 selection:bg-indigo-500 selection:text-white">
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0B0E14]">
-    <div class="flex flex-col items-center gap-4">
-      <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+  <div *ngIf="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0B0E14]/90 backdrop-blur-sm">
+    <div class="flex flex-col items-center gap-6">
+      <div class="relative w-16 h-16">
+        <div class="absolute inset-0 rounded-full border-4 border-slate-800"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+      </div>
       <p class="text-indigo-400 font-medium tracking-wide animate-pulse">Cargando detalles...</p>
     </div>
   </div>
 
-  <!-- Error State -->
-  <div *ngIf="error && !loading" class="max-w-md mx-auto mt-10 p-4 bg-red-900/20 border border-red-500/30 rounded-lg text-center">
-    <p class="text-red-400">{{ error }}</p>
-    <button (click)="cancel()" class="mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors">
-      Volver
+  <div *ngIf="error && !loading" class="max-w-md mx-auto mt-20 p-6 bg-red-950/30 border border-red-500/30 rounded-2xl text-center backdrop-blur-sm">
+    <div class="w-16 h-16 bg-red-900/50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-400">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    </div>
+    <h3 class="text-lg font-bold text-white mb-2">Ha ocurrido un error</h3>
+    <p class="text-red-300/80 mb-6">{{ error }}</p>
+    <button (click)="cancel()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-all border border-slate-700">
+      Volver al perfil
     </button>
   </div>
 
-  <!-- Content -->
-  <div *ngIf="!loading && categoryData && publicCategory" class="container mx-auto px-4 pt-8 max-w-4xl animate-fadeIn">
+  <div *ngIf="!loading && categoryData && publicCategory" class="container mx-auto px-4 pt-8 max-w-5xl animate-fadeIn">
 
-    <!-- Header -->
-    <div class="flex items-center gap-4 mb-8">
-      <button (click)="cancel()" class="w-10 h-10 rounded-full bg-[#161b26] border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="flex items-center gap-4 mb-8 group">
+      <button (click)="cancel()" class="w-10 h-10 rounded-xl bg-[#161b26] border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:border-indigo-500/50 group-hover:bg-[#1c2230] transition-all duration-300 shadow-lg">
+        <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
       </button>
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-white">{{ publicCategory.name }}</h1>
-        <p class="text-slate-500 text-sm">Editar detalles y especialidades</p>
+        <h1 class="text-3xl font-bold text-white tracking-tight">{{ publicCategory.name }}</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Gestión de tu servicio profesional</p>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-      <!-- Main Form -->
-      <div class="lg:col-span-2 space-y-6">
+      <div class="lg:col-span-8 space-y-6">
 
-        <!-- Basic Info Card -->
-        <div class="bg-[#161b26] border border-slate-800 rounded-2xl p-6">
-          <h2 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
-            <span class="w-1 h-6 bg-indigo-500 rounded-full"></span>
-            Información del Servicio
-          </h2>
+        <div class="bg-[#161b26] border border-slate-800/60 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/20">
+          <div class="flex items-center gap-3 mb-8 pb-4 border-b border-slate-800/50">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </div>
+            <h2 class="text-xl font-bold text-white">Detalles del Servicio</h2>
+          </div>
 
           <div class="space-y-6">
-            <!-- Description -->
-            <div>
-              <label class="block text-sm font-medium text-slate-400 mb-2">Descripción del servicio</label>
-              <textarea [(ngModel)]="categoryData.description"
-                        rows="4"
-                        class="w-full bg-[#0B0E14] border border-slate-700 rounded-xl p-4 text-white placeholder-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all resize-none"
-                        placeholder="Describe tu experiencia y qué ofreces en esta categoría..."></textarea>
+
+            <div class="group">
+              <label class="block text-sm font-medium text-slate-300 mb-2 group-focus-within:text-indigo-400 transition-colors">
+                Eslogan <span class="text-slate-600 font-normal ml-1">(Frase corta de marketing)</span>
+              </label>
+              <div class="relative">
+                <input type="text" [(ngModel)]="categoryData.slogan"
+                       class="w-full bg-[#0B0E14] border border-slate-700 rounded-xl px-4 py-3.5 text-white placeholder-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:shadow-[0_0_20px_rgba(99,102,241,0.1)] transition-all outline-none"
+                       placeholder="Ej. Soluciones robustas y escalables para tu negocio">
+              </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <!-- Experience -->
-              <div>
-                <label class="block text-sm font-medium text-slate-400 mb-2">Años de experiencia</label>
+            <div class="group">
+              <label class="block text-sm font-medium text-slate-300 mb-2 group-focus-within:text-indigo-400 transition-colors">Descripción detallada</label>
+              <textarea [(ngModel)]="categoryData.description"
+                        rows="5"
+                        class="w-full bg-[#0B0E14] border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:shadow-[0_0_20px_rgba(99,102,241,0.1)] transition-all resize-none outline-none leading-relaxed"
+                        placeholder="Describe tu metodología, herramientas que dominas y el valor que aportas..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              <div class="group">
+                <label class="block text-sm font-medium text-slate-300 mb-2 group-focus-within:text-indigo-400 transition-colors">Años de experiencia</label>
                 <div class="relative">
-                  <input type="number" [(ngModel)]="categoryData.experience" min="0"
-                         class="w-full bg-[#0B0E14] border border-slate-700 rounded-xl p-4 pl-12 text-white placeholder-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
-                  <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-500 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                   </div>
+                  <input type="number" [(ngModel)]="categoryData.experience" min="0"
+                         class="w-full bg-[#0B0E14] border border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all outline-none">
                 </div>
               </div>
 
-              <!-- Price -->
-              <div>
-                <label class="block text-sm font-medium text-slate-400 mb-2">Precio desde ($)</label>
+              <div class="group">
+                <label class="block text-sm font-medium text-slate-300 mb-2 group-focus-within:text-emerald-400 transition-colors">Precio base desde</label>
                 <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <span class="text-slate-500 font-bold group-focus-within:text-emerald-500 transition-colors">$</span>
+                  </div>
                   <input type="number" [(ngModel)]="categoryData.priceMin" min="0"
-                         class="w-full bg-[#0B0E14] border border-slate-700 rounded-xl p-4 pl-12 text-white placeholder-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
-                  <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</div>
+                         class="w-full bg-[#0B0E14] border border-slate-700 rounded-xl pl-10 pr-4 py-3.5 text-white placeholder-slate-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none">
+                  <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <span class="text-xs text-slate-600">USD</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Specialties Card -->
-        <div class="bg-[#161b26] border border-slate-800 rounded-2xl p-6">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="w-1 h-6 bg-emerald-500 rounded-full"></span>
-              Especialidades
-            </h2>
-            <span class="text-sm text-slate-500">{{ selectedSpecialties.size }} seleccionadas</span>
+        <div class="bg-[#161b26] border border-slate-800/60 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/20">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-800/50 gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-white">Especialidades</h2>
+                <p class="text-slate-500 text-xs mt-0.5">Selecciona tus áreas de dominio</p>
+              </div>
+            </div>
+            <span class="px-3 py-1 bg-slate-800 text-slate-300 text-xs font-medium rounded-full border border-slate-700">
+              {{ selectedSpecialties.size }} seleccionadas
+            </span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div *ngFor="let specialty of publicCategory.children"
                  (click)="toggleSpecialty(specialty.id)"
-                 class="cursor-pointer p-3 rounded-xl border transition-all duration-200 flex items-center gap-3 group"
+                 class="relative cursor-pointer p-4 rounded-xl border transition-all duration-200 group overflow-hidden"
                  [ngClass]="isSpecialtySelected(specialty.id)
-                    ? 'bg-indigo-900/20 border-indigo-500/50'
-                    : 'bg-[#0B0E14] border-slate-800 hover:border-slate-600'">
+                    ? 'bg-indigo-900/10 border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.15)]'
+                    : 'bg-[#0B0E14] border-slate-800 hover:border-slate-600 hover:bg-[#11141a]'">
 
-              <div class="w-5 h-5 rounded border flex items-center justify-center transition-colors"
-                   [ngClass]="isSpecialtySelected(specialty.id)
-                      ? 'bg-indigo-500 border-indigo-500'
-                      : 'border-slate-600 group-hover:border-slate-500'">
-                <svg *ngIf="isSpecialtySelected(specialty.id)" class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                </svg>
+              <div class="absolute left-0 top-0 bottom-0 w-1 transition-all duration-300"
+                   [ngClass]="isSpecialtySelected(specialty.id) ? 'bg-indigo-500' : 'bg-transparent'"></div>
+
+              <div class="flex items-center gap-4">
+                <div class="w-6 h-6 rounded-lg border flex items-center justify-center transition-all duration-200 flex-shrink-0"
+                     [ngClass]="isSpecialtySelected(specialty.id)
+                        ? 'bg-indigo-600 border-indigo-600 rotate-0'
+                        : 'border-slate-600 group-hover:border-slate-500 bg-transparent rotate-0'">
+                  <svg *ngIf="isSpecialtySelected(specialty.id)" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                  </svg>
+                </div>
+
+                <span class="font-medium select-none"
+                      [ngClass]="isSpecialtySelected(specialty.id) ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'">
+                  {{ specialty.name }}
+                </span>
               </div>
-
-              <span class="text-sm font-medium"
-                    [ngClass]="isSpecialtySelected(specialty.id) ? 'text-indigo-300' : 'text-slate-400 group-hover:text-slate-300'">
-                {{ specialty.name }}
-              </span>
             </div>
           </div>
 
-          <div *ngIf="!publicCategory.children || publicCategory.children.length === 0" class="text-center py-8 text-slate-500">
-            No hay especialidades disponibles para esta categoría.
+          <div *ngIf="!publicCategory.children || publicCategory.children.length === 0" class="text-center py-12">
+            <div class="inline-block p-4 rounded-full bg-slate-800/50 mb-3">
+              <svg class="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+            </div>
+            <p class="text-slate-500">No hay especialidades disponibles para esta categoría.</p>
           </div>
         </div>
 
       </div>
 
-      <!-- Sidebar -->
-      <div class="space-y-6">
+      <div class="lg:col-span-4 space-y-6">
 
-        <!-- Status Card -->
-        <div class="bg-[#161b26] border border-slate-800 rounded-2xl p-6">
-          <h3 class="text-white font-bold mb-4">Estado y Visibilidad</h3>
+        <div class="bg-[#161b26] border border-slate-800/60 rounded-3xl p-6 shadow-xl">
+          <h3 class="text-white font-bold mb-6 flex items-center gap-2">
+            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Configuración
+          </h3>
 
-          <div class="flex items-center justify-between p-4 bg-[#0B0E14] rounded-xl border border-slate-800 mb-4">
-            <span class="text-slate-400 text-sm">Visible en perfil</span>
+          <div class="flex items-center justify-between p-4 bg-[#0B0E14] rounded-2xl border border-slate-800 mb-5 group hover:border-slate-700 transition-colors">
+            <div>
+              <span class="text-white font-medium block">Visible</span>
+              <span class="text-xs text-slate-500">Mostrar en mi perfil</span>
+            </div>
             <button (click)="categoryData.visible = !categoryData.visible"
-                    class="relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none"
+                    class="relative w-12 h-7 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0B0E14] focus:ring-emerald-500"
                     [ngClass]="categoryData.visible ? 'bg-emerald-500' : 'bg-slate-700'">
-              <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200"
+              <span class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300"
                     [ngClass]="categoryData.visible ? 'translate-x-5' : 'translate-x-0'"></span>
             </button>
           </div>
 
-          <div class="p-4 bg-[#0B0E14] rounded-xl border border-slate-800">
-            <div class="text-xs text-slate-500 uppercase tracking-wider mb-1">Estado de aprobación</div>
-            <div class="font-bold capitalize"
-                 [ngClass]="{
-                   'text-emerald-400': categoryData.status === 'approved',
-                   'text-amber-400': categoryData.status === 'pending',
-                   'text-red-400': categoryData.status === 'rejected'
-                 }">
-              {{ categoryData.status === 'approved' ? 'Aprobado' : (categoryData.status === 'pending' ? 'Pendiente' : 'Rechazado') }}
+          <div class="p-5 bg-[#0B0E14] rounded-2xl border border-slate-800">
+            <div class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-3">Estado de la cuenta</div>
+
+            <div class="flex items-center gap-3">
+              <div class="flex-shrink-0 w-3 h-3 rounded-full animate-pulse"
+                   [ngClass]="{
+                     'bg-emerald-500': categoryData.status === 'approved',
+                     'bg-amber-500': categoryData.status === 'pending',
+                     'bg-red-500': categoryData.status === 'rejected'
+                   }"></div>
+
+              <div class="font-bold text-lg capitalize"
+                   [ngClass]="{
+                     'text-emerald-400': categoryData.status === 'approved',
+                     'text-amber-400': categoryData.status === 'pending',
+                     'text-red-400': categoryData.status === 'rejected'
+                   }">
+                {{ categoryData.status === 'approved' ? 'Aprobado' : (categoryData.status === 'pending' ? 'Pendiente de revisión' : 'Rechazado') }}
+              </div>
             </div>
-            <p class="text-xs text-slate-500 mt-2" *ngIf="categoryData.status === 'pending'">
-              Tus cambios serán revisados por un administrador.
+
+            <p class="text-xs text-slate-500 mt-3 leading-relaxed" *ngIf="categoryData.status === 'pending'">
+              Tus cambios recientes están siendo analizados por nuestro equipo de calidad.
             </p>
           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="flex flex-col gap-3">
+        <div class="sticky top-6 flex flex-col gap-4">
           <button (click)="save()"
                   [disabled]="saving"
-                  class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-900/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                  class="group relative w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-[0_4px_20px_rgba(79,70,229,0.3)] hover:shadow-[0_4px_25px_rgba(79,70,229,0.5)] flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed overflow-hidden">
+
+            <div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10"></div>
+
             <span *ngIf="saving" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-            {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+            <span *ngIf="!saving" class="flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+              Guardar Cambios
+            </span>
+            <span *ngIf="saving">Guardando...</span>
           </button>
 
           <button (click)="cancel()"
                   [disabled]="saving"
-                  class="w-full py-4 bg-[#161b26] hover:bg-[#1f2937] text-slate-400 hover:text-white font-medium rounded-xl transition-all border border-slate-700 hover:border-slate-600">
+                  class="w-full py-4 bg-[#161b26] hover:bg-slate-800 text-slate-400 hover:text-white font-medium rounded-xl transition-all border border-slate-700 hover:border-slate-500">
             Cancelar
           </button>
         </div>
