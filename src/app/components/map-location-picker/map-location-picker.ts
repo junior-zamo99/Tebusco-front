@@ -178,7 +178,7 @@ export class MapLocationPickerComponent implements OnInit, OnDestroy {
 
     const popupContent = `
       <div class="text-center">
-        <p class="font-semibold text-gray-900 mb-1">📍 Ubicación Seleccionada</p>
+        <p class="font-semibold text-gray-900 mb-1"> Ubicación Seleccionada</p>
         <p class="text-sm text-gray-600">Lat: ${lat.toFixed(6)}</p>
         <p class="text-sm text-gray-600">Lng: ${lng.toFixed(6)}</p>
       </div>
@@ -231,12 +231,12 @@ export class MapLocationPickerComponent implements OnInit, OnDestroy {
         if (this.marker) {
           const popupContent = `
             <div class="text-center" style="min-width: 200px;">
-              <p class="font-semibold text-gray-900 mb-2">📍 Ubicación Seleccionada</p>
+              <p class="font-semibold text-gray-900 mb-2"> Ubicación Seleccionada</p>
               ${fullAddress ? `<p class="text-sm text-gray-700 mb-2 font-semibold">${fullAddress}</p>` : ''}
               <p class="text-sm text-gray-600 mb-1">${this.selectedLocation.address.city || 'Ciudad'}</p>
               <p class="text-sm text-gray-600">${this.selectedLocation.address.state || ''}</p>
               <p class="text-sm text-gray-600">${this.selectedLocation.address.country || ''}</p>
-              <p class="text-xs text-gray-500 mt-2">Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}</p>
+
             </div>
           `;
           this.marker.setPopupContent(popupContent);
@@ -244,7 +244,7 @@ export class MapLocationPickerComponent implements OnInit, OnDestroy {
       }
     })
     .catch(error => {
-      console.error('❌ Error en reverse geocoding:', error);
+      console.error(' Error en reverse geocoding:', error);
 
       if (this.selectedLocation) {
         this.locationSelected.emit(this.selectedLocation);

@@ -1,16 +1,24 @@
-<section class="my-16">
-  <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-2xl p-12 text-center">
-    <h2 class="text-4xl font-bold mb-4 text-gray-900">
+<section class="my-4">
+  <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl p-5 text-center shadow-md">
+    <h2 class="text-xl font-bold mb-1 text-gray-900 leading-tight">
       Mejora tu Plan y Destaca
     </h2>
-    <p class="text-gray-800 text-lg mb-8 max-w-2xl mx-auto">
+    <p class="text-gray-900/80 text-sm mb-4 max-w-xl mx-auto">
       Accede a más solicitudes, mejora tu visibilidad y consigue trabajos premium.
     </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <button (click)="navigateToExtras()" class="btn bg-gray-900 text-white hover:bg-gray-800">
-        Ver Packetes extras
+
+    <div class="flex flex-row gap-3 justify-center">
+      <button
+        (click)="navigateToExtras()"
+        class="px-5 py-2 bg-gray-900 text-white text-xs font-bold rounded-lg hover:bg-gray-800 hover:-translate-y-0.5 transition-all shadow-sm"
+      >
+        Ver Paquetes extras
       </button>
-      <button routerLink="/professional/stats" class="btn bg-white/20 text-gray-900 hover:bg-white/30 border-2 border-gray-900">
+
+      <button
+        routerLink="/professional/stats"
+        class="px-5 py-2 bg-white/20 text-gray-900 text-xs font-bold rounded-lg border border-gray-900 hover:bg-white/30 transition-colors"
+      >
         Ver Planes
       </button>
     </div>

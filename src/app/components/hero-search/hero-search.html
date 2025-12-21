@@ -53,11 +53,15 @@
               <div>
                 <div class="flex items-center gap-2">
                   <p class="text-white font-bold text-xs">{{ searchResults.totalResults }} encontrados</p>
+
                   <span
-                    *ngIf="useGeoSearch && searchResults.providers.results.length > 0 && hasLocationMatch(searchResults.providers.results[0])"
+                    *ngIf="searchResults.providers.results.length > 0 && searchResults.providers.results[0].distanceInMeters !== undefined"
                     class="flex items-center gap-0.5 text-[10px] bg-green-400/20 text-green-300 px-1.5 py-0.5 rounded-full border border-green-400/30 font-semibold"
                   >
-                   Cerca de ti
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                    </svg>
+                    Cerca de ti
                   </span>
                 </div>
               </div>
@@ -126,7 +130,7 @@
               *ngFor="let provider of searchResults.providers.results.slice(0, 4)"
               (click)="onProviderClick(provider)"
               [ngClass]="{
-                'bg-green-400/5 border-l-2 border-green-400': hasLocationMatch(provider) && getLocationMatch(provider)?.isNearby
+                'bg-green-400/5 border-l-2 border-green-400': provider.distanceInMeters !== undefined
               }"
               class="w-full px-4 py-2.5 hover:bg-white/5 transition-all duration-200 text-left group"
             >
@@ -161,6 +165,10 @@
                     >
                       Empresa
                     </span>
+
+                    <span *ngIf="provider.distanceInMeters !== undefined" class="bg-slate-700 text-slate-300 text-[10px] px-1.5 py-0 rounded-full border border-slate-600">
+                      {{ provider.distanceInMeters < 1000 ? provider.distanceInMeters + ' m' : (provider.distanceInMeters / 1000).toFixed(1) + ' km' }}
+                    </span>
                   </div>
 
                   <div class="flex flex-wrap gap-1 mt-0.5 mb-1">
@@ -173,7 +181,7 @@
                   </div>
 
                   <div class="flex items-center gap-2 text-[10px]">
-                     <span *ngIf="provider.hasActiveSubscription" class="flex items-center gap-1 text-green-400 font-semibold">
+                      <span *ngIf="provider.hasActiveSubscription" class="flex items-center gap-1 text-green-400 font-semibold">
                       <span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
                       Disp.
                     </span>

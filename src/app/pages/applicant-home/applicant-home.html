@@ -1,176 +1,33 @@
 <div class="container-custom">
 
-  <!-- Hero personalizado para solicitante logueado -->
-  <section class="bg-gradient-to-br from-navy-blue to-card-bg rounded-2xl overflow-hidden my-8 p-12">
-    <div class="text-center">
-      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-        ¡Bienvenido de nuevo, <span class="text-primary">{{ userName }}</span>!
-      </h1>
-      <p class="text-white/90 text-lg mb-8">
-        ¿Qué servicio necesitas hoy?
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <button routerLink="/requests/create" class="btn btn-primary">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Publicar Solicitud
-        </button>
-        <button routerLink="/categories" class="btn btn-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          Buscar Profesionales
-        </button>
-      </div>
-    </div>
+  <app-home-hero-applicant
+    [userName]="userName"
+    (createRequest)="onNavigateCreateRequest()"
+    (openAddressModal)="openAddressModalManual()">
+  </app-home-hero-applicant>
+
+  <div class="mt-6">
+    <app-ads-carousel></app-ads-carousel>
+  </div>
+
+  <section class="my-8">
+    <app-home-request-applicant></app-home-request-applicant>
   </section>
 
-  <!-- Mis Solicitudes Activas -->
-  <section class="my-12">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-text">Mis Solicitudes Activas</h2>
-      <button routerLink="/requests" class="text-primary font-medium hover:underline">Ver todas</button>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Card de solicitud ejemplo - aquí irán datos reales -->
-      <div class="bg-card-bg rounded-2xl p-5 hover:shadow-xl transition-all">
-        <div class="flex items-center justify-between mb-4">
-          <span class="px-3 py-1 bg-yellow-500/20 text-yellow-500 text-xs font-semibold rounded-full">
-            Pendiente
-          </span>
-          <span class="text-sm text-text-light">Hace 2 horas</span>
-        </div>
-        <h3 class="font-bold text-text mb-2">Reparación de plomería</h3>
-        <p class="text-sm text-text-light mb-4">Fuga de agua en el baño principal</p>
-        <div class="flex items-center justify-between">
-          <span class="text-text-light text-sm">3 ofertas recibidas</span>
-          <button class="btn btn-primary btn-sm">Ver Ofertas</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Categorías populares -->
-  <app-categories-carousel></app-categories-carousel>
-
-  <!-- Profesionales recomendados -->
-  <section class="my-12">
-    <h2 class="text-2xl font-bold text-text mb-6">Profesionales Recomendados</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <!-- Cards de profesionales aquí -->
-    </div>
-  </section>
-
-  <!-- Banner: Conviértete en Profesional (Solo si userType === 1) - AL FINAL -->
-  <section *ngIf="canBecomeProfessional()" class="my-16">
-    <div class="bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-500 rounded-3xl overflow-hidden shadow-2xl">
-      <div class="grid md:grid-cols-2 gap-0 items-center">
-
-        <!-- Contenido - Lado Izquierdo -->
-        <div class="p-8 md:p-12 lg:p-16">
-          <div class="inline-flex items-center gap-2 bg-navy-blue/90 px-4 py-2 rounded-full mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <span class="text-white font-bold text-sm">¡Oportunidad única!</span>
-          </div>
-
-          <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-navy-blue mb-4 leading-tight">
-            ¿Eres profesional?<br/>
-            <span class="text-white">¡Empieza a ganar!</span>
-          </h2>
-
-          <p class="text-navy-blue text-lg mb-8 leading-relaxed font-medium">
-            Ofrece tus servicios, encuentra clientes y construye tu reputación en nuestra plataforma.
-          </p>
-
-          <!-- Beneficios -->
-          <ul class="space-y-4 mb-8">
-            <li class="flex items-start gap-3 text-navy-blue">
-              <div class="w-6 h-6 bg-navy-blue rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <span class="font-bold text-base">Acceso a miles de clientes potenciales</span>
-            </li>
-            <li class="flex items-start gap-3 text-navy-blue">
-              <div class="w-6 h-6 bg-navy-blue rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <span class="font-bold text-base">Gestión fácil de tus servicios y proyectos</span>
-            </li>
-          </ul>
+  <div class="my-6">
+    <app-categories-carousel></app-categories-carousel>
+  </div>
 
 
-         <button
-            (click)="handleProfessionalRegistration()"
-            [disabled]="isLoadingRedirect"
-            class="bg-navy-blue text-yellow-400 hover:bg-dark-navy font-bold py-5 px-10 rounded-2xl transition-all shadow-2xl hover:shadow-3xl flex items-center gap-3 text-lg group w-full md:w-auto justify-center disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            <span *ngIf="!isLoadingRedirect">Registrarme como Profesional</span>
 
-            <span *ngIf="isLoadingRedirect">Verificando...</span>
-
-            <svg *ngIf="!isLoadingRedirect" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-
-            <svg *ngIf="isLoadingRedirect" class="animate-spin h-6 w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Imagen/Estadísticas - Lado Derecho -->
-        <div class="bg-navy-blue p-8 md:p-12 h-full flex items-center justify-center">
-          <div class="text-center max-w-md">
-            <!-- Icono principal -->
-            <div class="w-32 h-32 bg-yellow-400 rounded-full mx-auto mb-8 flex items-center justify-center shadow-2xl">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-navy-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-
-            <!-- Estadísticas -->
-            <div class="grid grid-cols-2 gap-6">
-              <div class="bg-card-bg rounded-2xl p-6 border-2 border-yellow-400">
-                <div class="flex items-center justify-center mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <div class="text-4xl font-extrabold text-yellow-400 mb-1">2,500+</div>
-                <div class="text-white/90 text-sm font-semibold">Profesionales</div>
-              </div>
-
-              <div class="bg-card-bg rounded-2xl p-6 border-2 border-yellow-400">
-                <div class="flex items-center justify-center mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                  </svg>
-                </div>
-                <div class="text-4xl font-extrabold text-yellow-400 mb-1">4.8</div>
-                <div class="text-white/90 text-sm font-semibold">Calificación</div>
-              </div>
-            </div>
-
-            <!-- Botón secundario -->
-            <button class="mt-8 text-yellow-400 font-semibold hover:text-yellow-300 transition-colors flex items-center gap-2 mx-auto">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Más información</span>
+  <section *ngIf="canBecomeProfessional()" class="my-8">
+    <div class="bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-500 rounded-2xl overflow-hidden shadow-xl">
+        <div class="p-8 text-center md:text-left">
+            <h2 class="text-2xl font-bold text-navy-blue">¿Eres profesional?</h2>
+            <button (click)="handleProfessionalRegistration()" class="mt-4 bg-navy-blue text-white px-6 py-2 rounded-xl font-bold">
+               Registrarme
             </button>
-          </div>
         </div>
-
-      </div>
     </div>
   </section>
 

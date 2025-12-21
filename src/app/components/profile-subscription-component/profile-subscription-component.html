@@ -1,0 +1,79 @@
+<div class="animate-fadeIn space-y-5">
+
+  <div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#1e1b4b] border border-indigo-500/30 shadow-xl">
+     <div class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-indigo-500/20 rounded-full blur-2xl"></div>
+     <div class="absolute bottom-0 left-0 -mb-8 -ml-8 w-40 h-40 bg-purple-500/20 rounded-full blur-2xl"></div>
+
+     <div class="relative z-10 p-5">
+        <div class="flex justify-between items-start mb-5">
+           <div>
+              <p class="text-indigo-200 text-[10px] font-bold uppercase tracking-wider mb-0.5">Plan Actual</p>
+              <h2 class="text-2xl font-black text-white tracking-tight">{{ data.subscription?.planName || 'Free' }}</h2>
+              <div class="inline-flex items-center gap-1.5 mt-1.5 px-2.5 py-0.5 bg-white/10 rounded-full backdrop-blur-md border border-white/10">
+                 <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+                 <span class="text-[10px] font-medium text-white">{{ data.subscription?.status | titlecase }}</span>
+              </div>
+           </div>
+           <div class="text-right">
+              <div class="text-white/80 text-[10px]">Renueva:</div>
+              <div class="text-white font-bold text-sm">{{ formatDate(data.subscription?.endDate) }}</div>
+              <div class="text-indigo-300 text-[10px] mt-0.5">{{ getDaysRemaining() }} días rest.</div>
+           </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
+           <div>
+              <div class="flex justify-between text-xs mb-1.5">
+                 <span class="text-indigo-100">Categorías</span>
+                 <span class="text-white font-bold">{{ data.usage.categories.used }} / {{ data.usage.categories.limit }}</span>
+              </div>
+              <div class="h-1.5 w-full bg-black/30 rounded-full overflow-hidden backdrop-blur-sm">
+                 <div class="h-full bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full transition-all duration-1000"
+                      [style.width.%]="getUsagePercent('categories')"></div>
+              </div>
+           </div>
+
+           <div>
+              <div class="flex justify-between text-xs mb-1.5">
+                 <span class="text-indigo-100">Ofertas</span>
+                 <span class="text-white font-bold">{{ data.usage.offers.used }} / {{ data.usage.offers.limit }}</span>
+              </div>
+              <div class="h-1.5 w-full bg-black/30 rounded-full overflow-hidden backdrop-blur-sm">
+                 <div class="h-full bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full transition-all duration-1000"
+                      [style.width.%]="getUsagePercent('offers')"></div>
+              </div>
+           </div>
+        </div>
+     </div>
+  </div>
+
+  <div class="bg-[#161b26] border border-slate-800 rounded-lg overflow-hidden">
+     <div class="px-4 py-3 border-b border-slate-800 flex justify-between items-center">
+        <h3 class="font-bold text-white text-sm">Facturación</h3>
+        <button class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Ver todo</button>
+     </div>
+
+     <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-400">
+           <thead class="bg-[#0B0E14] uppercase font-bold text-slate-500">
+              <tr>
+                 <th class="px-4 py-2">Fecha</th>
+                 <th class="px-4 py-2">Desc.</th>
+                 <th class="px-4 py-2">Monto</th>
+                 <th class="px-4 py-2 text-right">Estado</th>
+              </tr>
+           </thead>
+           <tbody class="divide-y divide-slate-800">
+              <tr class="hover:bg-[#1f2937] transition-colors">
+                 <td class="px-4 py-3">{{ formatDate(data.subscription?.startDate) }}</td>
+                 <td class="px-4 py-3 font-medium text-white truncate max-w-[150px]">Suscripción {{ data.subscription?.planName }}</td>
+                 <td class="px-4 py-3">$0.00</td>
+                 <td class="px-4 py-3 text-right">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Pagado</span>
+                 </td>
+              </tr>
+           </tbody>
+        </table>
+     </div>
+  </div>
+</div>

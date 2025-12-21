@@ -1,54 +1,14 @@
-/* Component-specific styles for home page */
+/* Spinner color personalizado (si no usas Tailwind para el color) */
+.border-t-primary {
+  border-top-color: #3b82f6; /* Ajusta a tu color principal */
+}
 
-/* Animation for fade in */
+/* Animación de aparición suave */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.6s ease-out;
-}
-
-/* Plan cards styling */
-.card {
-  position: relative;
-  overflow: visible;
-}
-
-/* Animation for loading spinner */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-/* Hover effects for plan cards */
-.card:hover {
-  transform: translateY(-4px);
-}
-
-/* Badge positioning */
-.card .absolute {
-  z-index: 10;
-}
-
-/* Smooth transitions */
-* {
-  transition: all 0.3s ease;
-}
-
-/* Section spacing */
-section {
-  scroll-margin-top: 100px;
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

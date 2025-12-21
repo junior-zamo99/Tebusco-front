@@ -39,14 +39,14 @@ export class NavbarComponent implements OnInit {
     public themeService: ThemeService
   ) {
     effect(() => {
-      const type = this.userType();
-      if (type === 2) {
-        const savedView = localStorage.getItem('current_view') as 'sa' | 'pl';
-        if (savedView) {
-          this.currentView = savedView;
-        }
+    const type = this.userType();
+    if (type > 0) {
+      const savedView = localStorage.getItem('current_view') as 'sa' | 'pl';
+      if (savedView) {
+        this.currentView = savedView;
       }
-    });
+    }
+  });
   }
 
   ngOnInit(): void {
@@ -57,20 +57,21 @@ export class NavbarComponent implements OnInit {
     this.themeService.toggleTheme();
   }
 
-  loadCurrentView(): void {
-    const savedView = localStorage.getItem('current_view');
-    if (savedView === 'sa' || savedView === 'pl') {
-      this.currentView = savedView;
-      const type = this.userType();
-      if (type === 2) {
-        this.currentView = 'sa';
-        localStorage.setItem('current_view', 'sa');
-      } else {
-        this.currentView = 'pl';
-        localStorage.setItem('current_view', 'applicant');
-      }
-    }
+ loadCurrentView(): void {
+  const savedView = localStorage.getItem('current_view') as 'sa' | 'pl';
+  const type = this.userType();
+  if (type === 0) {
+    if (savedView) this.currentView = savedView;
+    return;
   }
+
+  if (savedView) {
+    this.currentView = savedView;
+  } else {
+    this.currentView = (type === 2 || type === 1) ? 'sa' : 'pl';
+    localStorage.setItem('current_view', this.currentView);
+  }
+}
 
   onLogoClick(): void {
     if (this.authService.isAuthenticated()) {

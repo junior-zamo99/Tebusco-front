@@ -1,0 +1,260 @@
+<div class="min-h-screen container-custom py-8">
+
+  <div *ngIf="isLoading" class="flex items-center justify-center min-h-[60vh]">
+    <div class="text-center">
+      <div class="relative w-16 h-16 mx-auto mb-6">
+        <div class="absolute inset-0 border-4 border-[var(--color-card-bg-light)] rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-[var(--color-primary)] rounded-full border-t-transparent animate-spin"></div>
+      </div>
+      <p class="text-[var(--color-primary)] font-bold text-sm tracking-widest animate-pulse">CARGANDO SOLICITUD...</p>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage && !isLoading" class="flex items-center justify-center min-h-[60vh]">
+    <div class="card border-[var(--color-danger)] bg-[color-mix(in_srgb,var(--color-danger)_5%,transparent)] p-8 text-center max-w-lg w-full">
+      <div class="w-16 h-16 rounded-full bg-[color-mix(in_srgb,var(--color-danger)_10%,transparent)] flex items-center justify-center mx-auto mb-4 text-[var(--color-danger)]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h2 class="text-xl font-bold text-[var(--color-text)] mb-2">Error al cargar</h2>
+      <p class="text-[var(--color-text-muted)] mb-6 text-sm">{{ errorMessage }}</p>
+      <button (click)="goBack()" class="btn btn-sm bg-[var(--color-danger)] text-white hover:opacity-90 shadow-lg w-full justify-center">
+        Volver atrás
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && request" class="animate-fadeIn">
+
+    <nav class="flex items-center justify-between mb-8">
+      <button (click)="goBack()" class="group flex items-center gap-2 text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">
+        <div class="w-8 h-8 rounded-full bg-[var(--color-card-bg)] border border-[var(--color-border)] flex items-center justify-center group-hover:border-[var(--color-primary)] transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </div>
+        <span class="font-medium text-sm">Volver a mis solicitudes</span>
+      </button>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+      <div class="lg:col-span-2 space-y-8">
+
+        <div class="card p-0 overflow-hidden relative group border-[var(--color-border)]">
+          <div class="h-1.5 w-full bg-gradient-warm"></div>
+
+          <div class="p-6 md:p-8 relative">
+             <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                 <div class="flex items-center gap-3">
+                     <span [class]="'badge uppercase tracking-wider shadow-sm ' + getStatusColor(request.status)">
+                         {{ getStatusLabel(request.status) }}
+                     </span>
+
+                     <span class="flex items-center gap-1.5 text-xs font-medium text-[var(--color-text-muted)] bg-[var(--color-card-bg-light)] px-3 py-1 rounded-full border border-[var(--color-border)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {{ request.createdAt | date:'d MMM yyyy' }}
+                     </span>
+                 </div>
+             </div>
+
+             <h1 class="text-3xl md:text-4xl font-black text-[var(--color-text)] mb-6 leading-tight tracking-tight">
+                 {{ request.title }}
+             </h1>
+
+             <div *ngIf="request.status === 'PENDING'" class="flex flex-wrap gap-4 mb-8 pb-8 border-b border-[var(--color-border)]">
+
+                <button (click)="updateStatus('COMPLETED')"
+                        [disabled]="isActionLoading"
+                        class="btn btn-secondary shadow-lg hover:shadow-accent disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg *ngIf="!isActionLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <svg *ngIf="isActionLoading" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Marcar Completada
+                </button>
+
+                <button (click)="updateStatus('CANCELLED')"
+                        [disabled]="isActionLoading"
+                        class="btn btn-neutral border border-[var(--color-border)] hover:bg-[var(--color-danger)] hover:text-white hover:border-[var(--color-danger)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg *ngIf="!isActionLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Cancelar Solicitud
+                </button>
+             </div>
+
+             <div class="mb-8">
+                 <h3 class="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-3 flex items-center gap-2">
+                     <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]"></span>
+                     Descripción del trabajo
+                 </h3>
+                 <div class="bg-[var(--color-card-bg-light)] p-6 rounded-xl border border-[var(--color-border)] text-[var(--color-text-light)] leading-relaxed whitespace-pre-line text-sm shadow-inner">
+                     {{ request.description }}
+                 </div>
+             </div>
+
+             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+
+                 <div class="bg-[var(--color-card-bg-light)] border border-[var(--color-border)] rounded-xl p-4 flex flex-col justify-center gap-2 hover:border-[var(--color-border)] transition-colors">
+                     <div class="flex items-center justify-between">
+                        <span class="text-[10px] text-[var(--color-text-muted)] font-bold uppercase tracking-wider">Urgencia</span>
+                        <div class="relative flex h-2.5 w-2.5">
+                             <span [ngClass]="{
+                                 'bg-[var(--color-danger)]': request.urgency === 'high' || request.urgency === 'urgent' || request.urgency === 'EMERGENCY',
+                                 'bg-[var(--color-warning)]': request.urgency === 'medium',
+                                 'bg-[var(--color-success)]': request.urgency === 'low'
+                             }" class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"></span>
+                             <span [ngClass]="{
+                                 'bg-[var(--color-danger)]': request.urgency === 'high' || request.urgency === 'urgent' || request.urgency === 'EMERGENCY',
+                                 'bg-[var(--color-warning)]': request.urgency === 'medium',
+                                 'bg-[var(--color-success)]': request.urgency === 'low'
+                             }" class="relative inline-flex rounded-full h-2.5 w-2.5"></span>
+                         </div>
+                     </div>
+                     <span class="text-sm font-bold capitalize text-[var(--color-text)]">
+                         {{ getUrgencyLabelDisplay(request.urgency) }}
+                     </span>
+                 </div>
+
+                 <div class="bg-[var(--color-card-bg-light)] border border-[var(--color-border)] rounded-xl p-4 flex flex-col justify-center gap-2">
+                     <span class="text-[10px] text-[var(--color-text-muted)] font-bold uppercase tracking-wider">Para el</span>
+                     <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                         <span class="text-sm font-bold text-[var(--color-text)]">
+                             {{ request.dateNeeded ? (request.dateNeeded | date:'dd/MM/yyyy') : 'Lo antes posible' }}
+                         </span>
+                     </div>
+                 </div>
+
+                 <div class="bg-[var(--color-card-bg-light)] border border-[var(--color-border)] rounded-xl p-4 flex flex-col justify-center gap-2">
+                     <span class="text-[10px] text-[var(--color-text-muted)] font-bold uppercase tracking-wider">Horario</span>
+                     <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                         <span class="text-sm font-bold text-[var(--color-text)]">
+                             {{ request.hourPreferred || 'Flexible' }}
+                         </span>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="border-t border-[var(--color-border)] pt-6">
+                <h3 class="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    Categorías del trabajo
+                </h3>
+
+                <div class="flex flex-col gap-2">
+                    <div *ngFor="let category of request.categories"
+                         class="relative flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-[var(--color-card-bg-light)]"
+                         [ngStyle]="{ 'margin-left.px': (category.level - 1) * 24 }">
+
+                         <div *ngIf="category.level > 1" class="absolute -left-[14px] top-1/2 w-[14px] h-px bg-[var(--color-border)]"></div>
+                         <div *ngIf="category.level > 1" class="absolute -left-[14px] bottom-1/2 top-[-10px] w-px bg-[var(--color-border)]"></div>
+
+                        <span class="text-sm font-medium text-[var(--color-text-light)] group-hover:text-[var(--color-primary)] transition-colors">
+                            {{ category.name }}
+                        </span>
+                    </div>
+
+                    <div *ngIf="!request.categories || request.categories.length === 0" class="text-sm text-[var(--color-text-muted)] italic px-2">
+                        No se especificaron categorías.
+                    </div>
+                </div>
+             </div>
+
+          </div>
+        </div>
+
+        <div class="card p-0 overflow-hidden border-[var(--color-border)]">
+            <div class="px-6 py-4 border-b border-[var(--color-border)] bg-[var(--color-card-bg-light)] flex justify-between items-center">
+                <h3 class="text-sm font-bold text-[var(--color-text)] flex items-center gap-2">
+                    <div class="p-1.5 bg-[var(--color-card-bg)] rounded-lg border border-[var(--color-border)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    Ubicación
+                </h3>
+            </div>
+
+            <div *ngIf="mapLocation" class="h-[350px] w-full relative z-0">
+                <app-map-location-viewer
+                    [location]="mapLocation"
+                    height="100%"
+                    [zoom]="15"
+                    [showFullAddress]="true">
+                </app-map-location-viewer>
+            </div>
+
+            <div *ngIf="!mapLocation && request.address" class="p-12 text-center bg-[var(--color-card-bg-light)]">
+                <div class="w-16 h-16 bg-[var(--color-card-bg)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--color-border)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <p class="text-sm text-[var(--color-text-muted)] font-medium mb-1">Mapa no disponible</p>
+                <p class="font-bold text-[var(--color-text)] text-base">{{ request.address }}</p>
+            </div>
+        </div>
+
+      </div>
+
+      <div class="lg:col-span-1 space-y-6 lg:sticky lg:top-8">
+<div class="card p-8 text-center relative overflow-hidden bg-[var(--color-primary)] shadow-primary-intense border-none">
+    <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+    <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full blur-3xl -ml-12 -mb-12"></div>
+
+    <p class="text-white/80 text-[10px] font-bold uppercase tracking-widest mb-3 relative z-10">Presupuesto Estimado</p>
+
+    <div class="text-4xl lg:text-5xl font-black text-white mb-2 tracking-tight relative z-10 drop-shadow-md">
+        <span class="text-2xl font-bold text-white/70 mr-1" *ngIf="request. budget">Bs.</span>
+        {{ request.budget ? (request.budget | number:'1.2-2') : 'A convenir' }}
+    </div>
+</div>
+
+        <div class="card border-[var(--color-border)] p-6">
+            <h3 class="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-6 border-b border-[var(--color-border)] pb-3 text-center">
+                Información del Solicitante
+            </h3>
+
+            <div class="flex flex-col items-center text-center">
+                <div class="relative mb-4">
+                    <div class="w-24 h-24 rounded-full p-1 border-2 border-[var(--color-border)] bg-[var(--color-card-bg)]">
+                        <img *ngIf="request.applicant?.userPhotoUrl" [src]="request.applicant.userPhotoUrl" class="w-full h-full object-cover rounded-full bg-[var(--color-card-bg-light)]">
+                    </div>
+                    <div class="absolute bottom-1 right-1 bg-[var(--color-success)] w-6 h-6 rounded-full border-4 border-[var(--color-card-bg)] flex items-center justify-center text-[var(--color-card-bg)]" title="Verificado">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+
+                <h4 class="text-lg font-bold text-[var(--color-text)] mb-1">
+                    {{ request.applicant?.userName }} {{ request.applicant?.userLastName }}
+                </h4>
+
+                <p class="text-xs text-[var(--color-text-muted)] font-medium mb-4">{{ request.applicant?.userEmail }}</p>
+
+                <button class="btn btn-outline-secondary btn-sm w-full">Ver Perfil Completo</button>
+            </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

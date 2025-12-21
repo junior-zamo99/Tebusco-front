@@ -1,50 +1,37 @@
-<nav class="sticky top-0 z-50 bg-card-bg border-b-2 border-primary shadow-lg">
+<nav class="sticky top-0 z-50 bg-card-bg border-b border-primary/50 shadow-lg backdrop-blur-md bg-opacity-95">
   <div class="container-custom">
-    <div class="flex items-center justify-between py-4">
-      <!-- Logo y Selector de Vista -->
-      <div class="flex items-center gap-6">
-      <a
-          (click)="onLogoClick()"
-          class="text-2xl font-extrabold text-primary hover:text-accent transition-colors duration-300 cursor-pointer"
-        >
-          <img src="/assets/img/logo/logo.png" alt="Logo TEBUSCO" class="mx-auto max-w-xs max-h-15 object-contain" />
+    <div class="flex items-center justify-between py-2">
+
+      <div class="flex items-center gap-4">
+        <a (click)="onLogoClick()"
+          class="flex items-center gap-2 text-xl font-extrabold text-primary hover:text-accent transition-colors duration-300 cursor-pointer">
+          <img src="/assets/img/logo/logo.png" alt="Logo TEBUSCO" class="w-auto h-9 object-contain" />
         </a>
 
-        <!-- Dropdown Custom Selector de Vista (solo para userType === 2) -->
-        <div *ngIf="authService.isAuthenticated() && canSwitchView()" class="hidden md:block relative view-selector">
-          <button
-            (click)="toggleViewDropdown()"
-            class="flex items-center gap-2 bg-card-bg-light border-2 border-primary/40 text-text px-4 py-2.5 rounded-lg font-medium hover:border-primary transition-all shadow-sm min-w-[180px]"
-          >
+        <div *ngIf="!authService.isInitialLoading() && authService.isAuthenticated() && canSwitchView()"
+             class="hidden md:block relative view-selector">
+          <button (click)="toggleViewDropdown()"
+            class="flex items-center gap-2 bg-card-bg-light border border-primary/40 text-text px-3 py-1.5 rounded-lg text-sm font-medium hover:border-primary transition-all shadow-sm min-w-[150px]">
             <span>{{ currentView === 'sa' ? 'Solicitante' : 'Profesional' }}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-text-light ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
 
-          <!-- Dropdown Menu -->
-          <div
-            *ngIf="isViewDropdownOpen"
-            class="absolute top-full left-0 mt-2 w-56 bg-card-bg border border-border rounded-lg shadow-xl z-50 overflow-hidden"
-          >
-            <button
-              (click)="selectView('sa')"
-              [class.bg-primary]="currentView === 'sa'"
+          <div *ngIf="isViewDropdownOpen"
+            class="absolute top-full left-0 mt-1 w-48 bg-card-bg border border-border rounded-lg shadow-xl z-50 overflow-hidden">
+            <button (click)="selectView('sa')" [class.bg-primary]="currentView === 'sa'"
               [class.text-background]="currentView === 'sa'"
-              class="w-full px-4 py-3 text-left hover:bg-card-bg-light transition-colors flex items-center gap-3 text-text"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              class="w-full px-3 py-2 text-left hover:bg-card-bg-light transition-colors flex items-center gap-2 text-sm text-text">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               <span class="font-medium">Solicitante</span>
             </button>
-            <button
-              (click)="selectView('pl')"
-              [class.bg-primary]="currentView === 'pl'"
+            <button (click)="selectView('pl')" [class.bg-primary]="currentView === 'pl'"
               [class.text-background]="currentView === 'pl'"
-              class="w-full px-4 py-3 text-left hover:bg-card-bg-light transition-colors flex items-center gap-3 text-text"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              class="w-full px-3 py-2 text-left hover:bg-card-bg-light transition-colors flex items-center gap-2 text-sm text-text">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               <span class="font-medium">Profesional</span>
@@ -53,186 +40,101 @@
         </div>
       </div>
 
-      <!-- Buscador -->
       @if (currentView === 'sa') {
-        <div class="hidden md:flex flex-1 max-w-xl mx-8 search-container">
+      <div class="hidden md:flex flex-1 max-w-lg mx-6 search-container">
         <div class="relative w-full">
-          <input
-            type="text"
-            placeholder="Buscar profesionales o servicios..."
-            class="w-full py-2 pl-4 pr-12 bg-card-bg-light border border-border rounded-full text-text placeholder:text-text-light focus:outline-none focus:border-primary transition-colors duration-300"
-            (input)="onSearch($event)"
-            (focus)="onSearchFocus()"
-            [value]="searchTerm"
-          />
-          <button class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-primary rounded-full flex items-center justify-center hover:bg-primary-dark transition-colors duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-background" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <input type="text" placeholder="Buscar profesionales o servicios..."
+            class="w-full py-1.5 pl-4 pr-10 bg-card-bg-light border border-border rounded-full text-sm text-text placeholder:text-text-light focus:outline-none focus:border-primary transition-colors duration-300"
+            (input)="onSearch($event)" (focus)="onSearchFocus()" [value]="searchTerm" />
+          <button
+            class="absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 bg-primary rounded-full flex items-center justify-center hover:bg-primary-dark transition-colors duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-background" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </button>
-
-          <app-search-result
-            [searchTerm]="searchTerm"
-            [isOpen]="isSearchOpen"
-            (close)="closeSearchResults()"
-          ></app-search-result>
+          <app-search-result [searchTerm]="searchTerm" [isOpen]="isSearchOpen" (close)="closeSearchResults()">
+          </app-search-result>
         </div>
       </div>
       }
 
-      <div class="hidden lg:flex items-center gap-4">
-
-
-
-
-
-
-
-
-
-        <button class="relative p-2 text-text hover:text-primary transition-colors duration-300">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="hidden lg:flex items-center gap-3">
+        <button *ngIf="authService.isAuthenticated()" class="relative p-1.5 text-text hover:text-primary transition-colors duration-300">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
-          <span *ngIf="notificationCount > 0" class="absolute top-0 right-0 bg-danger text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+          <span *ngIf="notificationCount > 0" class="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
             {{ notificationCount }}
           </span>
         </button>
 
+        <ng-container *ngIf="!authService.isInitialLoading()">
 
-        <ng-container *ngIf="!authService.isAuthenticated()">
-          <button (click)="onLogin()" class="btn btn-secondary">
-            Iniciar Sesión
-          </button>
-          <button (click)="onRegister()" class="btn btn-primary">
-            Registro
-          </button>
-        </ng-container>
+          <ng-container *ngIf="!authService.isAuthenticated()">
+            <button (click)="onLogin()" class="btn btn-secondary py-1.5 px-4 text-sm">Iniciar Sesión</button>
+            <button (click)="onRegister()" class="btn btn-primary py-1.5 px-4 text-sm">Registro</button>
+          </ng-container>
 
-        <div *ngIf="authService.isAuthenticated()" class="relative">
-          <button
-            (click)="toggleUserMenu()"
-            class="flex items-center gap-3 p-2 rounded-lg hover:bg-card-bg-light transition-colors user-menu-button"
-          >
-            <div
-              *ngIf="authService.currentUser()?.photoUrl"
-              class="w-10 h-10 rounded-full bg-cover bg-center border-2 border-primary"
-              [style.background-image]="'url(' + photoUrl() + ')'"
-            ></div>
-            <div
-              *ngIf="!authService.currentUser()?.photoUrl"
-              class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center border-2 border-primary"
-            >
-              <span class="text-sm font-bold text-white">{{ getInitials() }}</span>
-            </div>
-            <span class="text-text font-medium hidden xl:block">{{ getUserName() }}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+          <div *ngIf="authService.isAuthenticated()" class="relative">
+            <button (click)="toggleUserMenu()"
+              class="flex items-center gap-2 p-1 rounded-lg hover:bg-card-bg-light transition-colors user-menu-button border border-transparent hover:border-border">
+              <div *ngIf="authService.currentUser()?.photoUrl"
+                class="w-8 h-8 rounded-full bg-cover bg-center border border-primary"
+                [style.background-image]="'url(' + photoUrl() + ')'"></div>
+              <div *ngIf="!authService.currentUser()?.photoUrl"
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center border border-primary">
+                <span class="text-xs font-bold text-white">{{ getInitials() }}</span>
+              </div>
+              <span class="text-sm font-medium text-text hidden xl:block">{{ getUserName() }}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
 
+            <div *ngIf="isUserMenuOpen"
+              class="absolute right-0 top-full mt-2 w-60 bg-card-bg border border-border rounded-lg shadow-xl z-50 overflow-hidden user-menu-dropdown">
+              <div class="p-3 bg-gradient-to-r from-dark-navy to-navy-blue border-b border-border">
+                <p class="text-text font-semibold text-sm">{{ getUserName() }}</p>
+                <p class="text-text-light text-xs truncate">{{ authService.currentUser()?.email }}</p>
+                <div class="mt-2">
+                   <span *ngIf="userType() === 2 && currentView === 'pl'" class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-primary/20 text-primary text-[10px] font-medium rounded-full">
+                    Modo Profesional
+                  </span>
+                  <span *ngIf="userType() === 2 && currentView === 'sa'" class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-accent/20 text-accent text-[10px] font-medium rounded-full">
+                    Modo Solicitante
+                  </span>
+                </div>
+              </div>
 
-          <div
-            *ngIf="isUserMenuOpen"
-            class="absolute right-0 top-full mt-2 w-64 bg-card-bg border border-border rounded-lg shadow-2xl z-50 overflow-hidden user-menu-dropdown"
-          >
-            <div class="p-4 bg-gradient-to-r from-dark-navy to-navy-blue border-b border-border">
-              <p class="text-text font-semibold">{{ getUserName() }}</p>
-              <p class="text-text-light text-sm">{{ authService.currentUser()?.email }}</p>
-
-              <div class="mt-2">
-                <span
-                  *ngIf="userType() === 2 && currentView === 'pl'"
-                  class="inline-flex items-center gap-1 px-2 py-1 bg-primary/20 text-primary text-xs font-medium rounded-full"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  Modo Profesional
-                </span>
-                <span
-                  *ngIf="userType() === 2 && currentView === 'sa'"
-                  class="inline-flex items-center gap-1 px-2 py-1 bg-accent/20 text-accent text-xs font-medium rounded-full"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div class="py-1">
+                <button (click)="onProfile()" class="w-full px-4 py-2 text-left hover:bg-card-bg-light transition-colors flex items-center gap-3 text-sm text-text">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  Modo Solicitante
-                </span>
-                <span
-                  *ngIf="userType() === 1"
-                  class="inline-flex items-center gap-1 px-2 py-1 bg-accent/20 text-accent text-xs font-medium rounded-full"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  Solicitante
-                </span>
+                  Mi Perfil
+                </button>
+                <button *ngIf="currentView === 'sa'" (click)="onRequests()" class="w-full px-4 py-2 text-left hover:bg-card-bg-light transition-colors flex items-center gap-3 text-sm text-text">
+                  Mis Solicitudes
+                </button>
+                <button *ngIf="currentView === 'pl'" (click)="onOffers()" class="w-full px-4 py-2 text-left hover:bg-card-bg-light transition-colors flex items-center gap-3 text-sm text-text">
+                  Mis Ofertas
+                </button>
+                <button class="w-full px-4 py-2 text-left hover:bg-card-bg-light transition-colors flex items-center gap-3 text-sm text-text">
+                  Configuración
+                </button>
+              </div>
+
+              <div class="border-t border-border">
+                <button (click)="onLogout()" class="w-full px-4 py-2 text-left hover:bg-danger/10 transition-colors flex items-center gap-3 text-sm text-danger font-semibold">
+                  Cerrar Sesión
+                </button>
               </div>
             </div>
-
-            <div class="py-2">
-              <button
-                (click)="onProfile()"
-                class="w-full px-4 py-3 text-left hover:bg-card-bg-light transition-colors flex items-center gap-3 text-text"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                Mi Perfil
-              </button>
-
-              @if (currentView === 'sa'){
-              <button
-                (click)="onRequests()"
-                class="w-full px-4 py-3 text-left hover:bg-card-bg-light transition-colors flex items-center gap-3 text-text"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Mis Solicitudes
-              </button>
-              }
-              @if (currentView=== 'pl'){
-                    <button
-                  (click)="onOffers()"
-                  class="w-full px-4 py-3 text-left hover:bg-card-bg-light transition-colors flex items-center gap-3 text-text"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                Mis Ofertas
-              </button>
-              }
-
-              <button
-                class="w-full px-4 py-3 text-left hover:bg-card-bg-light transition-colors flex items-center gap-3 text-text"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Configuración
-              </button>
-            </div>
-
-            <div class="border-t border-border">
-              <button
-                (click)="onLogout()"
-                class="w-full px-4 py-3 text-left hover:bg-danger/10 transition-colors flex items-center gap-3 text-danger font-semibold"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                Cerrar Sesión
-              </button>
-            </div>
           </div>
-        </div>
+        </ng-container>
       </div>
 
-
-      <button class="lg:hidden p-2 text-text hover:text-primary" (click)="toggleMenu()">
+      <button class="lg:hidden p-1 text-text hover:text-primary" (click)="toggleMenu()">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path *ngIf="!isMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           <path *ngIf="isMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -240,79 +142,40 @@
       </button>
     </div>
 
-
-    <div *ngIf="isMenuOpen" class="lg:hidden border-t border-border py-4">
-      <!-- Selector de Vista Móvil -->
-      <div *ngIf="authService.isAuthenticated() && canSwitchView()" class="px-4 mb-4">
-        <label class="block text-text-light text-sm font-medium mb-2">Cambiar vista:</label>
-        <select
-          [(ngModel)]="currentView"
-          (change)="onViewChange(currentView)"
-          class="w-full appearance-none bg-card-bg-light border-2 border-primary/40 text-text px-4 py-3 pr-10 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <option value="applicant">🙋 Solicitante</option>
-          <option value="professional">💼 Profesional</option>
+    <div *ngIf="isMenuOpen" class="lg:hidden border-t border-border py-2 space-y-3">
+      <div *ngIf="!authService.isInitialLoading() && authService.isAuthenticated() && canSwitchView()" class="px-4">
+        <label class="block text-text-light text-xs font-medium mb-1">Cambiar vista:</label>
+        <select [(ngModel)]="currentView" (change)="onViewChange(currentView)"
+          class="w-full appearance-none bg-card-bg-light border border-primary/40 text-text px-3 py-2 text-sm rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-primary">
+          <option value="sa">🙋 Solicitante</option>
+          <option value="pl">💼 Profesional</option>
         </select>
       </div>
 
-      <!-- Buscador Móvil -->
-      <div class="px-4 mb-4">
+      <div class="px-4">
         <div class="relative">
-          <input
-            type="text"
-            placeholder="Buscar..."
-            class="w-full py-2 pl-4 pr-10 bg-card-bg-light border border-border rounded-lg text-text"
-            (input)="onSearch($event)"
-          />
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute right-3 top-1/2 -translate-y-1/2 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <input type="text" placeholder="Buscar..." (input)="onSearch($event)"
+            class="w-full py-2 pl-4 pr-10 bg-card-bg-light border border-border rounded-lg text-sm text-text" />
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 absolute right-3 top-1/2 -translate-y-1/2 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
       </div>
 
-      <!-- Botones de acción móvil -->
-      <div class="px-4 space-y-2">
-        <!-- Toggle de Tema Móvil -->
-        <button
-          (click)="toggleTheme()"
-          class="w-full flex items-center justify-between px-4 py-3 bg-card-bg-light border border-border rounded-lg text-text hover:border-primary transition-all"
-        >
+      <div class="px-4 space-y-2 pb-2">
+        <button (click)="toggleTheme()"
+          class="w-full flex items-center justify-between px-3 py-2 bg-card-bg-light border border-border rounded-lg text-sm text-text hover:border-primary transition-all">
           <span class="font-medium">{{ themeService.isDark() ? 'Tema Claro' : 'Tema Oscuro' }}</span>
-          <svg
-            *ngIf="themeService.isDark()"
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-          <svg
-            *ngIf="themeService.isLight()"
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-          </svg>
         </button>
 
-        <ng-container *ngIf="!authService.isAuthenticated()">
-          <button (click)="onLogin()" class="btn btn-secondary w-full">
-            Iniciar Sesión
-          </button>
-          <button (click)="onRegister()" class="btn btn-primary w-full">
-            Registro
-          </button>
-        </ng-container>
-
-        <ng-container *ngIf="authService.isAuthenticated()">
-          <button class="w-full btn btn-primary">
-            Publicar Solicitud
-          </button>
+        <ng-container *ngIf="!authService.isInitialLoading()">
+          <ng-container *ngIf="!authService.isAuthenticated()">
+            <button (click)="onLogin()" class="btn btn-secondary w-full py-2 text-sm">Iniciar Sesión</button>
+            <button (click)="onRegister()" class="btn btn-primary w-full py-2 text-sm">Registro</button>
+          </ng-container>
+          <ng-container *ngIf="authService.isAuthenticated()">
+            <button class="w-full btn btn-primary py-2 text-sm">Publicar Solicitud</button>
+          </ng-container>
         </ng-container>
       </div>
     </div>

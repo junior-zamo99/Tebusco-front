@@ -59,8 +59,7 @@ export class CategoriesCarouselComponent implements OnInit {
   }
 
   navigateToCategory(category: CategoryNode): void {
-    this.router.navigate(['/categories'], {
-      state: { selectedCategoryId: category.id }
+    this.router.navigate(['/categories'], { queryParams: { category: category.id }
     });
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 export interface StorageUser {
   id: number;
@@ -17,17 +18,18 @@ export interface StorageApplicant {
 }
 
 export interface StorageUserAddress {
-  addressId: number;
+  addressId?: number;
   label: string;
   country: string;
-  state: string;
+  state: string | null;
   city: string;
-  address: string;
+  address: string | null;
   postalCode: string | null;
-  lat: string;
-  lng: string;
-  isDefault: boolean;
-  isActive: boolean;
+  lat: number | null;
+  lng: number | null;
+  isDefault?: boolean;
+  isActive?: boolean;
+  fullAddress?: string;
 }
 
 export interface typeOfUser {
@@ -67,12 +69,28 @@ export class StorageService {
   private readonly USER_ADDRESS_KEY = 'app_user_address';
   private readonly PROFESSIONAL_KEY = 'app_professional';
   private readonly COMPANY_KEY = 'app_company';
+  private readonly MESSAGE_ADDRESS_KEY = 'app_message_address';
+  private readonly APPLICANT_ADDRESS_KEY = 'app_applicant_address';
+
+  private addressSubject = new BehaviorSubject<StorageUserAddress | null>(this.getInitialAddress());
+  public address$ = this.addressSubject.asObservable();
+
+  constructor() {}
+
+  private getInitialAddress(): StorageUserAddress | null {
+    try {
+      const stored = localStorage.getItem(this.APPLICANT_ADDRESS_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  }
 
   saveUser(user: StorageUser): void {
     try {
       localStorage.setItem(this.USER_KEY, JSON.stringify(user));
     } catch (error) {
-      console.error('Error al guardar usuario:', error);
+      console.error(error);
     }
   }
 
@@ -80,7 +98,16 @@ export class StorageService {
     try {
       localStorage.setItem(this.APPLICANT_KEY, JSON.stringify(applicant));
     } catch (error) {
-      console.error('Error al guardar applicant:', error);
+      console.error(error);
+    }
+  }
+
+  saveApplicantAddress(applicantAddress: StorageUserAddress): void {
+    try {
+      localStorage.setItem(this.APPLICANT_ADDRESS_KEY, JSON.stringify(applicantAddress));
+      this.addressSubject.next(applicantAddress);
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -88,7 +115,15 @@ export class StorageService {
     try {
       localStorage.setItem(this.USER_ADDRESS_KEY, JSON.stringify(userAddress));
     } catch (error) {
-      console.error('Error al guardar dirección:', error);
+      console.error(error);
+    }
+  }
+
+  saveMessageAddress(messageAddress: string): void {
+    try {
+      localStorage.setItem(this.MESSAGE_ADDRESS_KEY, JSON.stringify(messageAddress));
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -96,7 +131,7 @@ export class StorageService {
     try {
       localStorage.setItem(this.PROFESSIONAL_KEY, JSON.stringify(professional));
     } catch (error) {
-      console.error('Error al guardar profesional:', error);
+      console.error(error);
     }
   }
 
@@ -104,7 +139,7 @@ export class StorageService {
     try {
         localStorage.setItem('type_of_user', JSON.stringify(typeOfUser));
     } catch (error) {
-        console.error('Error al guardar tipo de usuario:', error);
+        console.error(error);
     }
   }
 
@@ -112,7 +147,7 @@ export class StorageService {
     try {
       localStorage.setItem(this.COMPANY_KEY, JSON.stringify(company));
     } catch (error) {
-      console.error('Error al guardar empresa:', error);
+      console.error(error);
     }
   }
 
@@ -124,7 +159,7 @@ export class StorageService {
       if (data.professional) this.saveProfessional(data.professional);
       if (data.company) this.saveCompany(data.company);
     } catch (error) {
-      console.error('Error al guardar todos los datos:', error);
+      console.error(error);
     }
   }
 
@@ -133,7 +168,6 @@ export class StorageService {
       const user = localStorage.getItem(this.USER_KEY);
       return user ? JSON.parse(user) : null;
     } catch (error) {
-      console.error('Error al obtener usuario:', error);
       return null;
     }
   }
@@ -143,7 +177,6 @@ export class StorageService {
       const applicant = localStorage.getItem(this.APPLICANT_KEY);
       return applicant ? JSON.parse(applicant) : null;
     } catch (error) {
-      console.error('Error al obtener applicant:', error);
       return null;
     }
   }
@@ -153,7 +186,19 @@ export class StorageService {
       const address = localStorage.getItem(this.USER_ADDRESS_KEY);
       return address ? JSON.parse(address) : null;
     } catch (error) {
-      console.error('Error al obtener dirección:', error);
+      return null;
+    }
+  }
+
+  getApplicantAddress(): StorageUserAddress | null {
+    return this.addressSubject.getValue();
+  }
+
+  getMessageAddress(): string | null {
+    try {
+      const value = localStorage.getItem(this.MESSAGE_ADDRESS_KEY);
+      return value ? JSON.parse(value) : null;
+    } catch (error) {
       return null;
     }
   }
@@ -163,7 +208,6 @@ export class StorageService {
       const professional = localStorage.getItem(this.PROFESSIONAL_KEY);
       return professional ? JSON.parse(professional) : null;
     } catch (error) {
-      console.error('Error al obtener profesional:', error);
       return null;
     }
   }
@@ -173,7 +217,6 @@ export class StorageService {
       const company = localStorage.getItem(this.COMPANY_KEY);
       return company ? JSON.parse(company) : null;
     } catch (error) {
-      console.error('Error al obtener empresa:', error);
       return null;
     }
   }
@@ -183,7 +226,6 @@ export class StorageService {
         const typeUser = localStorage.getItem('type_of_user');
         return typeUser ? JSON.parse(typeUser) : null;
     } catch (error) {
-        console.error('Error al obtener tipo de usuario:', error);
         return null;
     }
   }
@@ -209,8 +251,12 @@ export class StorageService {
       localStorage.removeItem(this.USER_ADDRESS_KEY);
       localStorage.removeItem(this.PROFESSIONAL_KEY);
       localStorage.removeItem(this.COMPANY_KEY);
+      localStorage.removeItem(this.MESSAGE_ADDRESS_KEY);
+      localStorage.removeItem(this.APPLICANT_ADDRESS_KEY);
+
+      this.addressSubject.next(null);
     } catch (error) {
-      console.error('Error al limpiar localStorage:', error);
+      console.error(error);
     }
   }
 
@@ -218,7 +264,7 @@ export class StorageService {
     try {
       localStorage.removeItem(this.USER_KEY);
     } catch (error) {
-      console.error('Error al limpiar usuario:', error);
+      console.error(error);
     }
   }
 }

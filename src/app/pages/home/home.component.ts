@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { HeroComponent } from '../../components/hero/hero.component';
-
 import { StorageService } from '../../services/storage.service';
+
+// Importación de todos los componentes necesarios
+import { HeroComponent } from '../../components/hero/hero.component';
 import { ActiveProfiles } from '../../components/active-profiles/active-profiles';
 import { PendingOffers } from '../../components/pending-offers/pending-offers';
 import { ProfessionalCta } from '../../components/professional-cta/professional-cta';
@@ -33,7 +34,7 @@ import { HeroProfessional } from '../../components/hero-professional/hero-profes
     LoadingScreen,
     HeroSolicitante,
     HeroProfessional,
-],
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -52,8 +53,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadUserView();
-    this.simulateLoading();
+    this.isLoading = true;
+
+    setTimeout(() => {
+      this.loadUserView();
+
+      this.simulateLoading();
+    }, 100);
 
     this.viewCheckInterval = setInterval(() => {
       this.checkViewChange();
@@ -77,13 +83,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (typeOfUser) {
       this.userType = typeOfUser.keyType;
     }
-
   }
 
   checkViewChange(): void {
     const savedView = localStorage.getItem('current_view');
     if (savedView && savedView !== this.lastView) {
       console.log('Cambio de vista detectado:', savedView);
+
       this.isChangingView = true;
       this.lastView = savedView as 'applicant' | 'professional';
 
@@ -92,7 +98,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         setTimeout(() => {
           this.isChangingView = false;
-        }, 1500);
+        }, 800);
       }, 300);
     }
   }
@@ -100,10 +106,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   simulateLoading(): void {
     setTimeout(() => {
       this.isLoading = false;
-    }, 2000); // 2 segundos
+    }, 2000);
   }
-
-
 
   startProfessionalRegistration(): void {
     if (this.storageService.isUserLoggedIn()) {

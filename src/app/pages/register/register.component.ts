@@ -390,6 +390,11 @@ onLocationSelected(location: LocationCoordinates): void {
           this.storageService.saveProfessional(response.data.professional);
         }
 
+        if( response.data.userAddress) {
+          this.storageService.saveApplicantAddress(response.data.userAddress);
+          this.storageService.saveMessageAddress('S');
+        }
+
         this.redirectBasedOnUserType(response.data);
       },
       error: (error) => {

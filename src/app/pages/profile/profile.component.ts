@@ -15,7 +15,7 @@ import { User, Applicant, UserAddress } from '../../interface/auth.interface';
 export class ProfileComponent implements OnInit {
   user: User | null = null;
   applicant: Applicant | null = null;
-  addresses: UserAddress[] = [];
+  addresses: UserAddress | null = null;
 
   activeTab: 'info' | 'addresses' | 'security' = 'info';
   isEditing: boolean = false;
@@ -96,7 +96,8 @@ export class ProfileComponent implements OnInit {
   }
 
   getDefaultAddress(): UserAddress | null {
-    return this.addresses.find(addr => addr.isDefault) || this.addresses[0] || null;
+    if (!this.addresses || !Array.isArray(this.addresses)) return null;
+    return this.addresses.find(addr => addr.isDefault) || null;
   }
 
   formatDate(date: Date | undefined): string {

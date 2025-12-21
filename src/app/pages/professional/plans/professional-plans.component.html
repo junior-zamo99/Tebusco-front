@@ -20,13 +20,11 @@
       <div class="bg-[#111625] p-1 rounded-full inline-flex border border-slate-800 mx-auto md:mx-0" *ngIf="availableIntervals.length > 0">
         <button *ngFor="let interval of availableIntervals"
                 (click)="selectInterval(interval)"
-                class="px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 relative overflow-hidden"
-                [class.text-white]="selectedInterval === interval"
-                [class.text-slate-400]="selectedInterval !== interval"
-                [class.shadow-lg]="selectedInterval === interval">
+                class="px-4 py-2 rounded-full text-xs font-bold transition-all duration-200"
+                [ngClass]="selectedInterval === interval
+                  ? 'bg-primary text-gray-900 shadow-md'
+                  : 'text-slate-400 hover:text-white bg-transparent'">
 
-          <div *ngIf="selectedInterval === interval"
-               class="absolute inset-0 bg-primary rounded-full -z-10 animate-fade-in"></div>
           {{ intervalLabels[interval] }}
         </button>
       </div>
@@ -54,18 +52,18 @@
 
         <div *ngIf="isRecommended(plan)"
              class="absolute -top-3 left-0 right-0 mx-auto w-max px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg transform transition-all"
-             [ngClass]="isPlanSelected(plan) ? 'bg-white text-primary' : 'bg-primary text-white'">
+             [ngClass]="isPlanSelected(plan) ? 'bg-white text-gray-900' : 'bg-primary text-white'">
           Más Popular
         </div>
 
         <div class="mb-4">
           <h3 class="text-lg font-bold mb-1"
-              [class.text-white]="isPlanSelected(plan)"
+              [class.text-gray-900]="isPlanSelected(plan)"
               [class.text-slate-200]="!isPlanSelected(plan)">
             {{ plan.name }}
           </h3>
           <p class="text-xs leading-relaxed min-h-[32px]"
-             [class.text-white/80]="isPlanSelected(plan)"
+             [class.text-gray-800]="isPlanSelected(plan)"
              [class.text-slate-400]="!isPlanSelected(plan)">
             {{ plan.description }}
           </p>
@@ -74,43 +72,43 @@
         <div class="mb-6" *ngIf="getIntervalForPlan(plan) as interval">
           <div class="flex items-baseline gap-1">
             <span class="text-3xl font-black tracking-tight"
-                  [class.text-white]="isPlanSelected(plan)">
+                  [class.text-gray-900]="isPlanSelected(plan)">
               {{ interval.pricePerPeriod }}
             </span>
             <span class="text-base font-bold"
-                  [class.text-white/90]="isPlanSelected(plan)"
+                  [class.text-gray-800]="isPlanSelected(plan)"
                   [class.text-primary]="!isPlanSelected(plan)">
               {{ interval.currency }}
             </span>
           </div>
           <div class="text-[10px] font-medium mt-0.5"
-               [class.text-white/70]="isPlanSelected(plan)"
+               [class.text-gray-700]="isPlanSelected(plan)"
                [class.text-slate-500]="!isPlanSelected(plan)">
              facturado {{ intervalLabels[selectedInterval] | lowercase }}
           </div>
 
           <div *ngIf="calculateSavings(plan, interval) as savings"
                class="mt-2 inline-block px-2 py-0.5 rounded-full text-[10px] font-bold"
-               [ngClass]="isPlanSelected(plan) ? 'bg-black/20 text-white' : 'bg-green-500/10 text-green-400'">
-            Ahorras {{ savings.percentage }}%
+               [ngClass]="isPlanSelected(plan) ? 'bg-white/30 text-gray-900' : 'bg-green-500/10 text-green-400'">
+             Ahorras {{ savings.percentage }}%
           </div>
         </div>
 
         <div class="h-px w-full mb-6"
-             [ngClass]="isPlanSelected(plan) ? 'bg-white/20' : 'bg-slate-800'"></div>
+             [ngClass]="isPlanSelected(plan) ? 'bg-black/10' : 'bg-slate-800'"></div>
 
         <div class="flex-1 space-y-3 mb-6" *ngIf="getIntervalForPlan(plan) as interval">
            <ng-container *ngIf="interval.features.length > 0">
             <div *ngFor="let feature of interval.features" class="flex items-start gap-2">
               <div class="flex-shrink-0 mt-0.5 p-0.5 rounded-full"
-                   [ngClass]="isPlanSelected(plan) ? 'bg-white/20' : 'bg-primary/10'">
-                <svg class="w-3 h-3" [ngClass]="isPlanSelected(plan) ? 'text-white' : 'text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   [ngClass]="isPlanSelected(plan) ? 'bg-black/10' : 'bg-primary/10'">
+                <svg class="w-3 h-3" [ngClass]="isPlanSelected(plan) ? 'text-gray-900' : 'text-primary'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
 
               <div class="text-xs font-medium"
-                   [class.text-white]="isPlanSelected(plan)"
+                   [class.text-gray-900]="isPlanSelected(plan)"
                    [class.text-slate-300]="!isPlanSelected(plan)">
                 <span *ngIf="feature.limitValue && !feature.isUnlimited" class="font-bold mr-1">
                   {{ feature.limitValue }}
@@ -121,8 +119,9 @@
             </div>
            </ng-container>
 
-           <div *ngIf="interval.features.length === 0" class="flex items-center gap-2 opacity-80">
-             <div class="flex-shrink-0 p-0.5 rounded-full bg-white/10">
+           <div *ngIf="interval.features.length === 0" class="flex items-center gap-2 opacity-80"
+                [class.text-gray-900]="isPlanSelected(plan)">
+             <div class="flex-shrink-0 p-0.5 rounded-full" [ngClass]="isPlanSelected(plan) ? 'bg-black/10' : 'bg-white/10'">
                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/></svg>
              </div>
              <span class="text-xs">Paquete completo incluido</span>
@@ -133,7 +132,7 @@
           class="w-full py-3 rounded-xl font-bold text-xs tracking-wide transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
           [disabled]="!getIntervalForPlan(plan)"
           [ngClass]="isPlanSelected(plan)
-            ? 'bg-white text-primary shadow-lg'
+            ? 'bg-white text-gray-900 shadow-lg'
             : 'bg-primary text-white hover:bg-orange-600 shadow-lg shadow-orange-500/20'">
           {{ isPlanSelected(plan) ? 'Seleccionado' : 'Comenzar Ahora' }}
         </button>

@@ -1,0 +1,130 @@
+<div class="p-6">
+
+  <div class="mb-6 p-4 bg-background border border-border rounded-xl flex justify-between items-start gap-3 shadow-sm">
+    <div>
+      <p class="text-[10px] text-text-light uppercase tracking-wider font-bold mb-1.5">Categorías Seleccionadas</p>
+      <div class="flex flex-wrap gap-2">
+        <span *ngFor="let cat of selectedCategories" class="px-2.5 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-lg border border-primary/20">
+          {{ cat.name }}
+        </span>
+      </div>
+    </div>
+    <button type="button" (click)="back.emit()" class="text-xs font-medium text-text-light hover:text-primary transition-colors flex items-center gap-1 mt-1">
+      <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+      Editar
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+
+    <div class="form-group">
+      <label class="block text-xs font-semibold text-text mb-1.5">Título de la solicitud <span class="text-danger">*</span></label>
+      <input
+        type="text"
+        formControlName="title"
+        placeholder="Ej: Reparación de tubería urgente en cocina"
+        class="w-full px-4 py-2.5 rounded-lg border bg-background text-text text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-light/50 shadow-sm"
+        [class.border-danger]="isFieldInvalid('title')"
+        [class.border-border]="!isFieldInvalid('title')"
+      >
+      <p *ngIf="isFieldInvalid('title')" class="text-danger text-[10px] mt-1">Mínimo 5 caracteres.</p>
+    </div>
+
+    <div class="form-group">
+      <label class="block text-xs font-semibold text-text mb-1.5">Descripción detallada <span class="text-danger">*</span></label>
+      <textarea
+        formControlName="description"
+        rows="3"
+        placeholder="Describe el problema, materiales necesarios..."
+        class="w-full px-4 py-2.5 rounded-lg border bg-background text-text text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-light/50 resize-none shadow-sm"
+        [class.border-danger]="isFieldInvalid('description')"
+        [class.border-border]="!isFieldInvalid('description')"
+      ></textarea>
+      <p *ngIf="isFieldInvalid('description')" class="text-danger text-[10px] mt-1">Mínimo 10 caracteres.</p>
+    </div>
+
+    <div class="p-4 bg-background rounded-xl border border-border">
+      <div class="flex justify-between items-center mb-2">
+        <label class="block text-xs font-semibold text-text">Ubicación del trabajo <span class="text-danger">*</span></label>
+        <span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">Mueve el pin rojo</span>
+      </div>
+      <div class="rounded-lg overflow-hidden border border-border mb-3 shadow-sm">
+        <app-map-location-picker
+          [initialLat]="initialLat"
+          [initialLng]="initialLng"
+          [height]="'250px'"
+          [showReverseGeocode]="true"
+          (locationSelected)="onMapLocationSelected($event)">
+        </app-map-location-picker>
+      </div>
+      <div class="relative">
+        <svg class="absolute top-2.5 left-3 h-4 w-4 text-text-light pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <input type="text" formControlName="address" placeholder="Dirección exacta"
+          class="w-full pl-9 pr-4 py-2 rounded-lg border bg-surface text-text text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+          [class.border-danger]="isFieldInvalid('address')"
+          [class.border-border]="!isFieldInvalid('address')">
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-xs font-semibold text-text mb-2">Nivel de Urgencia <span class="text-danger">*</span></label>
+
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        <button
+          *ngFor="let level of urgencyLevels"
+          type="button"
+          (click)="setUrgency(level.value)"
+          class="flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 group"
+          [ngClass]="form.get('urgency')?.value === level.value ? level.activeClasses + ' shadow-md scale-[1.02]' : level.classes + ' bg-background opacity-80 hover:opacity-100'"
+        >
+          <span class="text-sm font-bold">{{ level.label }}</span>
+          <span class="text-[10px] opacity-80 mt-0.5 text-center leading-tight">{{ level.desc }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs font-semibold text-text mb-1.5">Presupuesto (Bs)</label>
+        <div class="relative">
+          <span class="absolute left-3 top-2 text-text-light text-sm font-semibold pointer-events-none">Bs.</span>
+          <input
+            type="number"
+            formControlName="budget"
+            placeholder="0.00"
+            class="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-background text-text text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-light/50"
+          >
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <div class="flex-1">
+          <label class="block text-xs font-semibold text-text mb-1.5">Fecha</label>
+          <input type="date" formControlName="dateNeeded"
+            class="w-full px-2 py-2 rounded-lg border border-border bg-background text-text text-sm focus:border-primary outline-none">
+        </div>
+        <div class="flex-1">
+          <label class="block text-xs font-semibold text-text mb-1.5">Hora</label>
+          <input type="time" formControlName="hourPreferred"
+            class="w-full px-2 py-2 rounded-lg border border-border bg-background text-text text-sm focus:border-primary outline-none">
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-6 flex justify-end gap-3 border-t border-border mt-4">
+      <button type="button" (click)="back.emit()" class="px-5 py-2.5 border border-border rounded-lg text-text-light hover:bg-background hover:text-text transition-all duration-200 text-xs font-semibold">
+        Atrás
+      </button>
+
+      <button type="submit" [disabled]="form.invalid || isSubmitting"
+        class="px-6 py-2.5 bg-primary text-white rounded-lg font-semibold text-xs shadow-lg shadow-primary/20 hover:bg-primary-dark hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center gap-2">
+        <span *ngIf="isSubmitting" class="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+        {{ isSubmitting ? 'Publicando...' : 'Publicar Solicitud' }}
+      </button>
+    </div>
+
+  </form>
+</div>

@@ -2,11 +2,16 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnIni
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SearchService } from '../../services/search.service';
-import { GeoSearchService } from '../../services/geo-search.service';
-import { SearchGeneralData, CategorySearchResult, ProviderSearchResult } from '../../interface/search.interface';
-import { GeoSearchData } from '../../interface/geo-search.interface';
-import { Subject, debounceTime, distinctUntilChanged, switchMap, catchError, of } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { Subject, debounceTime, distinctUntilChanged, switchMap, catchError, of } from 'rxjs';
+
+// Importamos las interfaces correctas
+import {
+  SearchGeneralData,
+  CategorySearchResult,
+  ProviderSearchResult,
+  SearchQuery
+} from '../../interface/search.interface';
 
 @Component({
   selector: 'app-hero-search',
@@ -22,19 +27,21 @@ export class HeroSearch implements OnChanges, OnInit {
   searchResults: SearchGeneralData | null = null;
   isLoading: boolean = false;
   error: string | null = null;
-  useGeoSearch: boolean = true;
+
+
+  userCity: string = 'Santa Cruz de la Sierra';
+  userLat?: number;
+  userLng?: number;
 
   private searchSubject = new Subject<string>();
 
   constructor(
     private searchService: SearchService,
-    private geoSearchService: GeoSearchService,
     private router: Router,
     private authService: AuthService,
   ) {
     this.searchSubject.pipe(
       debounceTime(300),
-      distinctUntilChanged(),
       switchMap(term => {
         if (!term || term.trim().length < 2) {
           return of(null);
@@ -42,25 +49,21 @@ export class HeroSearch implements OnChanges, OnInit {
         this.isLoading = true;
         this.error = null;
 
-        if (this.useGeoSearch) {
-          return this.geoSearchService.quickSearch(term).pipe(
-            catchError(error => {
-              console.warn('Geo-search failed, falling back to regular search:', error);
-              return this.searchService.searchGeneral(term);
-            }),
-            catchError(error => {
-              this.error = 'Error al buscar. Intenta nuevamente.';
-              return of(null);
-            })
-          );
-        } else {
-          return this.searchService.searchGeneral(term).pipe(
-            catchError(error => {
-              this.error = 'Error al buscar. Intenta nuevamente.';
-              return of(null);
-            })
-          );
-        }
+        const query: SearchQuery = {
+            term: term,
+            city: this.userCity,
+            lat: this.userLat,
+            lng: this.userLng
+        };
+
+        return this.searchService.searchGeneral(query).pipe(
+          catchError(error => {
+            console.error('Error en búsqueda:', error);
+            this.error = 'Error al buscar. Intenta nuevamente.';
+            this.isLoading = false; // Apagamos loading en error
+            return of(null);
+          })
+        );
       })
     ).subscribe(response => {
       this.isLoading = false;
@@ -73,9 +76,25 @@ export class HeroSearch implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {
-    if (this.useGeoSearch) {
-      this.geoSearchService.getUserLocation();
+    const currentUserAddres = this.authService.currentAddresses();
+    if (currentUserAddres && currentUserAddres.city) {
+        this.userCity = currentUserAddres.city;
     }
+
+    // 2. OBTENER GPS (Si el navegador lo permite)
+    this.searchService.getCurrentPosition()
+      .then(pos => {
+        this.userLat = pos.coords.latitude;
+        this.userLng = pos.coords.longitude;
+
+        // Si ya había un término escrito, relanzamos la búsqueda con la nueva precisión GPS
+        if (this.searchTerm && this.searchTerm.length >= 2) {
+            this.searchSubject.next(this.searchTerm);
+        }
+      })
+      .catch(() => {
+        console.log('Ubicación GPS no disponible, usando ciudad base:', this.userCity);
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -112,10 +131,8 @@ export class HeroSearch implements OnChanges, OnInit {
     }
 
     if (provider.type === 'professional') {
-      const categoryIds = provider.categories.map(cat => cat.id);
-      this.router.navigate(['/professionals', provider.id], {
-        queryParams: { categoryIds: categoryIds.join(',') }
-      });
+      // Simplificado: Solo enviamos el ID para ir al perfil
+      this.router.navigate(['/professionals', provider.id]);
     } else {
       this.router.navigate(['/companies', provider.id]);
     }
@@ -128,6 +145,7 @@ export class HeroSearch implements OnChanges, OnInit {
       this.closeResults();
       return;
     }
+    // Implementar navegación a página de resultados completa si lo deseas
   }
 
   closeResults(): void {
@@ -141,23 +159,12 @@ export class HeroSearch implements OnChanges, OnInit {
     return `${provider.name.charAt(0)}${provider.lastName?.charAt(0) || ''}`.toUpperCase();
   }
 
-  hasLocationMatch(provider: any): boolean {
-    return provider && typeof provider === 'object' && 'locationMatch' in provider;
-  }
-
-  getLocationMatch(provider: any): any {
-    return this.hasLocationMatch(provider) ? provider.locationMatch : null;
-  }
-
+  // Normalizamos para asegurar que la estructura sea segura para el template
   private normalizeSearchResults(data: any): SearchGeneralData {
-    if (data.categories && data.providers) {
-      return data as SearchGeneralData;
-    }
-
     return {
       query: data.query || '',
       totalResults: data.totalResults || 0,
-      executionTime: '0ms',
+      executionTime: data.executionTime || '0ms',
       categories: data.categories || { total: 0, results: [] },
       providers: data.providers || { total: 0, professionals: 0, companies: 0, results: [] },
       suggestions: data.suggestions || []

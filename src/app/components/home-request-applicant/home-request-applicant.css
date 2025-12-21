@@ -1,0 +1,43 @@
+/* Animación de entrada de la lista */
+.animate-fadeIn {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Efecto Hover para las tarjetas */
+.card-request {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-request:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  background-color: #1a2542; /* Un azul un poco más claro al pasar el mouse */
+}
+.card-request:active {
+  transform: scale(0.98) translateY(-4px);
+  transition: transform 0.1s;
+}
+/* Efecto de brillo de fondo al hover */
+.card-request::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at top right, rgba(255, 152, 0, 0.05), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+.card-request:hover::after {
+  opacity: 1;
+}
+
+/* Ocultar scrollbar si es necesario */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

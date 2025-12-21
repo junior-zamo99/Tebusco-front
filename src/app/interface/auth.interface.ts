@@ -87,6 +87,6 @@ export interface MeResponse {
     user: User;
     applicant: Applicant;
     professional: Professional;
-    userAddresses: UserAddress[];
+    userAddresses: UserAddress;
   };
 }

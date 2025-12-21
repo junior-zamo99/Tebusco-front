@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { ProfessionalPublicService } from '../../services/professional-public.service';
+import { ProfileViewsService } from '../../services/profile-views.service';
+import { StorageService } from '../../services/storage.service';
+
 import { PublicProfessionalWithSelectedProfiles } from '../../interface/professional-public.interface';
 import { LocationData, MapLocationViewer } from '../map-location-viewer/map-location-viewer';
-import { MapLocationPickerComponent } from '../map-location-picker/map-location-picker';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -19,7 +22,7 @@ export class ProfessionalDetailComponent implements OnInit {
   error: string | null = null;
   showContactModal = false;
 
-  professionalId! : number;
+  professionalId!: number;
   categoryIds: number[] = [];
   backendUrl = environment.backendUrl;
   locationData: LocationData | null = null;
@@ -27,19 +30,22 @@ export class ProfessionalDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private professionalService: ProfessionalPublicService
+    private professionalService: ProfessionalPublicService,
+    private profileViewsService: ProfileViewsService,
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.professionalId = +params['id'];
+      this.trackView();
 
       this.route.queryParams.subscribe(queryParams => {
         if (queryParams['categoryIds']) {
           this.categoryIds = queryParams['categoryIds']
             .split(',')
             .map((id: string) => +id)
-            .filter((id: number) => ! isNaN(id));
+            .filter((id: number) => !isNaN(id));
         }
 
         if (this.categoryIds.length > 0) {
@@ -51,6 +57,28 @@ export class ProfessionalDetailComponent implements OnInit {
     });
   }
 
+  private trackView(): void {
+    if (!this.storageService.isUserLoggedIn()) {
+      return;
+    }
+
+    const applicantData = this.storageService.getApplicant();
+
+    if (applicantData) {
+      this.profileViewsService.registerView(this.professionalId).subscribe({
+        next: () => {
+          console.log('👀 Vista de perfil registrada correctamente');
+        },
+        error: (err) => {
+          console.warn('No se pudo registrar la vista:', err);
+        }
+      });
+    } else {
+      console.log('El usuario actual no es un Applicant, no se registra la vista.');
+    }
+  }
+
+
   loadProfessionalWithCategories(): void {
     this.loading = true;
     this.error = null;
@@ -58,11 +86,11 @@ export class ProfessionalDetailComponent implements OnInit {
     this.professionalService.getProfessionalWithCategories(
       this.professionalId,
       this.categoryIds
-    ). subscribe({
+    ).subscribe({
       next: (response) => {
         if (response.success) {
           this.professional = response.data;
-          this. prepareLocationData();
+          this.prepareLocationData();
           this.loading = false;
         } else {
           this.error = 'No se pudo cargar la información del profesional';
@@ -71,7 +99,7 @@ export class ProfessionalDetailComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading professional:', err);
-        this. error = 'Error al cargar los datos del profesional';
+        this.error = 'Error al cargar los datos del profesional';
         this.loading = false;
       }
     });
@@ -83,7 +111,7 @@ export class ProfessionalDetailComponent implements OnInit {
 
     this.professionalService.getProfessionalById(this.professionalId).subscribe({
       next: (response) => {
-        if (response. success) {
+        if (response.success) {
           const data = response.data;
           this.professional = {
             id: data.id,
@@ -92,6 +120,7 @@ export class ProfessionalDetailComponent implements OnInit {
             email: '',
             phone: '',
             isVerified: data.isVerified,
+            isPromocional: data.isPromocional,
             location: data.location,
             profiles: data.categories,
             subscription: data.subscription,
@@ -107,7 +136,7 @@ export class ProfessionalDetailComponent implements OnInit {
         }
       },
       error: (err) => {
-        console. error('Error loading professional:', err);
+        console.error('Error loading professional:', err);
         this.error = 'Error al cargar los datos del profesional';
         this.loading = false;
       }
@@ -115,15 +144,15 @@ export class ProfessionalDetailComponent implements OnInit {
   }
 
   private prepareLocationData(): void {
-    if (this.professional?. location && this.professional. location.lat && this.professional.location.lng) {
+    if (this.professional?.location && this.professional.location.lat && this.professional.location.lng) {
       this.locationData = {
-        lat: this. professional.location.lat,
-        lng: this.professional.location. lng,
+        lat: +this.professional.location.lat,
+        lng: +this.professional.location.lng,
         city: this.professional.location.city,
-        state: this.professional.location.state ??  undefined,
+        state: this.professional.location.state ?? undefined,
         country: this.professional.location.country,
-        address: this.professional.location.address ??  undefined,
-        fullAddress: this.professional.location. fullAddress ?? undefined,
+        address: this.professional.location.address ?? undefined,
+        fullAddress: this.professional.location.fullAddress ?? undefined,
         label: this.professional.location.label
       };
     }
@@ -132,7 +161,7 @@ export class ProfessionalDetailComponent implements OnInit {
   getInitials(fullName: string): string {
     const names = fullName.split(' ');
     if (names.length >= 2) {
-      return `${names[0]. charAt(0)}${names[1].charAt(0)}`. toUpperCase();
+      return `${names[0].charAt(0)}${names[1].charAt(0)}`.toUpperCase();
     }
     return fullName.substring(0, 2).toUpperCase();
   }
@@ -146,7 +175,7 @@ export class ProfessionalDetailComponent implements OnInit {
   }
 
   closeContactModal(): void {
-    this. showContactModal = false;
+    this.showContactModal = false;
   }
 
   openLink(url: string): void {
@@ -156,7 +185,7 @@ export class ProfessionalDetailComponent implements OnInit {
   }
 
   copyToClipboard(text: string, type: string): void {
-    navigator.clipboard.writeText(text). then(() => {
+    navigator.clipboard.writeText(text).then(() => {
       console.log(`${type} copiado al portapapeles: ${text}`);
     });
   }
@@ -165,22 +194,21 @@ export class ProfessionalDetailComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-
   get professionalInfo() {
     if (!this.professional) return null;
 
     return {
-      whatsappNumber: (this.professional as any).professional?. whatsappNumber,
+      whatsappNumber: (this.professional as any).professional?.whatsappNumber,
       websiteUrl: (this.professional as any).professional?.websiteUrl,
-      facebookProfile: (this.professional as any). professional?.facebookProfile,
+      facebookProfile: (this.professional as any).professional?.facebookProfile,
       instagramProfile: (this.professional as any).professional?.instagramProfile,
       linkedinProfile: (this.professional as any).professional?.linkedinProfile,
-      youtubeChannel: (this.professional as any). professional?.youtubeChannel,
-      businessEmail: (this.professional as any). professional?.businessEmail,
+      youtubeChannel: (this.professional as any).professional?.youtubeChannel,
+      businessEmail: (this.professional as any).professional?.businessEmail,
     };
   }
 
-  photoUrl(){
+  photoUrl() {
     return this.backendUrl + this.professional?.photoUrl;
   }
 
@@ -192,11 +220,8 @@ export class ProfessionalDetailComponent implements OnInit {
     }
 
     const profName = this.professional.fullName || 'Profesional';
-
     const profiles = this.professional.profiles || [];
     let contextMessage = '';
-
-    console.log("son perfiles",profiles);
 
     if (profiles.length === 1) {
       const categoryName = profiles[0].categoryName;
@@ -205,9 +230,7 @@ export class ProfessionalDetailComponent implements OnInit {
       contextMessage = `, necesito tus servicios`;
     }
 
-
-    const message = `Hola *${profName}*, te vi en la app *TEBUSCO* ${contextMessage}.¿Podrías darme más información?`;
-
+    const message = `Hola *${profName}*, te vi en la app *TEBUSCO* ${contextMessage}. ¿Podrías darme más información?`;
     const url = this.createWhatsAppLink(info.whatsappNumber, message);
 
     window.open(url, '_blank');

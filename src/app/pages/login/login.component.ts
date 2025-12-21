@@ -44,31 +44,46 @@ export class LoginComponent {
 
     this.isLoading.set(true);
 
-    this.authService.login(this.loginData).subscribe({
-      next: (response) => {
-        this.isLoading.set(false);
-        console.log('✅ Login exitoso', response);
+  this.authService.login(this.loginData).subscribe({
+  next: (response) => {
+    this.isLoading. set(false);
 
-        this.storageService.clearAll();
-        const user = { ...response.data.user, phone: response.data.user.phone || '' };
-        this.storageService.saveUser(user);
+    this.storageService.clearAll();
 
-        if (response.data.applicant) {
-          this.storageService.saveApplicant(response.data.applicant);
-        }
+    const user = { ... response.data.user, phone: response.data.user.phone || '' };
+    this.storageService.saveUser(user);
 
-        if (response.data.professional) {
-          this.storageService.saveProfessional(response.data.professional);
-        }
 
-        this.redirectBasedOnUserType(response.data);
-      },
-      error: (error) => {
-        this.isLoading.set(false);
-        this.errorMessage.set(error.error?.message || 'Error al iniciar sesión');
-        console.error('❌ Error en login:', error);
+    if (response.data.applicant) {
+      this.storageService.saveApplicant(response. data.applicant);
+    }
+
+
+    if (response.data. professional) {
+      console.log('🔄 Guardando professional en StorageService');
+      this.storageService.saveProfessional(response.data.professional);
+    }
+
+    if (response.data.userAddress) {
+      this.storageService.saveUserAddress(response.data.userAddress);
+
+      const verificacion = this.storageService.getUserAddress();
+
+      if (! verificacion) {
+        console.error('❌ ERROR: UserAddress NO se guardó correctamente! ');
       }
-    });
+    } else {
+      console.warn('⚠️ No hay userAddress en la respuesta');
+    }
+
+    this.redirectBasedOnUserType(response.data);
+  },
+  error: (error) => {
+    this.isLoading.set(false);
+    this.errorMessage. set(error.error?.message || 'Error al iniciar sesión');
+    console.error('❌ Error en login:', error);
+  }
+});
   }
 
 

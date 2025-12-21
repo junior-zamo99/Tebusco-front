@@ -1,49 +1,45 @@
-<div class="map-viewer-container relative">
-  <!-- Header Info -->
-  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-700 rounded-t-xl p-4 border-x border-t border-gray-200 dark:border-gray-600">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+<div class="map-viewer-container relative font-sans">
+  <div class="bg-gray-50 dark:bg-slate-800/50 rounded-t-lg p-2 border-x border-t border-gray-200 dark:border-slate-600">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-md bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       </div>
-      <div class="flex-1">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Ubicación del Profesional</h3>
-        <p *ngIf="location" class="text-sm text-gray-600 dark:text-gray-300">
+      <div class="flex-1 min-w-0">
+        <h3 class="text-xs font-bold text-gray-900 dark:text-slate-200 uppercase tracking-wide">Ubicación</h3>
+        <p *ngIf="location" class="text-xs text-gray-600 dark:text-slate-400 truncate">
           {{ location.city }}<span *ngIf="location.state">, {{ location.state }}</span>
         </p>
       </div>
     </div>
   </div>
 
-  <!-- Mapa -->
-  <div class="relative">
+  <div class="relative group">
     <div
       id="location-viewer-map"
       [style.height]="height"
-      class="w-full border-x border-b border-gray-200 dark:border-gray-600 rounded-b-xl overflow-hidden"
+      class="w-full border-x border-b border-gray-200 dark:border-slate-600 rounded-b-lg overflow-hidden bg-slate-100 dark:bg-slate-900"
     ></div>
 
-    <!-- ✅ Botón flotante para re-centrar -->
     <button
       *ngIf="showRecenterButton"
       (click)="recenterMap()"
-      class="absolute bottom-4 right-4 z-[1000]
-             bg-white dark:bg-gray-800
-             hover:bg-blue-50 dark:hover:bg-blue-900/30
-             text-blue-600 dark:text-blue-400
-             p-3 rounded-full shadow-lg
-             border-2 border-blue-200 dark:border-blue-700
-             transition-all duration-300
-             hover:scale-110 hover:shadow-xl
-             group
-             animate-slideIn"
+      class="absolute bottom-2 right-2 z-[1000]
+             bg-white dark:bg-slate-700
+             hover:bg-blue-50 dark:hover:bg-blue-600
+             text-blue-600 dark:text-blue-100
+             p-2 rounded-lg shadow-md
+             border border-blue-100 dark:border-slate-600
+             transition-all duration-200
+             hover:scale-105
+             flex items-center justify-center"
       title="Volver a la ubicación"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="h-5 w-5 group-hover:rotate-180 transition-transform duration-500"
+        class="h-4 w-4 transition-transform duration-500 hover:rotate-180"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -54,15 +50,14 @@
     </button>
   </div>
 
-  <!-- Dirección completa (opcional) -->
-  <div *ngIf="showFullAddress && location?.fullAddress" class="mt-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-xl p-4">
-    <div class="flex items-start gap-3">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <div *ngIf="showFullAddress && location?.fullAddress" class="mt-2 bg-blue-50 dark:bg-slate-700/30 border border-blue-100 dark:border-slate-600 rounded-lg p-2">
+    <div class="flex items-start gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <div>
-        <p class="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-1">Dirección completa</p>
-        <p class="text-sm text-blue-800 dark:text-blue-400">{{ location.fullAddress }}</p>
+      <div class="min-w-0">
+        <p class="text-[10px] font-bold text-blue-900 dark:text-slate-300 uppercase mb-0.5">Dirección exacta</p>
+        <p class="text-xs text-blue-800 dark:text-slate-400 leading-snug break-words">{{ location.fullAddress }}</p>
       </div>
     </div>
   </div>

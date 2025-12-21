@@ -1,14 +1,16 @@
-import { Component, OnInit, computed } from '@angular/core';
+import { Component, OnInit, AfterViewInit, computed } from '@angular/core'; // 1. Importar AfterViewInit
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router'; // Importar Router
+import { Router, RouterLink } from '@angular/router';
 import { HeroComponent } from '../../components/hero/hero.component';
 import { CategoriesCarouselComponent } from '../../components/categories-carousel/categories-carousel';
 import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
-
-// IMPORTAR TUS SERVICIOS
 import { ProfessionalService } from '../../services/professional.service';
 import { StatusProfessionalService } from '../../services/statusProfessional.service';
+import { HomeHeroApplicant } from '../../components/home-hero-applicant/home-hero-applicant';
+import { AdsCarousel } from '../../components/ads-carousel/ads-carousel';
+import { HomeRequestApplicant } from '../../components/home-request-applicant/home-request-applicant';
+import { AddressDialogService } from '../../services/address-dialog.service';
 
 @Component({
   selector: 'app-applicant-home',
@@ -17,14 +19,18 @@ import { StatusProfessionalService } from '../../services/statusProfessional.ser
     CommonModule,
     RouterLink,
     HeroComponent,
-    CategoriesCarouselComponent
+    CategoriesCarouselComponent,
+    HomeHeroApplicant,
+    AdsCarousel,
+    HomeRequestApplicant
   ],
   templateUrl: './applicant-home.html',
   styleUrls: ['./applicant-home.css'],
 })
-export class ApplicantHome implements OnInit {
+// 2. Implementar la interfaz AfterViewInit
+export class ApplicantHome implements OnInit, AfterViewInit {
   userName: string = '';
-  isLoadingRedirect = false; // Para evitar doble clic
+  isLoadingRedirect = false;
 
   canBecomeProfessional = computed(() => this.authService.userType() === 1);
 
@@ -33,7 +39,8 @@ export class ApplicantHome implements OnInit {
     private authService: AuthService,
     private professionalService: ProfessionalService,
     private statusService: StatusProfessionalService,
-    private router: Router
+    private router: Router,
+    private addressDialogService: AddressDialogService
   ) {}
 
   ngOnInit(): void {
@@ -42,22 +49,52 @@ export class ApplicantHome implements OnInit {
   }
 
 
+  ngAfterViewInit(): void {
+
+    setTimeout(() => {
+      this.checkAddressModal();
+    }, 1500);
+  }
+
+  async checkAddressModal() {
+
+    if (this.isLoadingRedirect) return;
+
+    const messageStatus = this.storageService.getMessageAddress();
+
+    if (messageStatus !== 'S') {
+      const addressSelected = await this.addressDialogService.open();
+
+      if (addressSelected) {
+        this.storageService.saveMessageAddress('S');
+      } else {
+        this.storageService.saveMessageAddress('N');
+      }
+    }
+  }
+
   handleProfessionalRegistration() {
     if (this.isLoadingRedirect) return;
     this.isLoadingRedirect = true;
 
     this.professionalService.getMeComplete().subscribe({
       next: (response) => {
-
-        console.log('Usuario ya tiene registro previo, redirigiendo...');
         this.statusService.processRedirection(response);
         this.isLoadingRedirect = false;
       },
       error: (err) => {
-        console.log('Usuario nuevo, enviando a upgrade...');
         this.router.navigate(['/professional/upgrade']);
         this.isLoadingRedirect = false;
       }
     });
+  }
+
+  openAddressModalManual() {
+    console.log('Click recibido en el padre');
+    this.addressDialogService.open();
+  }
+
+  onNavigateCreateRequest(){
+    this.router.navigate(['applicant/request/create']);
   }
 }

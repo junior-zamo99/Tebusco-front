@@ -2,9 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  // ==========================================
-  // 1. RUTAS PÚBLICAS (Home, Auth, Landing)
-  // ==========================================
+
   {
     path: '',
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
@@ -41,15 +39,13 @@ export const routes: Routes = [
       },
     ]
   },
-  // Categorías públicas
+
   {
     path: 'categories',
     loadComponent: () => import('./pages/categories/categories.component').then(m => m.CategoriesComponent)
   },
 
-  // ==========================================
-  // 3. MÓDULO PRIVADO: PROFESIONALES
-  // ==========================================
+
   {
     path: 'professional',
     canActivate: [authGuard],
@@ -93,9 +89,7 @@ export const routes: Routes = [
     ]
   },
 
-  // ==========================================
-  // 4. MÓDULO PRIVADO: SOLICITANTES (Applicant)
-  // ==========================================
+
   {
     path: 'applicant',
     canActivate: [authGuard],
@@ -103,13 +97,22 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () => import('./pages/applicant-home/applicant-home').then(m => m.ApplicantHome),
-      }
+      },
+      {
+        path: 'requests',
+        loadComponent: () => import('./pages/request/request-applicant/request-applicant').then(m => m.RequestApplicant)
+      },
+      {
+        path: 'request/create',
+        loadComponent: () => import('./pages/request/request-create/request-create').then(m => m.RequestCreate)
+      },
+      {
+        path: 'request/:id',
+        loadComponent: () => import('./pages/request/request-view/request-view').then(m => m.RequestView)
+      },
     ]
   },
 
-  // ==========================================
-  // 5. MÓDULO PRIVADO: PERFIL Y EXTRAS
-  // ==========================================
   {
     path: '',
     canActivate: [authGuard],
@@ -134,7 +137,7 @@ export const routes: Routes = [
         path: 'configure-category',
         loadComponent: () => import('./pages/configure-category/configure-category.component').then(m => m.ConfigureCategoryComponent)
       },
-      // Grupo Extras
+
       {
         path: 'extras',
         children: [
@@ -151,11 +154,9 @@ export const routes: Routes = [
     ]
   },
 
-  // ==========================================
-  // 6. WILDCARD (404)
-  // ==========================================
+
   {
     path: '**',
-    redirectTo: '' // O a un componente de 'Page Not Found'
+    redirectTo: ''
   }
 ];

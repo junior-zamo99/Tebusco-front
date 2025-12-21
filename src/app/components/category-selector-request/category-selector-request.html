@@ -1,0 +1,97 @@
+<div class="p-6">
+
+  <div class="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6 border-b border-border pb-4">
+
+    <div class="flex items-center gap-2 overflow-x-auto whitespace-nowrap w-full sm:w-auto scrollbar-hide text-sm">
+      <button
+        *ngIf="currentPath.length > 0"
+        (click)="goBack()"
+        class="flex items-center text-primary hover:bg-primary/10 px-2 py-1 rounded-md font-medium transition-colors mr-1"
+      >
+        <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+        Atrás
+      </button>
+
+      <button (click)="resetNavigation()" class="text-text-light hover:text-primary px-1">Categorías</button>
+
+      <ng-container *ngFor="let item of currentPath">
+        <span class="text-border">/</span>
+        <span class="text-text font-semibold px-1">{{ item.name }}</span>
+      </ng-container>
+    </div>
+
+    <div class="relative w-full sm:w-64">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="filterCategories()"
+        placeholder="Buscar..."
+        class="w-full pl-9 pr-4 py-2 bg-background border border-border rounded-lg text-sm text-text focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-light/50"
+      >
+      <svg class="absolute left-3 top-2.5 h-4 w-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center py-12">
+    <div class="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin"></div>
+  </div>
+
+  <div *ngIf="!isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6 min-h-[300px] content-start">
+
+    <button
+      *ngFor="let cat of filteredCategories"
+      (click)="handleCategoryClick(cat)"
+      class="group relative bg-card-bg border rounded-xl p-4 text-left transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 flex flex-col h-full"
+      [ngClass]="{
+        'border-primary bg-primary/5 ring-1 ring-primary': isSelected(cat),
+        'border-border hover:border-primary/50': !isSelected(cat)
+      }"
+    >
+      <div class="flex justify-between items-start mb-2">
+        <span class="text-2xl filter drop-shadow-sm">{{ getIcon(cat) }}</span>
+
+        <div *ngIf="cat.children && cat.children.length > 0" class="text-text-light group-hover:text-primary transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </div>
+
+        <div *ngIf="!cat.children || cat.children.length === 0">
+          <div class="w-5 h-5 rounded border flex items-center justify-center transition-colors"
+            [ngClass]="isSelected(cat) ? 'bg-primary border-primary' : 'border-border bg-background'">
+            <svg *ngIf="isSelected(cat)" class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="font-bold text-text text-sm mb-1 group-hover:text-primary transition-colors">{{ cat.name }}</h3>
+      <p class="text-xs text-text-light line-clamp-2 mb-2 flex-1">{{ cat.description || 'Selecciona para ver más detalles.' }}</p>
+
+      <span *ngIf="cat.children && cat.children.length > 0" class="text-[10px] text-primary font-medium bg-primary/10 px-2 py-0.5 rounded-md self-start">
+        {{ cat.children.length }} opciones
+      </span>
+    </button>
+
+    <div *ngIf="filteredCategories.length === 0" class="col-span-full flex flex-col items-center justify-center py-12 text-text-light/50">
+      <svg class="w-12 h-12 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <p class="text-sm">No se encontraron categorías</p>
+    </div>
+  </div>
+
+  <div class="flex justify-between items-center border-t border-border pt-4 mt-auto">
+    <div class="text-xs text-text-light">
+      <span *ngIf="tempSelectedCategories.length > 0" class="text-primary font-bold">
+        {{ tempSelectedCategories.length }} seleccionadas
+      </span>
+      <span *ngIf="tempSelectedCategories.length === 0">Selecciona al menos una especialidad</span>
+    </div>
+
+    <button
+      (click)="confirm()"
+      [disabled]="tempSelectedCategories.length === 0"
+      class="px-6 py-2 bg-primary text-white rounded-lg font-semibold text-xs shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+    >
+      Continuar
+    </button>
+  </div>
+</div>

@@ -1,115 +1,158 @@
-<!-- categories.component.html -->
+<div class="min-h-screen bg-background py-6 font-sans text-sm selection:bg-primary/30 selection:text-primary">
+  <div class="container-custom max-w-7xl mx-auto px-4">
 
-<div class="min-h-screen bg-background py-8">
-  <div class="container-custom">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-xl font-bold text-text tracking-tight">Categorías</h1>
+        <p class="text-xs text-text-light mt-0.5">Explora nuestros servicios profesionales</p>
+      </div>
 
-    <!-- Header (sin cambios) -->
-    <div class="mb-8">
-      <!-- ... tu header actual ... -->
-    </div>
-
-    <!-- Loading: Carga inicial -->
-    <div *ngIf="isLoading" class="flex items-center justify-center py-20">
-      <div class="text-center">
-        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto mb-4"></div>
-        <p class="text-text-light text-lg">Cargando categorías...</p>
+      <div class="relative w-full sm:w-64">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="h-4 w-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="filterCategories()"
+          placeholder="Buscar..."
+          class="w-full bg-card-bg border border-border rounded-lg pl-9 pr-4 py-2 text-xs text-text focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none placeholder-text-light/50"
+        >
+        <button
+          *ngIf="searchTerm"
+          (click)="searchTerm = ''; filterCategories()"
+          class="absolute inset-y-0 right-0 pr-3 flex items-center text-text-light hover:text-text transition-colors"
+        >
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
     </div>
 
-    <!-- Loading: Cargando subcategorías -->
-    <div *ngIf="!isLoading && isLoadingChildren">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="card animate-pulse">
-          <div class="w-full h-32 bg-gray-700 rounded-lg mb-4"></div>
-          <div class="space-y-3">
-            <div class="h-6 bg-gray-700 rounded w-3/4"></div>
-            <div class="h-4 bg-gray-700 rounded w-1/2"></div>
-            <div class="h-4 bg-gray-700 rounded w-full"></div>
-            <div class="h-4 bg-gray-700 rounded w-5/6"></div>
-          </div>
+    <nav *ngIf="selectedCategory || breadcrumb.length > 0" class="flex items-center gap-1 text-xs text-text-light mb-6 overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide animate-fadeIn">
+      <button
+        (click)="resetView()"
+        class="flex items-center gap-1.5 hover:text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-md transition-all duration-200"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+        </svg>
+        <span class="font-medium">Inicio</span>
+      </button>
+
+      <ng-container *ngFor="let cat of breadcrumb; let isLast = last">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-border flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+
+        <button
+          *ngIf="!isLast"
+          (click)="navigateToBreadcrumb(cat)"
+          class="hover:text-primary hover:bg-primary/10 px-2 py-1 rounded-md transition-all duration-200"
+        >
+          {{ cat.name }}
+        </button>
+
+        <span
+          *ngIf="isLast"
+          class="font-bold text-primary px-2.5 py-1 bg-primary/10 rounded-md border border-primary/20 flex items-center gap-1.5"
+        >
+          {{ cat.name }}
+        </span>
+      </ng-container>
+    </nav>
+
+    <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-20">
+      <div class="relative w-10 h-10">
+        <div class="absolute inset-0 rounded-full border-2 border-border"></div>
+        <div class="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+      </div>
+      <p class="text-text-light text-xs mt-3 animate-pulse">Cargando categorías...</p>
+    </div>
+
+    <div *ngIf="!isLoading && isLoadingChildren" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 animate-fadeIn">
+      <div *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" class="bg-card-bg rounded-lg border border-border p-3">
+        <div class="w-full h-20 bg-border/30 rounded-md mb-3 animate-pulse"></div>
+        <div class="space-y-2">
+          <div class="h-3 bg-border/30 rounded w-3/4 animate-pulse"></div>
+          <div class="h-2 bg-border/30 rounded w-1/2 animate-pulse"></div>
         </div>
       </div>
     </div>
 
-    <!-- Categories Grid/List -->
     <div *ngIf="!isLoading && !isLoadingChildren">
 
-      <!-- Grid View -->
-      <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div *ngIf="viewMode === 'grid'" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 animate-slideUp">
         <button
           *ngFor="let category of filteredCategories"
           (click)="selectCategory(category)"
-          class="card card-hover group text-left h-full"
+          class="group relative bg-card-bg hover:bg-card-bg-light border border-border hover:border-primary/40 rounded-lg p-3 text-left transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5 overflow-hidden w-full"
         >
-          <!-- Image -->
           <div
             *ngIf="category.imageUrl"
-            class="w-full h-48 mb-4 rounded-lg overflow-hidden bg-cover bg-center"
+            class="w-full h-24 mb-3 rounded-md overflow-hidden bg-cover bg-center relative shadow-inner"
             [style.background-image]="'url(' + category.imageUrl + ')'"
           >
-            <div class="w-full h-full bg-gradient-to-t from-dark-navy/80 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
           </div>
 
-          <!-- Icon -->
-          <div *ngIf="!category.imageUrl" class="flex items-center justify-center w-full h-32 mb-4 rounded-lg bg-gradient-to-br from-navy-blue to-dark-navy">
-            <span class="text-6xl">{{ getCategoryIcon(category) }}</span>
+          <div *ngIf="!category.imageUrl" class="flex items-center justify-center w-full h-20 mb-3 rounded-md bg-gradient-to-br from-background to-card-bg border border-border/50 group-hover:border-primary/20 transition-colors">
+            <span class="text-3xl filter drop-shadow-sm transform group-hover:scale-110 transition-transform duration-300">{{ getCategoryIcon(category) }}</span>
           </div>
 
-          <!-- Content -->
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex-1">
-              <h3 class="font-bold text-text text-lg group-hover:text-primary transition-colors mb-1">
+          <div class="flex items-start justify-between gap-2 mb-1">
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-text text-sm group-hover:text-primary transition-colors truncate leading-tight">
                 {{ category.name }}
               </h3>
-              <p class="text-xs text-text-light">
-                {{ category.childrenCount }} subcategoría{{ category.childrenCount !== 1 ? 's' : '' }}
-              </p>
+              <div class="flex items-center gap-1.5 mt-1">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium bg-background border border-border text-text-light group-hover:border-primary/20 group-hover:text-primary transition-colors">
+                  {{ category.childrenCount || 0 }} subcat.
+                </span>
+              </div>
             </div>
-            <svg
-              *ngIf="hasChildren(category)"
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-text-light group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
+
+            <div *ngIf="hasChildren(category)" class="text-border group-hover:text-primary transition-colors transform group-hover:translate-x-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
           </div>
 
-          <p class="text-sm text-text-light mb-4 line-clamp-2">
-            {{ category.description }}
+          <p class="text-[10px] text-text-light/70 line-clamp-2 leading-relaxed mt-1.5 group-hover:text-text-light transition-colors">
+            {{ category.description || 'Explora los servicios disponibles en esta categoría.' }}
           </p>
         </button>
       </div>
 
-      <!-- List View -->
-      <div *ngIf="viewMode === 'list'" class="space-y-4">
-        <!-- ... tu lista actual ... -->
-      </div>
-
-      <!-- No Results -->
-      <div *ngIf="filteredCategories.length === 0" class="text-center py-20">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-text-light mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <h4 class="text-2xl font-semibold text-text mb-2">No se encontraron categorías</h4>
-        <p class="text-text-light mb-6">Intenta con otros términos de búsqueda</p>
+      <div *ngIf="filteredCategories.length === 0" class="flex flex-col items-center justify-center py-16 bg-card-bg/50 rounded-xl border border-dashed border-border text-center animate-fadeIn">
+        <div class="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-3 shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-text-light opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <h4 class="text-sm font-bold text-text mb-1">Sin resultados</h4>
+        <p class="text-xs text-text-light mb-4 max-w-xs mx-auto">No encontramos categorías que coincidan con "{{ searchTerm }}".</p>
         <button
           (click)="searchTerm = ''; filterCategories()"
-          class="btn btn-primary"
+          class="px-4 py-2 bg-primary hover:bg-primary-dark text-white text-xs font-bold rounded-lg transition-all shadow-md shadow-primary/20 hover:shadow-primary/30"
         >
           Limpiar búsqueda
         </button>
       </div>
+
     </div>
 
-    <!-- Stats Footer -->
-    <div *ngIf="!isLoading && !isLoadingChildren && filteredCategories.length > 0" class="mt-12 text-center text-text-light">
-      <p>
-        Mostrando <span class="text-primary font-semibold">{{ filteredCategories.length }}</span>
+    <div *ngIf="!isLoading && !isLoadingChildren && filteredCategories.length > 0" class="mt-8 pt-4 border-t border-border/40 text-center">
+      <p class="text-[10px] text-text-light uppercase tracking-widest font-medium">
+        Mostrando <span class="text-primary font-bold">{{ filteredCategories.length }}</span>
         categoría{{ filteredCategories.length !== 1 ? 's' : '' }}
       </p>
     </div>
+
   </div>
 </div>

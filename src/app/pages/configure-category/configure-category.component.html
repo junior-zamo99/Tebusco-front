@@ -1,29 +1,27 @@
-<div class="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-8 px-4">
-  <div class="max-w-6xl mx-auto space-y-8">
+<div class="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-4 px-4">
+  <div class="max-w-5xl mx-auto space-y-5">
 
-    <!-- Header -->
-    <div class="text-center space-y-4">
-      <h1 class="text-4xl font-bold text-text">
-         Configurar Nueva Categoría
+    <div class="text-center space-y-1">
+      <h1 class="text-2xl font-bold text-text">
+          Configurar Nueva Categoría
       </h1>
-      <p class="text-text-light text-lg max-w-2xl mx-auto">
+      <p class="text-text-light text-sm max-w-xl mx-auto">
         Selecciona tu área de trabajo y configura tu perfil profesional
       </p>
     </div>
 
-    <!-- Progress Bar -->
-    <div class="bg-surface rounded-xl shadow-lg p-6 border-2 border-border">
-      <div class="flex items-center justify-between mb-3">
-        <span class="text-sm font-semibold text-text">Progreso</span>
-        <span class="text-sm font-bold text-primary">{{ progressPercentage }}%</span>
+    <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-text">Progreso</span>
+        <span class="text-xs font-bold text-primary">{{ progressPercentage }}%</span>
       </div>
-      <div class="w-full bg-background rounded-full h-3 overflow-hidden">
+      <div class="w-full bg-background rounded-full h-2 overflow-hidden">
         <div
           class="h-full bg-gradient-to-r from-primary to-primary-dark transition-all duration-500"
           [style.width.%]="progressPercentage">
         </div>
       </div>
-      <div class="flex justify-between mt-4 text-sm">
+      <div class="flex justify-between mt-2 text-xs">
         <span [class.text-primary]="step === 'category'" [class.font-bold]="step === 'category'" [class.text-text-light]="step !== 'category'">
           1. Categoría
         </span>
@@ -36,34 +34,30 @@
       </div>
     </div>
 
-    <!-- Error Message -->
     <div *ngIf="errorMessage"
-         class="bg-danger/10 border-2 border-danger/30 rounded-xl p-4 flex items-center gap-3">
-      <svg class="w-6 h-6 text-danger" fill="currentColor" viewBox="0 0 20 20">
+         class="bg-danger/10 border-2 border-danger/30 rounded-lg p-3 flex items-center gap-3">
+      <svg class="w-5 h-5 text-danger" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
       </svg>
-      <p class="text-danger font-medium">{{ errorMessage }}</p>
+      <p class="text-danger font-medium text-xs">{{ errorMessage }}</p>
     </div>
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
       <div class="text-center">
-        <div class="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-primary mx-auto mb-4"></div>
-        <p class="text-text-light text-lg">Cargando...</p>
+        <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-primary mx-auto mb-2"></div>
+        <p class="text-text-light text-xs">Cargando...</p>
       </div>
     </div>
 
-    <!-- Step 1: Select Main Category -->
-    <div *ngIf="!isLoading && step === 'category'" class="space-y-6">
-      <div class="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border-2 border-primary/30 rounded-xl p-6">
-        <h2 class="text-2xl font-bold text-text mb-2"> Paso 1: Selecciona la categoría principal</h2>
-        <p class="text-text-light">Elige la categoría general donde ofreces tus servicios</p>
+    <div *ngIf="!isLoading && step === 'category'" class="space-y-4">
+      <div class="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border-2 border-primary/30 rounded-xl p-4">
+        <h2 class="text-lg font-bold text-text mb-1"> Paso 1: Selecciona la categoría principal</h2>
+        <p class="text-text-light text-xs">Elige la categoría general donde ofreces tus servicios</p>
       </div>
 
-      <!-- Search Bar -->
       <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <svg class="w-6 h-6 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
@@ -72,26 +66,25 @@
           [(ngModel)]="searchTerm"
           (input)="filterCategories()"
           placeholder="Buscar categoría..."
-          class="w-full pl-14 pr-5 py-4 text-lg border-2 border-border bg-surface text-text rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
+          class="w-full pl-10 pr-4 py-3 text-sm border-2 border-border bg-surface text-text rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
         />
       </div>
 
-      <!-- Categories Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div
           *ngFor="let category of filteredCategories"
           (click)="selectMainCategory(category)"
-          class="bg-surface rounded-2xl shadow-lg border-2 border-border hover:border-primary hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer p-6">
-          <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-4xl">
+          class="bg-surface rounded-xl shadow-lg border-2 border-border hover:border-primary hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer p-4">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-2xl">
               {{ getCategoryIcon(category) }}
             </div>
-            <div class="flex-1">
-              <h3 class="font-bold text-text text-lg mb-2">{{ category.name }}</h3>
-              <p class="text-sm text-text-light" *ngIf="category.description">{{ category.description }}</p>
-              <div class="mt-3 flex items-center gap-2 text-sm text-primary font-semibold">
-                <span>{{ category.children?.length || 0 }} áreas disponibles</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-text text-sm mb-1 truncate">{{ category.name }}</h3>
+              <p class="text-xs text-text-light line-clamp-2" *ngIf="category.description">{{ category.description }}</p>
+              <div class="mt-2 flex items-center gap-1 text-xs text-primary font-semibold">
+                <span>{{ category.children?.length || 0 }} áreas</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
               </div>
@@ -101,24 +94,22 @@
       </div>
     </div>
 
-    <!-- Step 2: Select Area -->
-    <div *ngIf="!isLoading && step === 'area'" class="space-y-6">
-      <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-amber-500/10 border-2 border-amber-500/30 rounded-xl p-6">
+    <div *ngIf="!isLoading && step === 'area'" class="space-y-4">
+      <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-amber-500/10 border-2 border-amber-500/30 rounded-xl p-4">
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-2xl font-bold text-text mb-2">🔧 Paso 2: Selecciona tu área de trabajo</h2>
-            <p class="text-text-light">Categoría: <span class="font-semibold text-text">{{ selectedMainCategory?.name }}</span></p>
+            <h2 class="text-lg font-bold text-text mb-1">🔧 Paso 2: Selecciona tu área</h2>
+            <p class="text-text-light text-xs">Categoría: <span class="font-semibold text-text">{{ selectedMainCategory?.name }}</span></p>
           </div>
-          <button (click)="goBack()" class="px-4 py-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg font-semibold transition-all border-2 border-primary/30">
+          <button (click)="goBack()" class="px-3 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg text-xs font-semibold transition-all border-2 border-primary/30">
             ← Volver
           </button>
         </div>
       </div>
 
-      <!-- Search Bar -->
       <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <svg class="w-6 h-6 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
@@ -127,26 +118,25 @@
           [(ngModel)]="searchTerm"
           (input)="filterCategories()"
           placeholder="Buscar área..."
-          class="w-full pl-14 pr-5 py-4 text-lg border-2 border-border bg-surface text-text rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
+          class="w-full pl-10 pr-4 py-3 text-sm border-2 border-border bg-surface text-text rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
         />
       </div>
 
-      <!-- Areas Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div
           *ngFor="let area of filteredAreas"
           (click)="selectArea(area)"
-          class="bg-surface rounded-2xl shadow-lg border-2 border-border hover:border-amber-500 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer p-6">
-          <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-3xl">
+          class="bg-surface rounded-xl shadow-lg border-2 border-border hover:border-amber-500 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer p-4">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-xl">
               🔧
             </div>
-            <div class="flex-1">
-              <h3 class="font-bold text-text text-lg mb-2">{{ area.name }}</h3>
-              <p class="text-sm text-text-light mb-3" *ngIf="area.description">{{ area.description }}</p>
-              <div class="flex items-center gap-2 text-sm text-amber-500 font-semibold">
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-text text-sm mb-1 truncate">{{ area.name }}</h3>
+              <p class="text-xs text-text-light mb-1 line-clamp-1" *ngIf="area.description">{{ area.description }}</p>
+              <div class="flex items-center gap-1 text-xs text-amber-500 font-semibold">
                 <span>{{ area.children?.length || 0 }} especialidades</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
               </div>
@@ -156,45 +146,41 @@
       </div>
     </div>
 
-    <!-- Step 3: Configure Category -->
-    <div *ngIf="!isLoading && step === 'config'" class="space-y-6">
-      <div class="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 border-2 border-emerald-500/30 rounded-xl p-6">
+    <div *ngIf="!isLoading && step === 'config'" class="space-y-4">
+      <div class="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 border-2 border-emerald-500/30 rounded-xl p-4">
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-2xl font-bold text-text mb-2">⚡ Paso 3: Configura tu perfil</h2>
-            <p class="text-text-light">
+            <h2 class="text-lg font-bold text-text mb-1">⚡ Paso 3: Configura tu perfil</h2>
+            <p class="text-text-light text-xs">
               <span class="font-semibold text-text">{{ selectedArea?.name }}</span>
             </p>
           </div>
-          <button (click)="goBack()" class="px-4 py-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg font-semibold transition-all border-2 border-primary/30">
+          <button (click)="goBack()" class="px-3 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg text-xs font-semibold transition-all border-2 border-primary/30">
             ← Volver
           </button>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Left Column: Form -->
-        <div class="space-y-6">
-          <!-- Description -->
-          <div class="bg-surface rounded-xl shadow-lg p-6 border-2 border-border">
-            <label class="block text-sm font-bold text-text mb-2">
-              Descripción de tu servicio <span class="text-danger">*</span>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="space-y-4">
+          <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+            <label class="block text-xs font-bold text-text mb-1.5">
+              Descripción del servicio <span class="text-danger">*</span>
             </label>
             <textarea
               [(ngModel)]="description"
-              rows="5"
+              rows="4"
               maxlength="500"
               placeholder="Describe tus servicios, experiencia y qué te hace único..."
-              class="w-full px-4 py-3 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all resize-none placeholder-text-light">
+              class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all resize-none placeholder-text-light text-sm">
             </textarea>
-            <div class="text-right text-sm mt-2" [class.text-danger]="description.length > 450" [class.text-text-light]="description.length <= 450">
+            <div class="text-right text-[10px] mt-1" [class.text-danger]="description.length > 450" [class.text-text-light]="description.length <= 450">
               {{ description.length }}/500
             </div>
           </div>
 
-          <!-- Slogan -->
-          <div class="bg-surface rounded-xl shadow-lg p-6 border-2 border-border">
-            <label class="block text-sm font-bold text-text mb-2">
+          <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+            <label class="block text-xs font-bold text-text mb-1.5">
               Slogan (opcional)
             </label>
             <input
@@ -202,27 +188,26 @@
               [(ngModel)]="slogan"
               maxlength="100"
               placeholder="Ej: Soluciones rápidas y confiables"
-              class="w-full px-4 py-3 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
+              class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light text-sm"
             />
           </div>
 
-          <!-- Experience & Price -->
           <div class="grid grid-cols-2 gap-4">
-            <div class="bg-surface rounded-xl shadow-lg p-6 border-2 border-border">
-              <label class="block text-sm font-bold text-text mb-2">
-                Años de experiencia
+            <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+              <label class="block text-xs font-bold text-text mb-1.5">
+                Años experiencia
               </label>
               <input
                 type="number"
                 [(ngModel)]="experience"
                 min="0"
                 max="50"
-                class="w-full px-4 py-3 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all"
+                class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               />
             </div>
 
-            <div class="bg-surface rounded-xl shadow-lg p-6 border-2 border-border">
-              <label class="block text-sm font-bold text-text mb-2">
+            <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+              <label class="block text-xs font-bold text-text mb-1.5">
                 Precio mínimo ($)
               </label>
               <input
@@ -230,23 +215,21 @@
                 [(ngModel)]="priceMin"
                 min="0"
                 step="0.01"
-                class="w-full px-4 py-3 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all"
+                class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               />
             </div>
           </div>
         </div>
 
-        <!-- Right Column: Specialties -->
-        <div class="space-y-6">
-          <div class="bg-surface rounded-xl shadow-lg p-6 border-2 border-border">
-            <h3 class="text-lg font-bold text-text mb-4">
+        <div class="space-y-4">
+          <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border h-full flex flex-col">
+            <h3 class="text-sm font-bold text-text mb-3">
               Especialidades <span class="text-danger">*</span>
             </h3>
 
-            <!-- Search -->
-            <div class="relative mb-4">
+            <div class="relative mb-3">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -255,19 +238,18 @@
                 [(ngModel)]="searchTerm"
                 (input)="filterCategories()"
                 placeholder="Buscar especialidad..."
-                class="w-full pl-10 pr-4 py-2 text-sm border-2 border-border bg-background text-text rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
+                class="w-full pl-9 pr-3 py-2 text-xs border-2 border-border bg-background text-text rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
               />
             </div>
 
-            <!-- Selected Specialties -->
-            <div *ngIf="selectedSpecialties.length > 0" class="mb-4 p-4 bg-success/5 border-2 border-success/30 rounded-lg">
-              <p class="text-sm font-semibold text-success mb-2">✓ Seleccionadas ({{ selectedSpecialties.length }})</p>
-              <div class="flex flex-wrap gap-2">
+            <div *ngIf="selectedSpecialties.length > 0" class="mb-3 p-3 bg-success/5 border-2 border-success/30 rounded-lg">
+              <p class="text-[10px] font-semibold text-success mb-1.5">✓ Seleccionadas ({{ selectedSpecialties.length }})</p>
+              <div class="flex flex-wrap gap-1.5">
                 <span *ngFor="let specialty of selectedSpecialties"
-                      class="inline-flex items-center gap-1 bg-success/10 border border-success/30 text-success px-3 py-1 rounded-lg text-sm font-medium">
+                      class="inline-flex items-center gap-1 bg-success/10 border border-success/30 text-success px-2 py-0.5 rounded-lg text-[10px] font-medium">
                   {{ specialty.name }}
                   <button (click)="removeSpecialty(specialty.id)" class="hover:text-danger transition-colors">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
                   </button>
@@ -275,25 +257,24 @@
               </div>
             </div>
 
-            <!-- Available Specialties -->
-            <div class="max-h-96 overflow-y-auto space-y-2">
+            <div class="flex-1 overflow-y-auto max-h-[300px] space-y-1.5 pr-1">
               <div
                 *ngFor="let specialty of filteredSpecialties"
                 (click)="toggleSpecialty(specialty)"
-                class="flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all"
+                class="flex items-center gap-2 p-2 rounded-lg border-2 cursor-pointer transition-all"
                 [class.border-primary]="isSpecialtySelected(specialty.id)"
                 [class.bg-primary/5]="isSpecialtySelected(specialty.id)"
                 [class.border-border]="!isSpecialtySelected(specialty.id)"
                 [class.hover:border-primary/50]="!isSpecialtySelected(specialty.id)">
-                <div class="flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center"
+                <div class="flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center"
                      [class.border-primary]="isSpecialtySelected(specialty.id)"
                      [class.bg-primary]="isSpecialtySelected(specialty.id)"
                      [class.border-border]="!isSpecialtySelected(specialty.id)">
-                  <svg *ngIf="isSpecialtySelected(specialty.id)" class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <svg *ngIf="isSpecialtySelected(specialty.id)" class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                   </svg>
                 </div>
-                <span class="text-sm font-medium" [class.text-primary]="isSpecialtySelected(specialty.id)" [class.text-text]="!isSpecialtySelected(specialty.id)">
+                <span class="text-xs font-medium" [class.text-primary]="isSpecialtySelected(specialty.id)" [class.text-text]="!isSpecialtySelected(specialty.id)">
                   {{ specialty.name }}
                 </span>
               </div>
@@ -302,22 +283,21 @@
         </div>
       </div>
 
-      <!-- Actions -->
-      <div class="flex items-center justify-between gap-4 pt-6 border-t-2 border-border">
+      <div class="flex items-center justify-end gap-3 pt-4 border-t-2 border-border">
         <button
           (click)="onCancel()"
           [disabled]="isSaving"
-          class="px-6 py-3 border-2 border-border rounded-xl text-text-light hover:text-text hover:border-text-light transition-all font-semibold disabled:opacity-50">
+          class="px-4 py-2 border-2 border-border rounded-xl text-text-light hover:text-text hover:border-text-light transition-all font-semibold text-xs disabled:opacity-50">
           Cancelar
         </button>
 
         <button
           (click)="onSave()"
           [disabled]="isSaving"
-          class="px-8 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-bold text-lg disabled:opacity-50 flex items-center gap-3 transition-all hover:shadow-2xl hover:shadow-primary/30">
-          <span *ngIf="!isSaving">✅ Guardar categoría</span>
-          <span *ngIf="isSaving" class="flex items-center gap-2">
-            <div class="animate-spin h-5 w-5 border-3 border-white border-t-transparent rounded-full"></div>
+          class="px-6 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-bold text-xs disabled:opacity-50 flex items-center gap-2 transition-all hover:shadow-xl hover:shadow-primary/30">
+          <span *ngIf="!isSaving">Guardar</span>
+          <span *ngIf="isSaving" class="flex items-center gap-1.5">
+            <div class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
             Guardando...
           </span>
         </button>

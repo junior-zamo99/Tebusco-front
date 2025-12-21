@@ -83,6 +83,7 @@ export interface PublicProfessional {
   fullName: string;
   photoUrl: string | null;
   isVerified: boolean;
+  isPromocional: boolean;
   yearsOfExperience?: number;
   rating?: number;
   reviewsCount?: number;
@@ -109,6 +110,7 @@ export interface ProfessionalListItem {
   isPremium: boolean;
   specialties: string[];
   description: string | null;
+  isPromocional: boolean;
 }
 
 export interface ProfessionalListResponse {
@@ -156,6 +158,7 @@ export interface PublicProfessionalWithSelectedProfiles {
   photoUrl: string | null;
   email: string;
   phone: string | null;
+  isPromocional: boolean;
   isVerified: boolean;
   location: Location | null;
   profiles: ProfileCategory[];

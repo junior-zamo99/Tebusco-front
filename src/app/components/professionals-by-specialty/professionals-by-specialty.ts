@@ -30,7 +30,7 @@ export class ProfessionalsBySpecialty implements OnInit {
     totalPages: 0
   };
 
-  // Filtros adicionales
+  // Filtros internos (aunque no se muestren en el HTML, se mantienen por si acaso)
   filters = {
     city: '',
     minRating: undefined as number | undefined,
@@ -92,8 +92,6 @@ export class ProfessionalsBySpecialty implements OnInit {
       ...this.filters
     };
 
-
-
     this.professionalService.getProfessionalsBySpecialty(
       this.specialtyId,
       query
@@ -111,24 +109,6 @@ export class ProfessionalsBySpecialty implements OnInit {
         this.loading = false;
       }
     });
-  }
-
-  applyFilters(): void {
-    this.pagination.page = 1;
-    this.loadProfessionals();
-  }
-
-  clearFilters(): void {
-    this.filters = {
-      city: '',
-      minRating: undefined,
-      isVerified: undefined,
-      isPremium: undefined,
-      sortBy: 'rating',
-      sortOrder: 'desc'
-    };
-    this.pagination.page = 1;
-    this.loadProfessionals();
   }
 
   goToProfessional(professional: ProfessionalListItem): void {
@@ -156,12 +136,6 @@ export class ProfessionalsBySpecialty implements OnInit {
       this.router.navigate(['/professionals/category', this.parentCategory.id]);
     } else {
       this.router.navigate(['/categories']);
-    }
-  }
-
-  goToParentCategory(): void {
-    if (this.parentCategory) {
-      this.router.navigate(['/professionals/category', this.parentCategory.id]);
     }
   }
 

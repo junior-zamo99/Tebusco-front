@@ -1,11 +1,9 @@
-// categories.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { CategoryService } from '../../services/category.service';
 import { CategoryNode } from '../../models/category.model';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-categories',
@@ -42,28 +40,37 @@ export class CategoriesComponent implements OnInit {
 
   constructor(
     private categoryService: CategoryService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.loadLevel1Categories();
 
-    // Manejo de navegación con categoría preseleccionada
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras?.state?.['selectedCategoryId']) {
-      const categoryId = navigation.extras.state['selectedCategoryId'];
-      setTimeout(() => this.loadAndSelectCategory(categoryId), 100);
-    }
+    this.route.queryParams.subscribe(params => {
+      const categoryId = params['id'];
+
+      if (categoryId) {
+        this.loadAndSelectCategory(+categoryId);
+      } else {
+        if (this.selectedCategory) {
+          this.resetView(false);
+        }
+      }
+    });
   }
 
-
   loadLevel1Categories(): void {
-    this.isLoading = true;
+    if (this.categories.length === 0) {
+      this.isLoading = true;
+    }
 
     this.categoryService.getLevel1Categories(false).subscribe({
       next: (categories) => {
         this.categories = categories;
-        this.filteredCategories = categories;
+        if (!this.selectedCategory) {
+          this.filteredCategories = categories;
+        }
         this.isLoading = false;
       },
       error: (err) => {
@@ -73,7 +80,6 @@ export class CategoriesComponent implements OnInit {
     });
   }
 
-
   selectCategory(category: CategoryNode): void {
     if (category.level === 2) {
       this.router.navigate(['/professionals/category', category.id]);
@@ -81,7 +87,11 @@ export class CategoriesComponent implements OnInit {
     }
 
     if (category.childrenCount && category.childrenCount > 0) {
-      this.loadSubcategories(category);
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { id: category.id },
+        queryParamsHandling: 'merge'
+      });
     } else {
       this.router.navigate(['/search'], {
         queryParams: { category: category.slug }
@@ -89,39 +99,20 @@ export class CategoriesComponent implements OnInit {
     }
   }
 
+  private loadAndSelectCategory(categoryId: number): void {
+    if (this.selectedCategory?.id === categoryId) return;
 
-  private loadSubcategories(category: CategoryNode): void {
     this.isLoadingChildren = true;
 
-    this.categoryService.getSubcategories(category.id, false).subscribe({
-      next: (subcategories) => {
-        // Actualizar navegación
-        this.selectedCategory = category;
-        this.breadcrumb.push(category);
-        this.filteredCategories = subcategories;
-        this.searchTerm = '';
-        this.isLoadingChildren = false;
-      },
-      error: (err) => {
-        console.error('Error loading subcategories:', err);
-        this.isLoadingChildren = false;
-      }
-    });
-  }
-
-
-  private loadAndSelectCategory(categoryId: number): void {
-    // Primero obtenemos la categoría padre para tener sus datos (nombre, etc)
     this.categoryService.getCategoryById(categoryId, false).subscribe({
       next: (category) => {
         this.selectedCategory = category;
-        this.breadcrumb.push(category);
+        this.updateBreadcrumb(category);
 
-        // Luego cargamos sus subcategorías usando el servicio específico
-        this.isLoadingChildren = true;
         this.categoryService.getSubcategories(categoryId, false).subscribe({
           next: (subcategories) => {
             this.filteredCategories = subcategories;
+            this.searchTerm = '';
             this.isLoadingChildren = false;
           },
           error: (err) => {
@@ -131,72 +122,87 @@ export class CategoriesComponent implements OnInit {
         });
       },
       error: (err) => {
-        console.error('Error loading category:', err);
+        console.error('Error loading category details:', err);
+        this.isLoadingChildren = false;
+        this.router.navigate([], { relativeTo: this.route, queryParams: { id: null } });
       }
     });
   }
 
-
   filterCategories(): void {
+    const listToFilter = this.selectedCategory
+      ? this.filteredCategories
+      : this.categories;
+
     if (!this.searchTerm.trim()) {
-      // Sin búsqueda, mostrar todas las actuales
-      this.filteredCategories = this.selectedCategory
-        ? this.selectedCategory.children || []
-        : this.categories;
+      if (this.selectedCategory) {
+        this.loadAndSelectCategory(this.selectedCategory.id);
+      } else {
+        this.filteredCategories = this.categories;
+      }
       return;
     }
 
     const searchLower = this.searchTerm.toLowerCase();
-    const currentCategories = this.selectedCategory?.children || this.categories;
 
-    this.filteredCategories = currentCategories.filter(cat =>
+    this.filteredCategories = listToFilter.filter(cat =>
       cat.name.toLowerCase().includes(searchLower) ||
-      cat.description.toLowerCase().includes(searchLower)
+      (cat.description && cat.description.toLowerCase().includes(searchLower))
     );
   }
 
-
-  goBack(): void {
-    if (this.breadcrumb.length === 0) return;
-
-    this.breadcrumb.pop();
-
-    if (this.breadcrumb.length === 0) {
-      // Volver a nivel 1
-      this.selectedCategory = null;
-      this.loadLevel1Categories();
-    } else {
-      // Volver al nivel anterior
-      const parent = this.breadcrumb[this.breadcrumb.length - 1];
-      this.selectedCategory = parent;
-
-      // Recargar subcategorías del padre
-      this.isLoadingChildren = true;
-      this.categoryService.getSubcategories(parent.id, false).subscribe({
-        next: (subcategories) => {
-          this.filteredCategories = subcategories;
-          this.isLoadingChildren = false;
-        },
-        error: (err) => {
-          console.error('Error reloading subcategories:', err);
-          this.isLoadingChildren = false;
-        }
-      });
-    }
-
-    this.searchTerm = '';
-  }
-
-me(): void {
+  resetView(navigate: boolean = true): void {
     this.selectedCategory = null;
     this.breadcrumb = [];
+    this.filteredCategories = this.categories;
     this.searchTerm = '';
-    this.loadLevel1Categories();
+
+    if (navigate) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { id: null }
+      });
+    }
   }
 
-  getCategoryIcon(category: CategoryNode): string {
-    return this.categoryIcons[category.slug] || '📋';
+  navigateToBreadcrumb(category: CategoryNode): void {
+    const index = this.breadcrumb.findIndex(c => c.id === category.id);
+    if (index !== -1) {
+      this.breadcrumb = this.breadcrumb.slice(0, index + 1);
+    }
+
+    this.selectCategory(category);
   }
+
+  goBack(): void {
+    if (!this.selectedCategory) return;
+
+    if (this.breadcrumb.length > 1) {
+      const parent = this.breadcrumb[this.breadcrumb.length - 2];
+
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { id: parent.id }
+      });
+    } else {
+      this.resetView();
+    }
+  }
+
+  private updateBreadcrumb(category: CategoryNode): void {
+    const exists = this.breadcrumb.find(b => b.id === category.id);
+    if (!exists) {
+      if (category.parentId === null) {
+        this.breadcrumb = [category];
+      } else {
+        this.breadcrumb.push(category);
+      }
+    }
+  }
+
+ getCategoryIcon(category: CategoryNode): string {
+    return this.categoryIcons[category.slug] || '📋';
+    }
 
   hasChildren(category: CategoryNode): boolean {
     return (category.childrenCount && category.childrenCount > 0) || false;
@@ -204,13 +210,5 @@ me(): void {
 
   toggleViewMode(): void {
     this.viewMode = this.viewMode === 'grid' ? 'list' : 'grid';
-  }
-
-  getTopCategories(): CategoryNode[] {
-    return this.filteredCategories.filter(cat => cat.isTop);
-  }
-
-  getOtherCategories(): CategoryNode[] {
-    return this.filteredCategories.filter(cat => !cat.isTop);
   }
 }

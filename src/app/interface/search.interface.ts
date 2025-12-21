@@ -45,8 +45,10 @@ export interface ProviderSearchResult {
   nit?: string;
   companyName?: string;
   rating?: number;
+  isPromocional?: boolean;
   reviewsCount?: number;
   relevanceScore: number;
+  distanceInMeters?: number;
 }
 
 export interface SearchGeneralData {
@@ -64,6 +66,15 @@ export interface SearchGeneralData {
     results: ProviderSearchResult[];
   };
   suggestions?: string[];
+}
+
+export interface SearchQuery {
+  term: string;
+  city: string;
+  lat?: number;
+  lng?: number;
+  state?: string;
+  country?: string;
 }
 
 export interface SearchCategoriesData {

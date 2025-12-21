@@ -15,6 +15,7 @@ import {
   User,
   UserAddress
 } from '../interface/auth.interface';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,8 @@ export class AuthService {
   currentUser = signal<User | null>(null);
   currentApplicant = signal<Applicant | null>(null);
   currentProfessional = signal<Professional | null>(null);
-  currentAddresses = signal<UserAddress[]>([]);
+  currentAddresses = signal<UserAddress | null>(null);
+  isInitialLoading = signal<boolean>(true);
 
   userType = computed<number>(() => {
     const hasApplicant = this.currentApplicant() !== null;
@@ -43,7 +45,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private storageService: StorageService
   ) {
     this.checkSession();
   }
@@ -83,13 +86,19 @@ export class AuthService {
       tap(response => {
         console.log('Login response:', response);
 
-        this.currentUser.set(response.data.user);
+        console.log('🔄 Guardando user en StorageService');
+
+        console.log('userAddress:', response.data.userAddress);
+
+        if(response.data.user){
+          console.log('🔄 Actualizando estado de currentUser en AuthService...');
+           this.currentUser.set(response.data.user);
+        }
+
         this.currentApplicant.set(response.data.applicant);
         this.currentProfessional.set(response.data.professional || null);
+        this.currentAddresses.set(response.data.userAddress || null);
 
-        if (response.data.userAddress) {
-          this.currentAddresses.set([response.data.userAddress]);
-        }
 
         this.isAuthenticated.set(true);
 
@@ -120,8 +129,9 @@ export class AuthService {
         this.currentUser.set(null);
         this.currentApplicant.set(null);
         this.currentProfessional.set(null);
-        this.currentAddresses.set([]);
+        this.currentAddresses.set(null);
         this.isAuthenticated.set(false);
+        this.storageService.clearAll();
 
         this.router.navigate(['/login']);
       }),
@@ -131,7 +141,7 @@ export class AuthService {
         this.currentUser.set(null);
         this.currentApplicant.set(null);
         this.currentProfessional.set(null);
-        this.currentAddresses.set([]);
+        this.currentAddresses.set(null);
         this.isAuthenticated.set(false);
 
         this.router.navigate(['/login']);
@@ -154,7 +164,7 @@ export class AuthService {
         this.currentUser.set(response.data.user);
         this.currentApplicant.set(response.data.applicant);
         this.currentProfessional.set(response.data.professional || null);
-        this.currentAddresses.set(response.data.userAddresses);
+        this.currentAddresses.set(response.data.userAddresses || null);
         this.isAuthenticated.set(true);
 
         console.log('Sesión activa:', response.data.user.name);
@@ -184,19 +194,24 @@ export class AuthService {
     );
   }
 
-  private checkSession(): void {
-    if (typeof window === 'undefined') return;
-
-    this.getMe().subscribe({
-      next: (response) => {
-        console.log('Sesión restaurada:', response.data.user.name);
-      },
-      error: () => {
-        console.log('No hay sesión activa (normal si no has hecho login)');
-        this.isAuthenticated.set(false);
-      }
-    });
+ private checkSession(): void {
+  if (typeof window === 'undefined') {
+    this.isInitialLoading.set(false);
+    return;
   }
+
+  this.getMe().pipe(
+    finalize(() => this.isInitialLoading.set(false))
+  ).subscribe({
+    next: (response) => {
+      console.log('Sesión restaurada:', response.data.user.name);
+    },
+    error: () => {
+      console.log('No hay sesión activa');
+      this.isAuthenticated.set(false);
+    }
+  });
+}
 
   updateProfessionalState(professional: Professional): void {
     console.log('🔄 Actualizando estado de profesional en AuthService...');

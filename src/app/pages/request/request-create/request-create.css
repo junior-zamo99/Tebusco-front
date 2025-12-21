@@ -1,0 +1,6 @@
+/* Puedes dejarlo vacío o agregar esto para asegurar el fondo */
+:host {
+  display: block;
+  background-color: #f9fafb; /* gray-50 */
+  min-height: 100vh;
+}
