@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-[#0a1128] text-white py-8 px-4 md:px-8">
+<div class="min-h-screen bg-background text-white py-8 px-4 md:px-8">
   <div class="max-w-7xl mx-auto">
 
     <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fadeIn">
@@ -23,7 +23,7 @@
               (click)="selectStatus(tab.value)"
               [class]="currentStatus === tab.value
                 ? 'bg-[#ff9800] text-white shadow-lg shadow-orange-900/30'
-                : 'bg-[#1c2645] text-slate-400 hover:bg-[#252f52]'"
+                : 'bg-card-bg text-slate-400 hover:bg-[#252f52]'"
               class="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-300 whitespace-nowrap">
         {{ tab.label }}
       </button>
@@ -38,7 +38,7 @@
          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn">
 
       <div *ngFor="let req of requests"
-           class="group relative bg-[#111b36] rounded-xl overflow-hidden border border-slate-800/50 hover:border-slate-700 transition-all duration-300 flex flex-col h-full shadow-xl">
+           class="group relative bg-card-bg rounded-xl overflow-hidden border border-slate-800/50 hover:border-slate-700 transition-all duration-300 flex flex-col h-full shadow-xl">
 
         <div [class]="'absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ' + getTopBarGradient(req.urgency)"></div>
 
@@ -49,7 +49,7 @@
           </button>
 
           <div *ngIf="activeMenuRequestId === req.id"
-               class="absolute right-0 mt-2 w-40 bg-[#1c2645] border border-slate-700 rounded-lg shadow-2xl py-2 z-20 animate-fadeIn">
+               class="absolute right-0 mt-2 w-40 bg-card-bg border border-slate-700 rounded-lg shadow-2xl py-2 z-20 animate-fadeIn">
             <button (click)="editRequest(req.id)" class="w-full text-left px-4 py-2 text-sm hover:bg-slate-700 transition-colors">Editar</button>
             <button (click)="deleteRequest(req.id)" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-900/20 transition-colors">Eliminar</button>
           </div>
@@ -74,11 +74,11 @@
 
           <div class="flex flex-wrap gap-2 mt-auto">
             <span *ngFor="let cat of req.categories | slice:0:2"
-                  class="px-3 py-1 bg-[#1c2645] border border-slate-700/50 rounded-md text-[11px] font-medium text-slate-300">
+                  class="px-3 py-1 bg-white/5 border border-slate-700/50 rounded-md text-[11px] font-medium text-slate-300">
               {{ cat.name }}
             </span>
             <span *ngIf="req.categories.length > 2"
-                  class="px-2 py-1 bg-[#1c2645] border border-slate-700/50 rounded-md text-[11px] text-slate-500">
+                  class="px-2 py-1 bg-white/5 border border-slate-700/50 rounded-md text-[11px] text-slate-500">
               +{{ req.categories.length - 2 }}
             </span>
           </div>
@@ -103,7 +103,7 @@
 
     <div *ngIf="!loading && requests.length > 0" class="mt-12 flex justify-center items-center gap-3">
       <button (click)="previousPage()" [disabled]="currentPage === 1"
-              class="p-2 rounded-lg bg-[#1c2645] text-slate-400 disabled:opacity-30 hover:bg-[#252f52] transition-colors">
+              class="p-2 rounded-lg bg-card-bg text-slate-400 disabled:opacity-30 hover:bg-[#252f52] transition-colors">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
       </button>
 
@@ -112,12 +112,12 @@
       </span>
 
       <button (click)="nextPage()" [disabled]="requests.length < itemsPerPage"
-              class="p-2 rounded-lg bg-[#1c2645] text-slate-400 disabled:opacity-30 hover:bg-[#252f52] transition-colors">
+              class="p-2 rounded-lg bg-card-bg text-slate-400 disabled:opacity-30 hover:bg-[#252f52] transition-colors">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
       </button>
     </div>
 
-    <div *ngIf="!loading && requests.length === 0" class="py-20 text-center bg-[#111b36] rounded-2xl border border-dashed border-slate-700">
+    <div *ngIf="!loading && requests.length === 0" class="py-20 text-center bg-card-bg rounded-2xl border border-dashed border-slate-700">
       <p class="text-slate-500 font-medium">No se encontraron solicitudes.</p>
     </div>
 
