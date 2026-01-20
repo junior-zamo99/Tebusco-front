@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SearchService } from '../../services/search.service';
 import { AuthService } from '../../services/auth.service';
-import { Subject, debounceTime, distinctUntilChanged, switchMap, catchError, of } from 'rxjs';
+import { Subject, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 
 // Importamos las interfaces correctas
 import {
@@ -15,6 +16,7 @@ import {
 
 @Component({
   selector: 'app-hero-search',
+  standalone: true, // Si usas standalone components (visto en tu código anterior)
   imports: [CommonModule],
   templateUrl: './hero-search.html',
   styleUrl: './hero-search.css',
@@ -22,6 +24,7 @@ import {
 export class HeroSearch implements OnChanges, OnInit {
   @Input() searchTerm: string = '';
   @Input() isOpen: boolean = false;
+  @Input() selectedCityId: number | null = null;
   @Output() close = new EventEmitter<void>();
 
   searchResults: SearchGeneralData | null = null;
@@ -29,7 +32,6 @@ export class HeroSearch implements OnChanges, OnInit {
   error: string | null = null;
 
 
-  userCity: string = 'Santa Cruz de la Sierra';
   userLat?: number;
   userLng?: number;
 
@@ -42,25 +44,29 @@ export class HeroSearch implements OnChanges, OnInit {
   ) {
     this.searchSubject.pipe(
       debounceTime(300),
+      distinctUntilChanged(),
       switchMap(term => {
+
+        // Validación básica
         if (!term || term.trim().length < 2) {
           return of(null);
         }
+
         this.isLoading = true;
         this.error = null;
 
+
         const query: SearchQuery = {
             term: term,
-            city: this.userCity,
-            lat: this.userLat,
-            lng: this.userLng
+            city: this.selectedCityId || undefined, // Aquí va el number
+
         };
 
         return this.searchService.searchGeneral(query).pipe(
           catchError(error => {
             console.error('Error en búsqueda:', error);
             this.error = 'Error al buscar. Intenta nuevamente.';
-            this.isLoading = false; // Apagamos loading en error
+            this.isLoading = false;
             return of(null);
           })
         );
@@ -76,30 +82,28 @@ export class HeroSearch implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {
-    const currentUserAddres = this.authService.currentAddresses();
-    if (currentUserAddres && currentUserAddres.city) {
-        this.userCity = currentUserAddres.city;
-    }
+    // Ya no intentamos leer la ciudad string del AuthService,
+    // porque ahora dependemos del selector del padre (HeroSolicitante).
 
-    // 2. OBTENER GPS (Si el navegador lo permite)
+    // OBTENER GPS (Si el navegador lo permite)
+    // Esto sirve como fallback si el usuario no selecciona ciudad
     this.searchService.getCurrentPosition()
       .then(pos => {
         this.userLat = pos.coords.latitude;
         this.userLng = pos.coords.longitude;
-
-        // Si ya había un término escrito, relanzamos la búsqueda con la nueva precisión GPS
-        if (this.searchTerm && this.searchTerm.length >= 2) {
-            this.searchSubject.next(this.searchTerm);
-        }
       })
       .catch(() => {
-        console.log('Ubicación GPS no disponible, usando ciudad base:', this.userCity);
+        console.log('Ubicación GPS no disponible');
       });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['searchTerm']) {
-      this.searchSubject.next(this.searchTerm);
+    // 4. DETECCIÓN DE CAMBIOS
+    // Si cambia el texto O si cambia la ciudad seleccionada en el padre
+    if (changes['searchTerm'] || changes['selectedCityId']) {
+      if (this.searchTerm && this.searchTerm.length >= 2) {
+        this.searchSubject.next(this.searchTerm);
+      }
     }
   }
 
@@ -115,6 +119,7 @@ export class HeroSearch implements OnChanges, OnInit {
     } else if (category.level === 2) {
       this.router.navigate(['/professionals/category', category.id]);
     } else {
+      // Guardamos el ID en el estado para que la página de categorías lo lea
       this.router.navigate(['/categories'], {
         state: { selectedCategoryId: category.id }
       });
@@ -131,7 +136,6 @@ export class HeroSearch implements OnChanges, OnInit {
     }
 
     if (provider.type === 'professional') {
-      // Simplificado: Solo enviamos el ID para ir al perfil
       this.router.navigate(['/professionals', provider.id]);
     } else {
       this.router.navigate(['/companies', provider.id]);
@@ -145,7 +149,8 @@ export class HeroSearch implements OnChanges, OnInit {
       this.closeResults();
       return;
     }
-    // Implementar navegación a página de resultados completa si lo deseas
+    // Aquí podrías navegar a una página de búsqueda avanzada pasando los parámetros
+    // this.router.navigate(['/search'], { queryParams: { q: this.searchTerm, city: this.selectedCityId } });
   }
 
   closeResults(): void {
@@ -164,7 +169,7 @@ export class HeroSearch implements OnChanges, OnInit {
     return {
       query: data.query || '',
       totalResults: data.totalResults || 0,
-      executionTime: data.executionTime || '0ms',
+      // executionTime eliminado ya que dijimos que el backend no lo enviaba
       categories: data.categories || { total: 0, results: [] },
       providers: data.providers || { total: 0, professionals: 0, companies: 0, results: [] },
       suggestions: data.suggestions || []

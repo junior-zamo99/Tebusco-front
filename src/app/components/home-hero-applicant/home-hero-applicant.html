@@ -7,39 +7,7 @@
 
     <div class="text-center md:text-left flex flex-col items-center md:items-start w-full md:w-auto">
 
-      <button
-        (click)="openAddressModal.emit()"
-        class="group mb-4 inline-flex items-center gap-3 px-4 py-2 rounded-xl backdrop-blur-md transition-all border max-w-full"
-        [ngClass]="currentAddress
-          ? 'bg-white/20 border-white/30 hover:bg-white/30'
-          : 'bg-white/10 border-white/20 hover:bg-white/20 animate-pulse'"
-      >
-        <div class="shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-          </svg>
-        </div>
 
-        <div class="flex flex-col items-start leading-tight text-left min-w-0 flex-1">
-          <span class="text-xs font-bold tracking-wide uppercase text-blue-50 mb-0.5">
-            {{ getAddressLabel() }}
-          </span>
-
-          <span *ngIf="currentAddress" class="text-xs md:text-sm font-medium text-white truncate w-full max-w-[200px] md:max-w-[350px] block" title="{{ getFullAddress() }}">
-            {{ getFullAddress() }}
-          </span>
-
-          <span *ngIf="!currentAddress" class="text-xs font-medium text-white opacity-90">
-            Toca para configurar
-          </span>
-        </div>
-
-        <div class="shrink-0 ml-1 opacity-60 group-hover:opacity-100 transition-opacity">
-           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-      </button>
 
       <h1 class="text-xl md:text-2xl font-bold mb-1 tracking-tight">
         Hola, {{ userName }}

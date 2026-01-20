@@ -4,18 +4,18 @@ import { Observable, tap, catchError, throwError, finalize } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
 import { LoadingService } from './loading.service';
+import { StorageService } from './storage.service';
+
+// Asegúrate de que tus interfaces estén actualizadas como las definimos en el paso anterior
 import {
-  Applicant,
   AuthResponse,
   LoginRequest,
-  MeResponse,
-  Professional,
-  RefreshResponse,
   RegisterRequest,
   User,
+  Applicant,
+  Professional,
   UserAddress
 } from '../interface/auth.interface';
-import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,11 +34,8 @@ export class AuthService {
     const hasApplicant = this.currentApplicant() !== null;
     const hasProfessional = this.currentProfessional() !== null;
 
-    if (hasApplicant && hasProfessional) {
-      return 2;
-    } else if (hasApplicant) {
-      return 1;
-    }
+    if (hasApplicant && hasProfessional) return 2;
+    if (hasApplicant) return 1;
     return 0;
   });
 
@@ -51,6 +48,7 @@ export class AuthService {
     this.checkSession();
   }
 
+  // --- REGISTER ---
   register(data: RegisterRequest): Observable<AuthResponse> {
     this.loadingService.show('Registrando usuario...');
 
@@ -61,11 +59,19 @@ export class AuthService {
     ).pipe(
       tap(response => {
         console.log('Register response:', response);
-        this.currentUser.set(response.data.user);
-        this.currentApplicant.set(response.data.applicant);
-        this.currentProfessional.set(response.data.professional || null);
+
+        // CORRECCIÓN: Accedemos directo, sin .data
+        this.currentUser.set(response.user);
+        this.currentApplicant.set(response.applicant);
+        this.currentProfessional.set(response.professional || null);
+
+        // Si el backend devuelve userAddress en el registro
+        if (response.userAddress) {
+            this.currentAddresses.set(response.userAddress);
+        }
+
         this.isAuthenticated.set(true);
-        console.log('Usuario registrado:', response.data.user.name);
+        console.log('Usuario registrado:', response.user.name);
       }),
       catchError(error => {
         console.error('Error en register:', error);
@@ -75,6 +81,7 @@ export class AuthService {
     );
   }
 
+  // --- LOGIN ---
   login(data: LoginRequest): Observable<AuthResponse> {
     this.loadingService.show('Iniciando sesión...');
 
@@ -86,24 +93,18 @@ export class AuthService {
       tap(response => {
         console.log('Login response:', response);
 
-        console.log('🔄 Guardando user en StorageService');
-
-        console.log('userAddress:', response.data.userAddress);
-
-        if(response.data.user){
-          console.log('🔄 Actualizando estado de currentUser en AuthService...');
-           this.currentUser.set(response.data.user);
+        // CORRECCIÓN: Accedemos directo, sin .data
+        if(response.user){
+           this.currentUser.set(response.user);
         }
 
-        this.currentApplicant.set(response.data.applicant);
-        this.currentProfessional.set(response.data.professional || null);
-        this.currentAddresses.set(response.data.userAddress || null);
-
+        this.currentApplicant.set(response.applicant);
+        this.currentProfessional.set(response.professional || null);
+        this.currentAddresses.set(response.userAddress || null);
 
         this.isAuthenticated.set(true);
 
-        console.log('Login exitoso:', response.data.user.name);
-        console.log('UserType:', this.userType());
+        console.log('Login exitoso:', response.user.name);
       }),
       catchError(error => {
         console.error('Error en login:', error);
@@ -115,6 +116,7 @@ export class AuthService {
     );
   }
 
+  // --- LOGOUT ---
   logout(): Observable<any> {
     this.loadingService.show('Cerrando sesión...');
 
@@ -125,25 +127,12 @@ export class AuthService {
     ).pipe(
       tap(() => {
         console.log('Logout exitoso');
-
-        this.currentUser.set(null);
-        this.currentApplicant.set(null);
-        this.currentProfessional.set(null);
-        this.currentAddresses.set(null);
-        this.isAuthenticated.set(false);
-        this.storageService.clearAll();
-
+        this.clearState();
         this.router.navigate(['/login']);
       }),
       catchError(error => {
         console.error('Error en logout:', error);
-
-        this.currentUser.set(null);
-        this.currentApplicant.set(null);
-        this.currentProfessional.set(null);
-        this.currentAddresses.set(null);
-        this.isAuthenticated.set(false);
-
+        this.clearState();
         this.router.navigate(['/login']);
         return throwError(() => error);
       }),
@@ -153,21 +142,29 @@ export class AuthService {
     );
   }
 
-  getMe(): Observable<MeResponse> {
-    return this.http.get<MeResponse>(
+  // --- GET ME ---
+  getMe(): Observable<any> { // Usamos any o crea una interfaz GetMeResponse que coincida con tu backend
+    return this.http.get<any>(
       `${this.apiUrl}/auth/me`,
       { withCredentials: true }
     ).pipe(
       tap(response => {
         console.log('GetMe response:', response);
 
-        this.currentUser.set(response.data.user);
-        this.currentApplicant.set(response.data.applicant);
-        this.currentProfessional.set(response.data.professional || null);
-        this.currentAddresses.set(response.data.userAddresses || null);
-        this.isAuthenticated.set(true);
+        // Asumiendo que GetMe devuelve la misma estructura plana o similar
+        // Ajusta esto si tu endpoint /me devuelve algo distinto
+        this.currentUser.set(response.user);
+        this.currentApplicant.set(response.applicant);
+        this.currentProfessional.set(response.professional || null);
 
-        console.log('Sesión activa:', response.data.user.name);
+        // Si /me devuelve array de direcciones
+        if (response.userAddresses && response.userAddresses.length > 0) {
+             // Tomamos la primera o la default
+             this.currentAddresses.set(response.userAddresses[0]);
+        }
+
+        this.isAuthenticated.set(true);
+        console.log('Sesión activa:', response.user.name);
       }),
       catchError(error => {
         console.log('No hay sesión activa');
@@ -177,44 +174,66 @@ export class AuthService {
     );
   }
 
-  refreshToken(): Observable<RefreshResponse> {
-    return this.http.post<RefreshResponse>(
+  // --- CHECK SESSION ---
+  private checkSession(): void {
+    if (typeof window === 'undefined') {
+      this.isInitialLoading.set(false);
+      return;
+    }
+
+    this.getMe().pipe(
+      finalize(() => this.isInitialLoading.set(false))
+    ).subscribe({
+      next: (response) => {
+        // CORRECCIÓN: Acceso directo
+        console.log('Sesión restaurada:', response.user.name);
+      },
+      error: () => {
+        console.log('No hay sesión activa');
+        this.isAuthenticated.set(false);
+      }
+    });
+  }
+
+  refreshToken(): Observable<any> {
+    return this.http.post(
       `${this.apiUrl}/auth/refresh`,
       {},
       { withCredentials: true }
     ).pipe(
-      tap(response => {
-        console.log('Token refrescado');
+      tap((response: any) => {
+        console.log('Token refrescado correctamente');
+        // Si el refresh devuelve nuevo token o usuario, actualiza aquí si es necesario
       }),
       catchError(error => {
-        console.error('Error al refrescar token:', error);
-        this.logout();
+        // Si falla el refresh, cerramos sesión
+        this.doLogout();
         return throwError(() => error);
       })
     );
   }
 
- private checkSession(): void {
-  if (typeof window === 'undefined') {
-    this.isInitialLoading.set(false);
-    return;
+  // --- HELPERS ---
+  private clearState() {
+    this.currentUser.set(null);
+    this.currentApplicant.set(null);
+    this.currentProfessional.set(null);
+    this.currentAddresses.set(null);
+    this.isAuthenticated.set(false);
+    this.storageService.clearAll();
   }
 
-  this.getMe().pipe(
-    finalize(() => this.isInitialLoading.set(false))
-  ).subscribe({
-    next: (response) => {
-      console.log('Sesión restaurada:', response.data.user.name);
-    },
-    error: () => {
-      console.log('No hay sesión activa');
-      this.isAuthenticated.set(false);
-    }
-  });
-}
+  private doLogout() {
+    this.currentUser.set(null);
+    this.currentApplicant.set(null);
+    this.currentProfessional.set(null);
+    this.currentAddresses.set(null);
+    this.isAuthenticated.set(false);
+    this.storageService.clearAll();
+    this.router.navigate(['/login']);
+  }
 
   updateProfessionalState(professional: Professional): void {
-    console.log('🔄 Actualizando estado de profesional en AuthService...');
     this.currentProfessional.set(professional);
   }
 }

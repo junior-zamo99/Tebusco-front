@@ -1,108 +1,163 @@
-<section class="relative h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+<section class="relative w-full h-screen min-h-[600px] flex flex-col items-center justify-center overflow-hidden bg-slate-950 isolate">
 
-  <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-1/4 -left-20 w-64 h-64 bg-yellow-500/20 rounded-full blur-3xl animate-pulse"></div>
-    <div class="absolute bottom-1/4 right-1/4 w-48 h-48 bg-yellow-500/15 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+  <div class="absolute inset-0 pointer-events-none -z-10">
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-[#0f172a] to-slate-950"></div>
+
+    <div class="absolute top-0 left-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="absolute bottom-0 right-0 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2"></div>
+
+    <div class="absolute inset-0 opacity-[0.03]"
+         style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 60px 60px;">
+    </div>
   </div>
 
-  <div class="absolute inset-0 opacity-[0.02] pointer-events-none">
-    <div class="absolute inset-0" style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 40px 40px;"></div>
+  <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm transition-opacity duration-500 z-30"
+       [ngClass]="isSearchMode ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"
+       (click)="closeSearch()">
   </div>
 
-  <div class="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+  <button *ngIf="isSearchMode" (click)="closeSearch()"
+          class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 animate-fade-in cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
 
-      <div class="space-y-3 lg:-mt-20">
+  <div class="absolute top-6 left-6 md:left-10 z-40 flex flex-col md:flex-row md:items-center gap-4 transition-all duration-500 transform origin-top"
+       [ngClass]="isSearchMode ? 'opacity-0 -translate-y-4 pointer-events-none scale-95' : 'opacity-100 translate-y-0 scale-100'">
 
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
-          <span class="bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-300 bg-clip-text text-transparent">
-            Te Busco
-          </span>
-        </h1>
+    <div class="flex items-center gap-4">
+        <button routerLink="/login" class="text-white/70 hover:text-white text-sm md:text-base font-medium transition-colors">
+          Iniciar Sesión
+        </button>
+        <button routerLink="/register" class="px-5 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-yellow-500/50 hover:text-yellow-400 rounded-full text-sm md:text-base font-medium backdrop-blur-md transition-all duration-300">
+          Registrarse
+        </button>
+    </div>
 
-        <div class="relative w-full max-w-lg z-20"> <div class="relative group">
-            <input
-              type="text"
-              [(ngModel)]="searchTerm"
-              (input)="onSearchChange()"
-              (focus)="openSearch()"
-              placeholder="¿Qué necesitas? (ej: plomero, diseñador)"
-              class="w-full py-4 pl-12 pr-14 text-sm bg-white/95 backdrop-blur-md rounded-xl border-2 border-transparent focus:border-yellow-400 focus:outline-none shadow-xl text-slate-900 placeholder:text-slate-500 transition-all duration-300 group-hover:bg-white">
+    <div class="hidden md:block w-px h-6 bg-white/10"></div>
 
-            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+    <div class="flex items-center gap-2">
+        <div class="relative group">
+            <select [(ngModel)]="selectedCountryId" (change)="onCountryChange()"
+                    class="appearance-none pl-4 pr-8 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/30 rounded-full text-xs md:text-sm font-medium backdrop-blur-md transition-all outline-none cursor-pointer focus:ring-2 focus:ring-yellow-500/50">
+                <option [ngValue]="null" class="bg-slate-900 text-slate-400">País</option>
+                <option *ngFor="let c of countries" [ngValue]="c.id" class="bg-slate-900 text-white">{{ c.name }}</option>
+            </select>
+        </div>
+        <div class="relative group">
+            <select [(ngModel)]="selectedCityId" [disabled]="!selectedCountryId"
+                    class="appearance-none pl-4 pr-8 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/30 rounded-full text-xs md:text-sm font-medium backdrop-blur-md transition-all outline-none cursor-pointer focus:ring-2 focus:ring-yellow-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
+                <option [ngValue]="null" class="bg-slate-900 text-slate-400">Ciudad</option>
+                <option *ngFor="let c of cities" [ngValue]="c.id" class="bg-slate-900 text-white">{{ c.name }}</option>
+            </select>
+        </div>
+    </div>
+  </div>
+
+  <div class="relative z-40 w-full max-w-7xl mx-auto px-6 lg:px-8 h-full flex items-center">
+
+    <div class="flex flex-col lg:flex-row items-center w-full transition-all duration-700 ease-in-out">
+
+      <div class="flex flex-col transition-all duration-700 ease-[cubic-bezier(0.25,0.8,0.25,1)]"
+           [ngClass]="isSearchMode
+             ? 'w-full lg:w-full items-center text-center -translate-y-45'
+             : 'w-full lg:w-1/2 items-start text-left justify-center translate-y-0'">
+
+        <div class="transition-all duration-500 relative z-50">
+            <h1 class="font-black text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-2 transition-all duration-500"
+                [ngClass]="isSearchMode ? 'scale-90' : 'scale-100'">
+              <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                Te Busco
+              </span>
+            </h1>
+
+            <div class="overflow-hidden transition-all duration-500"
+                 [ngClass]="isSearchMode ? 'max-h-0 opacity-0' : 'max-h-20 opacity-100 mt-4'">
+                <p class="text-white/60 text-lg">La forma más rápida de encontrar expertos.</p>
             </div>
 
-            <button class="absolute right-2 top-1/2 -translate-y-1/2 bg-yellow-400 text-slate-900 p-2 rounded-lg hover:bg-yellow-500 transition-colors duration-300 shadow-md">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-
-          <app-hero-search [searchTerm]="searchTerm" [isOpen]="isSearchOpen" (close)="closeSearch()"></app-hero-search>
+            <p *ngIf="isSearchMode" class="text-white/80 text-base animate-fade-in mt-1 font-medium">
+              ¿Qué servicio necesitas solucionar hoy?
+            </p>
         </div>
 
-        <div class="space-y-6 pt-2">
+        <div class="relative z-50 w-full transition-all duration-700 ease-out mt-6"
+             [ngClass]="isSearchMode ? 'max-w-xl' : 'max-w-xl'">
 
-          <p class="text-base md:text-lg text-white/80 max-w-lg leading-relaxed border-l-4 border-yellow-500 pl-4">
-            Conecta con miles de profesionales verificados. Encuentra expertos para tu proyecto en cuestión de minutos.
-          </p>
+            <div class="relative group">
+                <input
+                  type="text"
+                  [(ngModel)]="searchTerm"
+                  (focus)="activateSearch()"
+                  placeholder="Ej: Plomero, Electricista..."
+                  class="w-full bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder:text-white/40 transition-all duration-500 outline-none"
+                  [ngClass]="isSearchMode
+                    ? 'h-14 pl-14 pr-6 text-sm shadow-[0_0_40px_rgba(234,179,8,0.15)] border-yellow-500/50 bg-slate-900 ring-2 ring-yellow-500/10'
+                    : 'h-14 pl-12 pr-6 text-base hover:bg-white/15 hover:border-white/20 shadow-xl'"
+                >
 
-          <div class="flex flex-wrap gap-2">
-            <span class="text-white/60 text-xs font-medium uppercase tracking-wider py-1.5 mr-1 self-center">Populares:</span>
-            <button *ngFor="let category of ['Hogar', 'Tecnología', 'Salud', 'Legal']"
-              class="px-3 py-1 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white hover:bg-white/10 hover:border-yellow-400/50 transition-all duration-300 text-xs font-medium">
-              {{category}}
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/10 pt-4 max-w-lg">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 bg-yellow-400/10 rounded-lg flex items-center justify-center text-yellow-400">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              </div>
-              <div>
-                <p class="text-white font-bold text-xs">Rápido</p>
-                <p class="text-white/50 text-[10px]">En minutos</p>
-              </div>
+                <div class="absolute left-5 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none transition-colors duration-300"
+                     [ngClass]="{'text-yellow-400': isSearchMode}">
+                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                   </svg>
+                </div>
             </div>
-            <div class="flex items-center gap-3">
-               <div class="w-8 h-8 bg-yellow-400/10 rounded-lg flex items-center justify-center text-yellow-400">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              </div>
-              <div>
-                <p class="text-white font-bold text-xs">Seguro</p>
-                <p class="text-white/50 text-[10px]">Verificado</p>
-              </div>
+
+            <div class="absolute top-full left-0 w-full mt-2 z-50 text-left">
+               <app-hero-search
+                 [searchTerm]="searchTerm"
+                 [selectedCityId]="selectedCityId"
+                 [isOpen]="isSearchMode && searchTerm.length >= 2"
+                 (close)="closeSearch()">
+               </app-hero-search>
             </div>
-             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 bg-yellow-400/10 rounded-lg flex items-center justify-center text-yellow-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+        </div>
+
+        <div class="transition-all duration-500 ease-out"
+             [ngClass]="isSearchMode ? 'opacity-0 translate-y-10 pointer-events-none absolute' : 'opacity-100 translate-y-0 relative'">
+
+             <div class="flex flex-wrap gap-3 mt-8 mb-10">
+                 <button *ngFor="let cat of ['Hogar', 'Tecnología', 'Mecánica']"
+                         class="px-5 py-2 bg-white/5 border border-white/10 rounded-full text-white/80 text-sm font-medium hover:bg-white/10 hover:border-yellow-500/30 hover:text-yellow-400 transition-all cursor-pointer">
+                   {{cat}}
+                 </button>
              </div>
-             <div>
-                <p class="text-white font-bold text-xs">Top</p>
-                <p class="text-white/50 text-[10px]">Expertos</p>
-              </div>
-           </div>
-          </div>
+
+             <div class="grid grid-cols-3 gap-8 pt-8 border-t border-white/10 max-w-sm">
+                <div class="text-center group cursor-default">
+                  <p class="text-3xl font-bold text-white group-hover:text-yellow-400 transition-colors">+500</p>
+                  <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Expertos</p>
+                </div>
+                <div class="text-center group cursor-default">
+                  <p class="text-3xl font-bold text-white group-hover:text-yellow-400 transition-colors">100%</p>
+                  <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Verificado</p>
+                </div>
+                <div class="text-center group cursor-default">
+                  <p class="text-3xl font-bold text-white group-hover:text-yellow-400 transition-colors">24/7</p>
+                  <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Soporte</p>
+                </div>
+             </div>
         </div>
 
       </div>
 
-      <div class="hidden lg:flex items-center justify-center relative h-full">
-        <div class="relative z-10 transform hover:scale-105 transition-transform duration-500 w-full max-w-sm lg:max-w-md">
-          <img
-            src="assets/tebuscohero.png"
-            alt="App Te Busco en celular"
-            class="w-full h-auto object-contain drop-shadow-2xl max-h-[80vh]"
-          />
-          <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/30 to-orange-500/30 blur-3xl -z-10 animate-pulse"></div>
-        </div>
+      <div class="hidden lg:flex items-center justify-center relative h-full transition-all duration-700 ease-[cubic-bezier(0.25,0.8,0.25,1)]"
+           [ngClass]="isSearchMode
+             ? 'w-0 opacity-0 translate-x-20 overflow-hidden'
+             : 'w-full lg:w-1/2 opacity-100 translate-x-0'">
+
+           <div class="relative z-10 w-full max-w-md xl:max-w-lg">
+              <img src="assets/tebuscohero.png"
+                   alt="App Te Busco Preview"
+                   class="w-full h-auto object-contain drop-shadow-2xl max-h-[75vh] hover:scale-105 transition-transform duration-500">
+
+              <div class="absolute inset-0 bg-yellow-500/20 blur-[100px] -z-10 rounded-full transform translate-y-10"></div>
+           </div>
       </div>
 
     </div>
   </div>
+
 </section>

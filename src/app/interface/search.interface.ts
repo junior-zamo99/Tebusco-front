@@ -1,3 +1,11 @@
+
+export interface SearchQuery {
+  term: string;
+  city?: number;
+  cities?: number[];
+  sex?: 'M' | 'F';
+}
+
 export interface CategorySearchResult {
   id: number;
   name: string;
@@ -51,10 +59,11 @@ export interface ProviderSearchResult {
   distanceInMeters?: number;
 }
 
+// 4. Estructura de DATOS (lo que viene dentro de 'data' en la respuesta JSON)
 export interface SearchGeneralData {
   query: string;
   totalResults: number;
-  executionTime: string;
+  // executionTime: string; // ELIMINADO: Tu backend no envía esto
   categories: {
     total: number;
     results: CategorySearchResult[];
@@ -66,15 +75,6 @@ export interface SearchGeneralData {
     results: ProviderSearchResult[];
   };
   suggestions?: string[];
-}
-
-export interface SearchQuery {
-  term: string;
-  city: string;
-  lat?: number;
-  lng?: number;
-  state?: string;
-  country?: string;
 }
 
 export interface SearchCategoriesData {
@@ -91,6 +91,7 @@ export interface SearchProvidersData {
   results: ProviderSearchResult[];
 }
 
+// 5. Respuestas completas de la API
 export interface SearchGeneralResponse {
   success: boolean;
   message: string;

@@ -28,7 +28,7 @@ import { AddressDialogService } from '../../services/address-dialog.service';
   styleUrls: ['./applicant-home.css'],
 })
 // 2. Implementar la interfaz AfterViewInit
-export class ApplicantHome implements OnInit, AfterViewInit {
+export class ApplicantHome implements OnInit {
   userName: string = '';
   isLoadingRedirect = false;
 
@@ -49,12 +49,7 @@ export class ApplicantHome implements OnInit, AfterViewInit {
   }
 
 
-  ngAfterViewInit(): void {
 
-    setTimeout(() => {
-      this.checkAddressModal();
-    }, 1500);
-  }
 
   async checkAddressModal() {
 

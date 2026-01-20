@@ -88,10 +88,10 @@ export class PlansSectionComponent implements OnInit, OnDestroy {
   }
 
   isRecommended(plan: Plan): boolean {
-    return plan.code === 'PREMIUM'; // O la lógica que prefieras para destacar
+    return plan.code === 'PREMIUM';
   }
 
-  // Calcula ahorro visual (ej: "Ahorras 20%")
+
   calculateSavings(plan: Plan, currentInterval: PlanInterval): { percentage: number } | null {
     if (currentInterval.interval === 'daily') return null;
     const dailyInterval = plan.intervals.find(i => i.interval === 'daily');

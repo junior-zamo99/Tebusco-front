@@ -1,131 +1,196 @@
 <div
   *ngIf="isOpen"
-  class="absolute top-full left-0 right-0 mt-1 bg-card-bg border border-border rounded-lg shadow-xl z-50 max-h-[500px] overflow-y-auto"
-  (clickOutside)="closeResults()"
+  class="absolute top-full left-0 right-0 mt-2 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 rounded-xl shadow-2xl z-50 max-h-[400px] overflow-hidden border border-white/10 backdrop-blur-xl"
 >
-  <div *ngIf="!currentLocation" class="p-8 text-center">
-    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    </div>
-    <h3 class="text-text text-sm font-bold mb-1">Sin ubicación seleccionada</h3>
-    <p class="text-text-light text-xs mb-4">Para buscar servicios, primero necesitamos saber dónde te encuentras.</p>
-    <button
-      (click)="openAddressModalManual()"
-      class="inline-flex items-center px-4 py-2 bg-primary text-white text-xs font-bold rounded-md hover:bg-primary-dark transition-colors"
-    >
-      Seleccionar ubicación
-    </button>
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-1/4 -left-20 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-24 h-24 bg-yellow-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
   </div>
 
-  <div *ngIf="currentLocation && isLoading" class="p-4 text-center">
-    <div class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent"></div>
-    <p class="mt-1 text-xs text-text-light">Buscando en {{ currentLocation.city }}...</p>
+  <div class="absolute inset-0 opacity-[0.02] pointer-events-none">
+    <div class="absolute inset-0"
+      style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 40px 40px;">
+    </div>
   </div>
 
-  <div *ngIf="currentLocation && !isLoading && searchResults">
+  <div class="relative z-10">
 
-    <div *ngIf="searchResults.totalResults === 0" class="p-6 text-center">
-      <p class="text-sm font-semibold text-text mb-0.5">Sin resultados en {{ currentLocation.city }}</p>
-      <p class="text-xs text-text-light">Intenta con otros términos dentro de {{ currentLocation.state }}.</p>
+    <div *ngIf="isLoading" class="p-6 text-center">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-yellow-400 border-t-transparent"></div>
+      <p class="mt-2 text-slate-300 text-sm font-medium">Buscando...</p>
     </div>
 
-    <div *ngIf="searchResults.totalResults > 0">
+    <div *ngIf="error" class="p-6 text-center">
+      <div class="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-2 backdrop-blur-sm border border-red-500/30">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <p class="text-red-400 text-sm font-medium">{{ error }}</p>
+    </div>
 
-      <div class="px-3 py-1.5 bg-card-bg-light border-b border-border flex justify-between items-center">
-        <span class="text-[9px] uppercase font-bold text-text-light tracking-widest">
-          Resultados en <span class="text-primary">{{ currentLocation.city }}</span>
-        </span>
+    <div *ngIf="!isLoading && !error && searchResults" class="max-h-[400px] overflow-y-auto custom-scrollbar">
+
+      <div *ngIf="searchResults.totalResults === 0" class="p-6 text-center">
+        <div class="w-12 h-12 bg-white/5 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-2 border border-white/10">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <p class="text-white font-bold text-sm mb-1">Sin resultados</p>
+        <p class="text-slate-400 text-xs">Intenta con otros términos o cambia la ciudad.</p>
       </div>
 
-      <div *ngIf="searchResults.categories.total > 0" class="border-b border-border">
-        <div class="px-3 py-2 bg-card-bg-light/30">
-          <h3 class="text-[10px] font-black uppercase text-text/60 tracking-widest">Categorías</h3>
-        </div>
-        <div class="py-1">
-          <button
-            *ngFor="let category of searchResults.categories.results.slice(0, 4)"
-            (click)="onCategoryClick(category)"
-            class="w-full px-3 py-2 hover:bg-primary/5 transition-colors text-left group flex items-center gap-3"
-          >
-            <div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-            <div class="flex-1 truncate">
-              <p class="text-sm font-bold text-text group-hover:text-primary truncate">{{ category.name }}</p>
-              <p class="text-[10px] text-text-light">{{ category.professionalsCount }} profesionales activos</p>
-            </div>
-          </button>
-        </div>
-      </div>
+      <div *ngIf="searchResults.totalResults > 0">
 
-      <div *ngIf="searchResults.providers.total > 0">
-        <div class="px-3 py-2 bg-card-bg-light/30 border-b border-border/50">
-          <h3 class="text-[10px] font-black uppercase text-text/60 tracking-widest">Profesionales y Empresas</h3>
-        </div>
-
-        <div class="py-1">
-          <button
-            *ngFor="let provider of searchResults.providers.results.slice(0, 10)"
-            (click)="onProviderClick(provider)"
-            class="w-full px-3 py-2 text-left group relative border-l-4 transition-all"
-            [ngClass]="provider.isPromocional
-                ? 'bg-yellow-500/5 border-yellow-500'
-                : 'hover:bg-card-bg-light border-transparent'"
-          >
-            <div *ngIf="provider.isPromocional" class="absolute top-0 right-0">
-               <span class="bg-yellow-500 text-black text-[8px] font-black px-2 py-0.5 rounded-bl-md uppercase tracking-tighter">
-                 {{ provider.type === 'professional' ? 'Profesional Promocionado' : 'Empresa Promocionada' }}
-               </span>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <div class="relative">
-                <div *ngIf="provider.photoUrl"
-                     class="w-10 h-10 rounded-full bg-cover bg-center border"
-                     [ngClass]="provider.isPromocional ? 'border-yellow-500 shadow-sm' : 'border-border'"
-                     [style.background-image]="'url(' + provider.photoUrl + ')'">
-                </div>
-                <div *ngIf="!provider.photoUrl"
-                     class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold"
-                     [ngClass]="provider.isPromocional ? 'bg-yellow-500 text-black' : 'bg-primary text-white'">
-                  {{ getProviderInitials(provider) }}
-                </div>
-                <div *ngIf="provider.hasActiveSubscription"
-                     class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-success border-2 border-card-bg rounded-full shadow-sm">
+        <div class="px-4 py-2 bg-white/5 backdrop-blur-sm border-b border-white/10 sticky top-0 z-20">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <p class="text-white font-bold text-xs">{{ searchResults.totalResults }} encontrados</p>
                 </div>
               </div>
+            </div>
 
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-1">
-                  <p class="text-sm font-bold truncate text-text group-hover:text-primary transition-colors">
-                    {{ provider.fullName }}
-                  </p>
-                  <svg *ngIf="provider.isVerified" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-success" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            <button
+              (click)="viewAllResults()"
+              class="text-xs font-semibold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1 group"
+            >
+              Ver todos
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="searchResults.categories.total > 0" class="border-b border-white/10">
+          <div class="px-4 py-1.5 bg-white/5 backdrop-blur-sm">
+            <div class="flex items-center gap-2">
+              <h3 class="text-white/60 font-bold text-[10px] uppercase tracking-wider">Categorías</h3>
+            </div>
+          </div>
+
+          <div class="divide-y divide-white/5">
+            <button
+              *ngFor="let category of searchResults.categories.results.slice(0, 3)"
+              (click)="onCategoryClick(category)"
+              class="w-full px-4 py-2 hover:bg-white/5 transition-all duration-200 text-left group"
+            >
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-400 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-105 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <div class="flex items-center gap-2">
-                  <span class="text-[10px] text-text-light flex items-center gap-0.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <p class="text-white text-sm font-bold group-hover:text-yellow-400 transition-colors truncate">
+                      {{ category.name }}
+                    </p>
+                    <span *ngIf="category.isTop" class="bg-gradient-to-r from-yellow-400 to-orange-400 text-slate-900 text-[10px] font-bold px-1.5 py-0 rounded">
+                      TOP
+                    </span>
+                  </div>
+                  <p class="text-slate-400 text-xs">
+                    {{ category.professionalsCount }} profesionales
+                  </p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600 group-hover:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="searchResults.providers.total > 0">
+          <div class="px-4 py-1.5 bg-white/5 backdrop-blur-sm">
+             <div class="flex items-center gap-2">
+              <h3 class="text-white/60 font-bold text-[10px] uppercase tracking-wider">Profesionales</h3>
+            </div>
+          </div>
+
+          <div class="divide-y divide-white/5">
+            <button
+              *ngFor="let provider of searchResults.providers.results.slice(0, 4)"
+              (click)="onProviderClick(provider)"
+              class="w-full px-4 py-2.5 hover:bg-white/5 transition-all duration-200 text-left group"
+            >
+              <div class="flex items-center gap-3">
+
+                <div class="relative flex-shrink-0">
+                  <div
+                    *ngIf="provider.photoUrl"
+                    class="w-10 h-10 rounded-full bg-cover bg-center ring-1 ring-yellow-400/30 group-hover:ring-yellow-400 transition-all"
+                    [style.background-image]="'url(' + provider.photoUrl + ')'"
+                  ></div>
+                  <div
+                    *ngIf="!provider.photoUrl"
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center ring-1 ring-yellow-400/30 group-hover:ring-yellow-400 transition-all"
+                  >
+                    <span class="text-xs font-bold text-white">{{ getProviderInitials(provider) }}</span>
+                  </div>
+                  <div *ngIf="provider.isVerified" class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center ring-2 ring-slate-950">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
-                    {{ provider.location?.city }}
-                  </span>
-                  <span *ngIf="provider.distanceInMeters" class="text-[10px] font-bold text-primary">
-                    • a {{ (provider.distanceInMeters / 1000) | number:'1.1-2' }} km
-                  </span>
+                  </div>
+                </div>
+
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <p class="text-white text-sm font-bold group-hover:text-yellow-400 transition-colors truncate leading-tight">
+                      {{ provider.fullName }}
+                    </p>
+                    <span
+                      *ngIf="provider.type === 'company'"
+                      class="bg-blue-400/20 text-blue-300 text-[10px] font-bold px-1.5 py-0 rounded uppercase border border-blue-400/30"
+                    >
+                      Empresa
+                    </span>
+                  </div>
+
+                  <div class="flex flex-wrap gap-1 mt-0.5 mb-1">
+                    <span
+                      *ngFor="let category of provider.categories.slice(0, 2)"
+                      class="text-[10px] bg-white/10 text-slate-300 px-1.5 py-0.5 rounded font-medium"
+                    >
+                      {{ category.name }}
+                    </span>
+                  </div>
+
+                  <div class="flex items-center gap-2 text-[10px]">
+                      <span *ngIf="provider.hasActiveSubscription" class="flex items-center gap-1 text-green-400 font-semibold">
+                      <span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                      Disp.
+                    </span>
+                    <span class="text-slate-500" *ngIf="provider.hasActiveSubscription">•</span>
+                    <span class="text-slate-400 truncate">
+                        {{ provider.location?.city || 'Bolivia' }}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="px-4 py-3 bg-white/5 backdrop-blur-sm border-t border-white/10">
+          <button
+            (click)="viewAllResults()"
+            class="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-slate-900 font-bold py-2 px-4 rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-yellow-400/50"
+          >
+            Ver todos los resultados
           </button>
         </div>
       </div>
-
     </div>
   </div>
 </div>

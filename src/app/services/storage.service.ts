@@ -15,6 +15,12 @@ export interface StorageApplicant {
   id: number;
   ci: string;
   isFrequentCustomer: boolean;
+  city?: {
+    id: number;
+    name: string;
+    code?: string;
+    country?: any;
+  };
 }
 
 export interface StorageUserAddress {

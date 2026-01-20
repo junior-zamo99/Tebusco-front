@@ -78,9 +78,7 @@ export class RequestForm implements OnInit {
 
   async ngOnInit() {
     try {
-      const coords = await this.locationService.getCoordinates();
-      this.initialLat = coords.lat;
-      this.initialLng = coords.lng;
+
     } catch (e) { console.warn(e); }
   }
 

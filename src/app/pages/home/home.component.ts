@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
 
-// Importación de todos los componentes necesarios
 import { HeroComponent } from '../../components/hero/hero.component';
 import { ActiveProfiles } from '../../components/active-profiles/active-profiles';
 import { PendingOffers } from '../../components/pending-offers/pending-offers';

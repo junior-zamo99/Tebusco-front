@@ -8,6 +8,7 @@ export interface PlanFeature {
   id: number;
   featureName: string;
   featureKey: string;
+  description: string;
   limitValue: number | null;
   isUnlimited: boolean;
 }

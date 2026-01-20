@@ -6,7 +6,7 @@ import { LoadingScreen } from './components/loading-screen/loading-screen';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, FooterComponent,LoadingScreen],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

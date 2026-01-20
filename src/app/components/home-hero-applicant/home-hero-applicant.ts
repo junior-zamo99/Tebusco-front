@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { StorageService, StorageUserAddress } from '../../services/storage.service';
 import { Subscription } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home-hero-applicant',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink,FormsModule],
   templateUrl: './home-hero-applicant.html',
 })
 export class HomeHeroApplicant implements OnInit, OnDestroy {
@@ -16,6 +17,8 @@ export class HomeHeroApplicant implements OnInit, OnDestroy {
   @Output() openAddressModal = new EventEmitter<void>();
 
   currentAddress: StorageUserAddress | null = null;
+  isSearchMode: boolean = false;
+  searchQuery: string = '';
   private sub: Subscription | null = null;
 
   constructor(private storageService: StorageService) {}
@@ -30,16 +33,14 @@ export class HomeHeroApplicant implements OnInit, OnDestroy {
     if (this.sub) this.sub.unsubscribe();
   }
 
-  getAddressLabel(): string {
-    return this.currentAddress ? this.currentAddress.label : 'Seleccionar ubicación';
+
+  activateSearch() {
+    this.isSearchMode = true;
   }
 
-  getFullAddress(): string {
-    if (!this.currentAddress) return 'Configurar ahora';
-
-    if (this.currentAddress.fullAddress) return this.currentAddress.fullAddress;
-    if (this.currentAddress.address) return `${this.currentAddress.address}, ${this.currentAddress.city}`;
-
-    return `${this.currentAddress.city}, ${this.currentAddress.country}`;
+  closeSearch() {
+    this.isSearchMode = false;
+    this.searchQuery = '';
   }
+
 }
