@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { PlansService, Plan, PlanInterval, PlanFeature } from '../../../services/plans.service';
+import { PlansService, Plan, PlanInterval } from '../../../services/plans.service';
+import { ProfessionalExtras } from '../professional-extras/professional-extras';
 
 @Component({
   selector: 'app-professional-plans',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ProfessionalExtras],
   templateUrl: './professional-plans.component.html',
   styleUrl: './professional-plans.component.css'
 })
@@ -22,6 +23,9 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
   selectedPlanInterval: PlanInterval | null = null;
   isLoading = false;
   errorMessage = '';
+
+  showExtrasSection = false;
+  selectedExtras: any[] = [];
 
   intervalLabels: { [key: string]: string } = {
     'daily': 'Diario',
@@ -45,7 +49,6 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-
   private loadPlans() {
     this.isLoading = true;
     this.errorMessage = '';
@@ -57,39 +60,28 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.plans = response.data || [];
 
-          console.log('📦 Planes cargados:', this.plans);
-
           this.detectAvailableIntervals();
-
-          console.log('📊 Intervalos disponibles:', this.availableIntervals);
-
           this.selectDefaultInterval();
 
-          console.log('✅ Intervalo seleccionado:', this.selectedInterval);
-
           if (this.plans.length > 0) {
-            // Buscar el primer plan que tenga el intervalo seleccionado
             for (const plan of this.plans) {
               const intervalForPlan = this.getIntervalForPlan(plan);
               if (intervalForPlan) {
-                console.log('🎯 Pre-seleccionando plan:', plan.name, intervalForPlan);
                 this.selectPlanInterval(intervalForPlan);
                 break;
               }
             }
           }
-
           this.cdr.detectChanges();
         },
         error: (error) => {
           this.isLoading = false;
           this.errorMessage = 'Error al cargar planes disponibles';
-          console.error('❌ Error loading plans:', error);
+          console.error('Error loading plans:', error);
           this.cdr.detectChanges();
         }
       });
   }
-
 
   private detectAvailableIntervals() {
     const intervalsSet = new Set<'daily' | 'weekly' | 'monthly' | 'yearly'>();
@@ -102,9 +94,7 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
 
     const order: Array<'daily' | 'weekly' | 'monthly' | 'yearly'> = ['daily', 'weekly', 'monthly', 'yearly'];
     this.availableIntervals = order.filter(i => intervalsSet.has(i));
-
   }
-
 
   private selectDefaultInterval() {
     if (this.availableIntervals.includes('monthly')) {
@@ -117,7 +107,6 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
       this.selectedInterval = 'yearly';
     }
   }
-
 
   selectInterval(interval: 'daily' | 'weekly' | 'monthly' | 'yearly') {
     this.selectedInterval = interval;
@@ -143,18 +132,13 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
         }
       }
     }
-
     this.cdr.detectChanges();
   }
 
-
   selectPlanInterval(interval: PlanInterval) {
-    console.log('✅ Seleccionando plan interval:', interval);
     this.selectedPlanIntervalId = interval.id;
     this.selectedPlanInterval = interval;
-
     localStorage.setItem('selectedPlanIntervalId', interval.id.toString());
-
     this.cdr.detectChanges();
   }
 
@@ -167,11 +151,9 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
     return plan.intervals.find(i => i.interval === this.selectedInterval);
   }
 
-
   isRecommended(plan: Plan): boolean {
     return plan.code === 'PREMIUM';
   }
-
 
   calculateSavings(plan: Plan, currentInterval: PlanInterval): { amount: number; percentage: number } | null {
     if (currentInterval.interval === 'daily') return null;
@@ -179,7 +161,6 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
     const dailyInterval = plan.intervals.find(i => i.interval === 'daily');
     if (!dailyInterval) return null;
 
-    // Calcular costo equivalente del intervalo diario
     const equivalentDailyCost = dailyInterval.pricePerPeriod * currentInterval.daysPerPeriod;
     const savings = equivalentDailyCost - currentInterval.pricePerPeriod;
     const percentage = (savings / equivalentDailyCost) * 100;
@@ -187,57 +168,37 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
     return savings > 0 ? { amount: Math.round(savings), percentage: Math.round(percentage) } : null;
   }
 
-
-  getPlansWithInterval(interval: 'daily' | 'weekly' | 'monthly' | 'yearly'): Plan[] {
-    return this.plans.filter(plan =>
-      plan.intervals.some(i => i.interval === interval)
-    );
-  }
-
-
-  getFeatureIcon(featureKey: string): string {
-    const icons: { [key: string]: string } = {
-      'offers': '📊',
-      'categories': '🏷️',
-      'priority_support': '🎯',
-      'analytics': '📈',
-      'custom_profile': '✨'
-    };
-    return icons[featureKey] || '✓';
-  }
-
-
-  getPlanColor(code: string): string {
-    const colors: { [key: string]: string } = {
-      'BASIC': 'text-blue-500',
-      'PREMIUM': 'text-primary',
-      'PRO': 'text-purple-500',
-      'ENTERPRISE': 'text-amber-500'
-    };
-    return colors[code] || 'text-primary';
-  }
-
-
-  hasFeatures(plan: Plan): boolean {
-    const interval = this.getIntervalForPlan(plan);
-    return !!(interval && interval.features.length > 0);
-  }
-
-  onContinue() {
+  onContinueToExtras() {
     if (!this.selectedPlanIntervalId) {
       alert('Por favor selecciona un plan');
       return;
     }
-    console.log('➡️ Navegando a pago con planIntervalId:', this.selectedPlanIntervalId);
 
+    this.showExtrasSection = true;
+
+    setTimeout(() => {
+      const element = document.getElementById('extras-section');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  }
+
+  onExtrasSelected(extras: any[]) {
+    this.selectedExtras = extras;
+    localStorage.setItem('selectedExtras', JSON.stringify(extras));
+  }
+
+  onBackToPlans() {
+    this.showExtrasSection = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  onProceedToPayment() {
     this.router.navigate(['/professional/payment'], {
       queryParams: {
         planIntervalId: this.selectedPlanIntervalId
       }
     });
-  }
-
-  onBack() {
-    this.router.navigate(['/professional/documents']);
   }
 }

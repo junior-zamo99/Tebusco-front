@@ -1,0 +1,213 @@
+<div class="credit-widget" [class.disabled]="disabled">
+  <!-- Header -->
+  <div class="widget-header">
+    <div class="flex items-center gap-2">
+      <span class="text-lg">💰</span>
+      <h3 class="text-lg font-semibold text-text">Aplicar Créditos</h3>
+    </div>
+    
+    <!-- Refresh button -->
+    <button 
+      *ngIf="useCredits"
+      type="button"
+      (click)="refreshBalance()"
+      [disabled]="isLoadingBalance"
+      class="text-sm text-primary hover:text-primary-dark transition-colors flex items-center gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" [class.animate-spin]="isLoadingBalance">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Actualizar
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoadingBalance" class="loading-state">
+    <div class="animate-pulse space-y-3">
+      <div class="h-4 bg-card-bg-light rounded w-3/4"></div>
+      <div class="h-4 bg-card-bg-light rounded w-1/2"></div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="balanceError && !isLoadingBalance" class="error-state">
+    <p class="text-sm text-danger">{{ balanceError }}</p>
+    <button 
+      type="button"
+      (click)="refreshBalance()" 
+      class="text-sm text-primary hover:underline mt-2">
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoadingBalance && !balanceError" class="widget-content">
+    
+    <!-- Checkbox to enable credits -->
+    <div class="checkbox-container">
+      <label class="flex items-center gap-3 cursor-pointer" [class.opacity-50]="!canUseCredits">
+        <input 
+          type="checkbox" 
+          [(ngModel)]="useCredits"
+          (change)="toggleUseCredits()"
+          [disabled]="!canUseCredits"
+          class="w-5 h-5 text-primary bg-card-bg-light border-border rounded focus:ring-2 focus:ring-primary cursor-pointer">
+        <span class="text-sm font-medium text-text">
+          Quiero usar mis créditos disponibles
+        </span>
+      </label>
+
+      <!-- No credits message -->
+      <p *ngIf="!hasCredits" class="text-xs text-text-light mt-2 ml-8">
+        No tienes créditos disponibles. <a routerLink="/my-credits" class="text-primary hover:underline">Ver cómo obtener créditos</a>
+      </p>
+
+      <!-- No amount to pay -->
+      <p *ngIf="hasCredits && totalAmount === 0" class="text-xs text-text-light mt-2 ml-8">
+        No hay monto a pagar
+      </p>
+    </div>
+
+    <!-- Credits Details (shown when checkbox is active) -->
+    <div *ngIf="useCredits && canUseCredits" class="credits-details" [@slideDown]>
+      
+      <!-- Available Balance -->
+      <div class="balance-info">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-text-light">Créditos disponibles:</span>
+          <span class="text-lg font-bold text-success">
+            {{ formatCurrency(availableCredits) }} <span class="text-sm font-normal">BOB</span>
+          </span>
+        </div>
+
+        <!-- Expiration warning -->
+        <div *ngIf="shouldShowExpirationWarning" class="expiration-warning" [ngClass]="expirationSeverityClass">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-xs">
+            <span *ngIf="daysUntilExpiration === 0">Expiran HOY</span>
+            <span *ngIf="daysUntilExpiration === 1">Expiran mañana</span>
+            <span *ngIf="daysUntilExpiration && daysUntilExpiration > 1">Expiran en {{ daysUntilExpiration }} días</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Amount Input -->
+      <div class="amount-input-container">
+        <label class="block text-sm font-medium text-text mb-2">
+          Monto a usar:
+        </label>
+        
+        <div class="input-wrapper">
+          <input 
+            type="number"
+            [(ngModel)]="creditAmountInput"
+            (input)="onAmountInputChange()"
+            (keypress)="onAmountInputKeyPress($event)"
+            [disabled]="disabled || isValidating"
+            step="0.01"
+            min="0"
+            [max]="Math.min(availableCredits, totalAmount)"
+            placeholder="0.00"
+            class="amount-input">
+          <span class="currency-label">BOB</span>
+        </div>
+
+        <!-- Validation Error -->
+        <p *ngIf="validationError" class="validation-error">
+          {{ validationError }}
+        </p>
+      </div>
+
+      <!-- Quick Buttons -->
+      <div class="quick-buttons">
+        <button 
+          type="button"
+          (click)="usePercentage(25)"
+          [disabled]="disabled || isValidating"
+          class="quick-btn">
+          25%
+        </button>
+        <button 
+          type="button"
+          (click)="usePercentage(50)"
+          [disabled]="disabled || isValidating"
+          class="quick-btn">
+          50%
+        </button>
+        <button 
+          type="button"
+          (click)="usePercentage(75)"
+          [disabled]="disabled || isValidating"
+          class="quick-btn">
+          75%
+        </button>
+        <button 
+          type="button"
+          (click)="useAllCredits()"
+          [disabled]="disabled || isValidating"
+          class="quick-btn quick-btn-primary">
+          100%
+        </button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button 
+          type="button"
+          (click)="applyCreditAmount()"
+          [disabled]="!creditAmountInput || disabled || isValidating"
+          class="apply-btn">
+          <span *ngIf="!isValidating">Aplicar</span>
+          <span *ngIf="isValidating" class="flex items-center gap-2">
+            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Validando...
+          </span>
+        </button>
+
+        <button 
+          type="button"
+          (click)="clearCredits()"
+          [disabled]="disabled"
+          class="clear-btn">
+          Limpiar
+        </button>
+      </div>
+
+      <!-- Summary (when credits are applied) -->
+      <div *ngIf="isUsingCredits" class="summary-card">
+        <div class="summary-row">
+          <span class="text-sm text-text-light">Total original:</span>
+          <span class="text-sm font-medium text-text line-through">
+            {{ formatCurrency(totalAmount) }} BOB
+          </span>
+        </div>
+        
+        <div class="summary-row highlight">
+          <span class="text-sm font-medium text-success">Créditos aplicados:</span>
+          <span class="text-sm font-bold text-success">
+            -{{ formatCurrency(creditAmount) }} BOB
+          </span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="summary-row total">
+          <span class="text-base font-semibold text-text">Nuevo total a pagar:</span>
+          <span class="text-xl font-bold text-primary">
+            {{ formatCurrency(newTotal) }} BOB
+          </span>
+        </div>
+
+        <!-- Savings badge -->
+        <div class="savings-badge">
+          ✨ Ahorras {{ formatCurrency(savingsAmount) }} BOB ({{ savingsPercentage }}%)
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,29 +1,29 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CategoryNode } from '../../models/category.model';
-import { RequestUrgencyEnum } from '../../models/request.models'; // Ajusta ruta
-import { LocationService } from '../../services/location.service';
-import { LocationCoordinates, MapLocationPickerComponent } from '../map-location-picker/map-location-picker';
+import { RequestUrgencyEnum } from '../../models/request.models';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-request-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MapLocationPickerComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './request-form.html',
 })
-export class RequestForm implements OnInit {
+export class RequestForm implements OnInit, OnChanges {
 
   @Input() selectedCategories: CategoryNode[] = [];
   @Input() isSubmitting = false;
+  @Input() initialData: any = null;
+
   @Output() formSubmit = new EventEmitter<any>();
   @Output() back = new EventEmitter<void>();
+  @Output() changeCategory = new EventEmitter<void>();
 
   form: FormGroup;
-  initialLat = -16.5000;
-  initialLng = -68.1500;
+  applicantCityName: string = 'Cargando...';
 
-  // DEFINICIÓN DE URGENCIAS (Español + Estilos)
   urgencyLevels = [
     {
       value: RequestUrgencyEnum.LOW,
@@ -62,7 +62,10 @@ export class RequestForm implements OnInit {
     }
   ];
 
-  constructor(private fb: FormBuilder, private locationService: LocationService) {
+  constructor(
+    private fb: FormBuilder,
+    private storageService: StorageService
+  ) {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
@@ -70,31 +73,75 @@ export class RequestForm implements OnInit {
       budget: [null, [Validators.min(0)]],
       dateNeeded: [null],
       hourPreferred: [''],
-      address: ['', [Validators.required]],
-      lat: [null, [Validators.required]],
-      lng: [null, [Validators.required]]
+      cityId: [null, [Validators.required]],
+      address: ['', [Validators.required, Validators.minLength(5)]],
     });
   }
 
-  async ngOnInit() {
-    try {
+  ngOnInit() {
 
-    } catch (e) { console.warn(e); }
+    if (this.initialData) {
+      this.patchFormValues();
+    } else {
+      this.loadApplicantData();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['initialData'] && this.initialData) {
+      this.patchFormValues();
+    }
+  }
+
+  loadApplicantData() {
+    const applicant = this.storageService.getApplicant();
+
+    if (applicant && applicant.city) {
+      this.applicantCityName = applicant.city.name;
+      this.form.patchValue({
+        cityId: applicant.city.id
+      });
+    } else {
+      this.applicantCityName = 'Ciudad no configurada';
+    }
+  }
+
+  private patchFormValues(): void {
+    if (!this.form || !this.initialData) return;
+
+    if (this.initialData.city) {
+      this.applicantCityName = this.initialData.city.name;
+    } else {
+      this.loadApplicantData();
+    }
+
+
+    let formattedDate = null;
+    if (this.initialData.dateNeeded) {
+      try {
+        const dateObj = new Date(this.initialData.dateNeeded);
+        if (!isNaN(dateObj.getTime())) {
+             formattedDate = dateObj.toISOString().split('T')[0];
+        }
+      } catch (e) {
+        console.error('Error parseando fecha', e);
+      }
+    }
+
+    this.form.patchValue({
+      title: this.initialData.title,
+      description: this.initialData.description,
+      urgency: this.initialData.urgency,
+      budget: this.initialData.budget,
+      address: this.initialData.address,
+      dateNeeded: formattedDate,
+      hourPreferred: this.initialData.hourPreferred,
+      cityId: this.initialData.cityId,
+    });
   }
 
   setUrgency(value: RequestUrgencyEnum) {
     this.form.get('urgency')?.setValue(value);
-  }
-
-  onMapLocationSelected(location: LocationCoordinates) {
-    const addressString = location.address?.fullAddress || `${location.address?.city || ''}`;
-    this.form.patchValue({
-      lat: location.lat,
-      lng: location.lng,
-      address: addressString.trim() || this.form.get('address')?.value
-    });
-    this.form.get('address')?.markAsTouched();
-    this.form.get('lat')?.markAsTouched();
   }
 
   onSubmit() {
@@ -102,6 +149,7 @@ export class RequestForm implements OnInit {
       this.formSubmit.emit(this.form.value);
     } else {
       this.form.markAllAsTouched();
+
     }
   }
 

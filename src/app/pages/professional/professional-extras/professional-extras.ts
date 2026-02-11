@@ -1,0 +1,92 @@
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { ExtrasSelectorComponent } from '../../../components/extras-selector/extras-selector.component';
+import { ExtrasService, ExtraPackage, SelectedExtra } from '../../../services/extras.service';
+
+@Component({
+  selector: 'app-professional-extras',
+  standalone: true,
+  imports: [CommonModule, ExtrasSelectorComponent],
+  templateUrl: './professional-extras.html',
+  styleUrls: ['./professional-extras.css']
+})
+export class ProfessionalExtras implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
+  @Input() isVisible = false;
+  @Output() extrasSelected = new EventEmitter<any[]>();
+  @Output() back = new EventEmitter<void>();
+  @Output() continue = new EventEmitter<void>();
+
+  packages: ExtraPackage[] = [];
+  selectedExtras: SelectedExtra[] = [];
+  isLoading = false;
+  errorMessage = '';
+
+  constructor(
+    private extrasService: ExtrasService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    this.loadPackages();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private loadPackages() {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.extrasService.getPackages()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          this.packages = response.data || [];
+          console.log('📦 Paquetes de extras cargados:', this.packages);
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.errorMessage = 'Error al cargar los extras disponibles';
+          console.error('❌ Error cargando extras:', error);
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  onExtrasChange(extras: SelectedExtra[]) {
+    this.selectedExtras = extras;
+    console.log('✅ Extras seleccionados actualizados:', this.selectedExtras);
+    this.extrasSelected.emit(extras);
+    this.cdr.detectChanges();
+  }
+
+  onBackClick() {
+    console.log('⬅️ Volver a planes');
+    this.back.emit();
+  }
+
+  onContinueClick() {
+    console.log('➡️ Continuar al pago con extras:', this.selectedExtras);
+    this.continue.emit();
+  }
+
+  get totalExtrasPrice(): number {
+    return this.selectedExtras.reduce((total, extra) => total + extra.totalPrice, 0);
+  }
+
+  get selectedExtrasCount(): number {
+    return this.selectedExtras.length;
+  }
+
+  get currency(): string {
+    return this.packages.length > 0 ? this.packages[0].currency : 'BOB';
+  }
+}

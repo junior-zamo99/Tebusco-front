@@ -17,6 +17,7 @@ import {
   ProviderSearchResult,
   SearchQuery
 } from '../../interface/search.interface';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-search-result',
@@ -36,6 +37,8 @@ export class SearchResult implements OnInit, OnChanges, OnDestroy {
 
   isLoading: boolean = false;
   error: string | null = null;
+
+  backendUrl= environment.backendUrl;
 
   private searchSubject = new Subject<string>();
 
@@ -168,5 +171,14 @@ export class SearchResult implements OnInit, OnChanges, OnDestroy {
       this.closeResults();
       return;
     }
+  }
+
+  photoURL(provider: ProviderSearchResult): string {
+
+    if (provider.photoUrl) {
+      const url =  this.backendUrl  + provider.photoUrl;
+      return url;
+    }
+    return 'assets/img/user-placeholder.png';
   }
 }

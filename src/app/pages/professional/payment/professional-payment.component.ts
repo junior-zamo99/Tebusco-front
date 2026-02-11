@@ -7,7 +7,9 @@ import { takeUntil } from 'rxjs/operators';
 import {
   SubscriptionService,
   PaymentMethod,
-  CreateSubscriptionResponse
+  CreateSubscriptionResponse,
+  ExtraRequest,
+  PurchaseOptions
 } from '../../../services/subscription.service';
 import {
   PlansService,
@@ -15,6 +17,12 @@ import {
   PlanInterval,
   PlanFeature
 } from '../../../services/plans.service';
+import { SelectedExtra } from '../../../services/extras.service';
+import {
+  CouponService,
+  CouponValidationResult,
+  CouponValidationItem
+} from '../../../services/coupon.service';
 
 @Component({
   selector: 'app-professional-payment',
@@ -26,20 +34,25 @@ import {
 export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  // Datos del plan
   planIntervalId: number | null = null;
   planInterval: PlanInterval | null = null;
   plan: Plan | null = null;
 
-
   paymentMethods: PaymentMethod[] = [];
   selectedPaymentMethodId: number | null = null;
 
-  // Opciones
+  selectedExtras: SelectedExtra[] = [];
+
+
+  couponCode: string = '';
+  appliedCoupon: CouponValidationResult | null = null;
+  isCouponValidating: boolean = false;
+  couponError: string = '';
+  couponSuccess: string = '';
+
   autoRenew = true;
   agreeTerms = false;
 
-  // Estados
   isLoading = false;
   isProcessing = false;
   errorMessage = '';
@@ -48,13 +61,15 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private subscriptionService: SubscriptionService,
-    private plansService: PlansService
+    private plansService: PlansService,
+    private couponService: CouponService
   ) {}
 
   ngOnInit() {
     this.loadPlanIntervalId();
     this.loadPaymentMethods();
     this.loadPlanDetails();
+    this.loadSelectedExtras();
   }
 
   ngOnDestroy() {
@@ -62,32 +77,24 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * 📥 Cargar planIntervalId desde query params o localStorage
-   */
+
   private loadPlanIntervalId() {
-    // Intentar desde query params
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
       if (params['planIntervalId']) {
         this.planIntervalId = parseInt(params['planIntervalId'], 10);
         localStorage.setItem('selectedPlanIntervalId', this.planIntervalId.toString());
       } else {
-        // Intentar desde localStorage
         const stored = localStorage.getItem('selectedPlanIntervalId');
         if (stored) {
           this.planIntervalId = parseInt(stored, 10);
         } else {
-          // No hay plan seleccionado, redirigir
           this.router.navigate(['/professional/plans']);
         }
       }
     });
   }
 
-  /**
-   * 📋 PASO 10: Listar Métodos de Pago
-   * GET /subscriptions/payment-methods
-   */
+
   private loadPaymentMethods() {
     this.subscriptionService.getPaymentMethods()
       .pipe(takeUntil(this.destroy$))
@@ -95,7 +102,6 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.paymentMethods = response.data || [];
 
-          // Pre-seleccionar el primer método activo
           const firstActiveMethod = this.paymentMethods.find(m => m.isActive);
           if (firstActiveMethod) {
             this.selectedPaymentMethodId = firstActiveMethod.id;
@@ -110,9 +116,7 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * 📊 Cargar detalles del plan seleccionado
-   */
+
   private loadPlanDetails() {
     if (!this.planIntervalId) return;
 
@@ -126,7 +130,6 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           const plans = response.data || [];
 
-          // Buscar el plan que contiene el interval seleccionado
           for (const p of plans) {
             const interval = p.intervals.find(i => i.id === this.planIntervalId);
             if (interval) {
@@ -151,24 +154,33 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * 💳 Seleccionar método de pago
-   */
+
+  private loadSelectedExtras() {
+    try {
+      const stored = localStorage.getItem('selectedExtras');
+      if (stored) {
+        this.selectedExtras = JSON.parse(stored);
+        console.log('🎁 Extras cargados desde localStorage:', this.selectedExtras);
+      } else {
+        this.selectedExtras = [];
+        console.log('ℹ️ No hay extras seleccionados');
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar extras:', error);
+      this.selectedExtras = [];
+    }
+  }
+
+
   selectPaymentMethod(methodId: number) {
     this.selectedPaymentMethodId = methodId;
     console.log('💳 Método de pago seleccionado:', methodId);
   }
 
-  /**
-   * 🔄 Toggle auto-renovación
-   */
   toggleAutoRenew() {
     this.autoRenew = !this.autoRenew;
   }
 
-  /**
-   * 📊 Calcular fechas de suscripción
-   */
   get subscriptionStartDate(): string {
     const today = new Date();
     return today.toLocaleDateString('es-ES', {
@@ -192,16 +204,46 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * 💰 Precio total
-   */
-  get totalPrice(): number {
+
+  get planAmount(): number {
     return this.planInterval?.pricePerPeriod || 0;
   }
 
-  /**
-   * 🎨 Obtener icono del método de pago
-   */
+  get extrasAmount(): number {
+    return this.selectedExtras.reduce((sum, extra) => sum + extra.totalPrice, 0);
+  }
+
+  get subtotal(): number {
+    return this.planAmount + this.extrasAmount;
+  }
+
+  get discountAmount(): number {
+    return this.appliedCoupon?.totalDiscountAmount || 0;
+  }
+
+  get totalPrice(): number {
+    const final = this.subtotal - this.discountAmount;
+    return Math.max(0, final);
+  }
+
+  get discountPercentage(): number {
+    if (this.subtotal === 0 || this.discountAmount === 0) return 0;
+    return Math.round((this.discountAmount / this.subtotal) * 100);
+  }
+
+  get currency(): string {
+    return this.planInterval?.currency || 'BOB';
+  }
+
+  get hasExtras(): boolean {
+    return this.selectedExtras.length > 0;
+  }
+
+  get hasCoupon(): boolean {
+    return this.appliedCoupon !== null && this.appliedCoupon.valid;
+  }
+
+
   getPaymentMethodIcon(type: string): string {
     const icons: { [key: string]: string } = {
       'card': '💳',
@@ -210,6 +252,87 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
       'bank_transfer': '🏦'
     };
     return icons[type] || '💵';
+  }
+
+
+  validateCoupon() {
+    if (!this.couponCode || this.couponCode.trim() === '') {
+      this.couponError = 'Por favor ingresa un código de cupón';
+      return;
+    }
+
+    if (!this.planIntervalId) {
+      this.couponError = 'No se ha seleccionado un plan';
+      return;
+    }
+
+    this.couponError = '';
+    this.couponSuccess = '';
+    this.isCouponValidating = true;
+
+    const items: CouponValidationItem[] = [];
+
+    items.push({
+      type: 'plan',
+      id: this.planIntervalId,
+      amount: this.planAmount,
+      quantity: 1
+    });
+
+    this.selectedExtras.forEach(extra => {
+      items.push({
+        type: 'extra',
+        id: extra.packageId,
+        amount: extra.price,
+        quantity: extra.quantity
+      });
+    });
+
+    console.log('🎫 Validando cupón:', {
+      code: this.couponCode,
+      items,
+      totalAmount: this.subtotal
+    });
+
+    this.couponService.validateCoupon(
+      this.couponCode,
+      items,
+      this.subtotal
+    )
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response) => {
+        this.isCouponValidating = false;
+        const result = response.data;
+
+        if (result.valid) {
+          this.appliedCoupon = result;
+          const discountAmount = result.totalDiscountAmount || 0;
+          this.couponSuccess = `Cupón aplicado! Descuento: ${this.currency} ${discountAmount.toFixed(2)}`;
+          this.couponError = '';
+          console.log('✅ Cupón válido:', result);
+        } else {
+          this.couponError = result.reason || 'Cupón inválido';
+          this.appliedCoupon = null;
+          console.warn('⚠️ Cupón inválido:', result);
+        }
+      },
+      error: (error) => {
+        this.isCouponValidating = false;
+        this.couponError = error.error?.message || 'Error al validar cupón';
+        this.appliedCoupon = null;
+        console.error('❌ Error validando cupón:', error);
+      }
+    });
+  }
+
+
+  removeCoupon() {
+    this.couponCode = '';
+    this.appliedCoupon = null;
+    this.couponError = '';
+    this.couponSuccess = '';
+    console.log('🗑️ Cupón removido');
   }
 
 
@@ -224,21 +347,36 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
       return;
     }
 
-
-
     this.isProcessing = true;
     this.errorMessage = '';
+
+    const extras: ExtraRequest[] = this.selectedExtras.map(extra => ({
+      packageId: extra.packageId,
+      quantity: extra.quantity
+    }));
+
+    let options: PurchaseOptions | undefined = undefined;
+
+    if (this.hasCoupon) {
+      options = {
+        couponCode: this.couponCode
+      };
+    }
 
     console.log('🔄 Procesando pago:', {
       planIntervalId: this.planIntervalId,
       paymentMethodId: this.selectedPaymentMethodId,
-      autoRenew: this.autoRenew
+      autoRenew: this.autoRenew,
+      extras: extras,
+      options: options
     });
 
     this.subscriptionService.createSubscription(
       this.planIntervalId,
       this.selectedPaymentMethodId || 0,
-      this.autoRenew
+      this.autoRenew,
+      extras.length > 0 ? extras : undefined,
+      options
     )
     .pipe(takeUntil(this.destroy$))
     .subscribe(
@@ -248,6 +386,10 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
         this.isProcessing = false;
 
         console.log('✅ Suscripción creada exitosamente:', response);
+
+        // Limpiar localStorage después de éxito
+        localStorage.removeItem('selectedPlanIntervalId');
+        localStorage.removeItem('selectedExtras');
 
         this.router.navigate(['/professional/payment-success']);
       },
@@ -265,6 +407,8 @@ export class ProfessionalPaymentComponent implements OnInit, OnDestroy {
           this.errorMessage = 'Plan inválido. Por favor selecciona otro plan.';
         } else if (error.error?.error === 'PAYMENT_FAILED') {
           this.errorMessage = 'Error en el pago. Por favor intenta con otro método.';
+        } else if (error.error?.error === 'INVALID_COUPON') {
+          this.errorMessage = 'El cupón ingresado no es válido o ya expiró.';
         } else {
           this.errorMessage = error.error?.message || 'Error al procesar el pago. Intenta nuevamente.';
         }

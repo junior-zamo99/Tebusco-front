@@ -1,5 +1,5 @@
 import { Component, signal, ViewChild, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { LocationService } from '../../services/location.service';
 import { RegisterRequest } from '../../interface/auth.interface';
@@ -9,12 +9,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../../services/storage.service';
 import { City, Country } from '../../models/location.model';
+import { PhoneInput } from '../../components/phone-input/phone-input';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
-  imports: [MapLocationPickerComponent, CommonModule, FormsModule]
+  imports: [ CommonModule, FormsModule, PhoneInput]
 })
 export class RegisterComponent implements OnInit {
 
@@ -23,6 +24,9 @@ export class RegisterComponent implements OnInit {
 
   countries: Country[] = [];
   cities: City[] = [];
+
+  isPhoneValid: boolean = false;
+
 
   formData = {
     name: '',
@@ -42,7 +46,8 @@ export class RegisterComponent implements OnInit {
     private authService: AuthService,
     private locationService: LocationService,
     private router: Router,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -73,6 +78,15 @@ export class RegisterComponent implements OnInit {
     }
   }
 
+  onPhoneChange(event: any) {
+    this.isPhoneValid = event.valid;
+    if (event.valid) {
+      this.formData.phone = event.fullNumber;
+    } else {
+      this.formData.phone = '';
+    }
+  }
+
   onSubmit(): void {
     if (!this.formData.name || !this.formData.lastName || !this.formData.email || !this.formData.password) {
       this.errorMessage.set('Por favor completa los campos obligatorios');
@@ -87,6 +101,11 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
+    if (!this.isPhoneValid || !this.formData.phone) {
+      this.errorMessage.set('Por favor ingresa un número de teléfono válido');
+      return;
+    }
+
     this.isLoading.set(true);
     this.errorMessage.set('');
 
@@ -95,8 +114,8 @@ export class RegisterComponent implements OnInit {
       lastName: this.formData.lastName.trim(),
       email: this.formData.email.trim().toLowerCase(),
       password: this.formData.password,
-      ci: this.formData.ci.trim(),
-      phone: this.formData.phone.trim(),
+     //ci: this.formData.ci.trim(),
+      phone: this.formData.phone,
       sex: this.formData.sex as any,
       cityid: this.selectedCityId
     };
@@ -105,12 +124,12 @@ export class RegisterComponent implements OnInit {
       next: (response) => {
         this.storageService.clearAll();
 
-        if (response.user) {
-             const userToSave = { ...response.user, phone: response.user.phone || '' };
+        if (response.data.user) {
+             const userToSave = { ...response.data.user, phone: response.data.user.phone || '' };
              this.storageService.saveUser(userToSave);
         }
-        if (response.applicant) {
-            const applicantToSave = { ...response.applicant, city: response.applicant.city || undefined };
+        if (response.data.applicant) {
+            const applicantToSave = { ...response.data.applicant, city: response.data.applicant.city || undefined };
             this.storageService.saveApplicant(applicantToSave);
         }
 
@@ -125,5 +144,10 @@ export class RegisterComponent implements OnInit {
       },
       complete: () => this.isLoading.set(false)
     });
+  }
+
+
+  onLoginRedirect(): void {
+    this.router.navigate(['/login']);
   }
 }

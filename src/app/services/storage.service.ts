@@ -13,7 +13,7 @@ export interface StorageUser {
 
 export interface StorageApplicant {
   id: number;
-  ci: string;
+  ci?: string;
   isFrequentCustomer: boolean;
   city?: {
     id: number;

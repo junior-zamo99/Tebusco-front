@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, computed, effect } from '@angular/core';
+import { Component, OnInit, HostListener, computed, effect, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -8,16 +8,19 @@ import { LoadingService } from '../../services/loading.service';
 import { SearchResult } from '../search-result/search-result';
 import { DialogService } from '../../services/dialog.service';
 import { ThemeService } from '../../services/theme.service';
+import { CreditBalanceWidgetComponent } from '../credit-balance-widget/credit-balance-widget.component';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, SearchResult],
+  imports: [CommonModule, RouterLink, FormsModule, SearchResult, CreditBalanceWidgetComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+  @ViewChild(CreditBalanceWidgetComponent) creditWidget?: CreditBalanceWidgetComponent;
+
   isMenuOpen = false;
   isUserMenuOpen = false;
   isSearchOpen = false;
@@ -246,5 +249,10 @@ export class NavbarComponent implements OnInit {
     const user = this.authService.currentUser();
     if (!user) return '';
     return `${user.name} ${user.lastName}`;
+  }
+
+
+  refreshCreditBalance(): void {
+    this.creditWidget?.refreshBalance();
   }
 }

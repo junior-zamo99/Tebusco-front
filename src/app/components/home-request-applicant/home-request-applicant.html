@@ -1,4 +1,4 @@
-<div class="py-10 relative overflow-hidden">
+<div *ngIf="!isLoading && requests.length > 0" class="py-10 relative overflow-hidden">
 
   <div class="text-center mb-8">
     <h2 class="text-2xl font-bold text-text mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
@@ -7,7 +7,7 @@
     <p class="text-text-light text-sm">Proyectos que necesitan tu ayuda</p>
   </div>
 
-  <div *ngIf="!isLoading && requests.length > 0" class="container-custom max-w-7xl mx-auto px-4">
+  <div  class="container-custom max-w-7xl mx-auto px-4">
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <div *ngFor="let req of requests"

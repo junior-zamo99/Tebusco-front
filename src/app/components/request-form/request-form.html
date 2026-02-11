@@ -1,129 +1,172 @@
-<div class="p-6">
+<div class="w-full h-full font-sans text-text p-6 md:p-8 overflow-y-auto bg-surface">
 
-  <div class="mb-6 p-4 bg-background border border-border rounded-xl flex justify-between items-start gap-3 shadow-sm">
-    <div>
-      <p class="text-[10px] text-text-light uppercase tracking-wider font-bold mb-1.5">Categorías Seleccionadas</p>
-      <div class="flex flex-wrap gap-2">
-        <span *ngFor="let cat of selectedCategories" class="px-2.5 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-lg border border-primary/20">
-          {{ cat.name }}
-        </span>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="grid grid-cols-1 xl:grid-cols-12 gap-8 h-full content-start">
+
+    <div class="xl:col-span-8 space-y-6">
+
+      <div class="bg-background/40 rounded-xl border border-border/50 p-6 md:p-8 hover:border-border/80 transition-colors">
+        <h3 class="text-xs font-bold text-text-light uppercase tracking-widest mb-6 flex items-center gap-2">
+           <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+           Detalles del Servicio
+        </h3>
+
+        <div class="space-y-6">
+          <div class="group">
+            <label class="block text-[11px] font-bold text-text-light uppercase tracking-wide mb-2">
+              Título de la solicitud <span class="text-primary">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="title"
+              placeholder="Ej: Necesito un plomero urgente para fuga de agua"
+              class="w-full bg-card-bg border border-border rounded-lg px-4 py-3.5 text-sm text-text placeholder-text-light/30 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-card-bg-hover outline-none transition-all duration-200"
+              [class.border-red-500]="isFieldInvalid('title')"
+            >
+            <p *ngIf="isFieldInvalid('title')" class="text-red-500 text-[10px] font-medium mt-1.5 ml-1">
+              Título requerido (mín. 5 caracteres)
+            </p>
+          </div>
+
+          <div class="group">
+            <label class="block text-[11px] font-bold text-text-light uppercase tracking-wide mb-2">
+              Descripción detallada <span class="text-primary">*</span>
+            </label>
+            <textarea
+              formControlName="description"
+              rows="6"
+              placeholder="Explica qué necesitas con detalle..."
+              class="w-full bg-card-bg border border-border rounded-lg px-4 py-3.5 text-sm text-text placeholder-text-light/30 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-card-bg-hover outline-none transition-all duration-200 resize-none leading-relaxed"
+              [class.border-red-500]="isFieldInvalid('description')"
+            ></textarea>
+            <p *ngIf="isFieldInvalid('description')" class="text-red-500 text-[10px] font-medium mt-1.5 ml-1">
+              Descripción muy corta (mín. 10 caracteres)
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
-    <button type="button" (click)="back.emit()" class="text-xs font-medium text-text-light hover:text-primary transition-colors flex items-center gap-1 mt-1">
-      <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-      Editar
-    </button>
-  </div>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div class="bg-background/40 rounded-xl border border-border/50 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+           <h3 class="text-[10px] font-bold text-text-light uppercase tracking-widest mb-3">Categorías Seleccionadas</h3>
+           <div class="flex flex-wrap gap-2">
+            <div *ngFor="let cat of selectedCategories" class="px-3 py-1.5 bg-card-bg border border-border rounded-md text-xs font-medium text-text shadow-sm flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary/70"></span>
+              {{ cat.name }}
+            </div>
+          </div>
+        </div>
 
-    <div class="form-group">
-      <label class="block text-xs font-semibold text-text mb-1.5">Título de la solicitud <span class="text-danger">*</span></label>
-      <input
-        type="text"
-        formControlName="title"
-        placeholder="Ej: Reparación de tubería urgente en cocina"
-        class="w-full px-4 py-2.5 rounded-lg border bg-background text-text text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-light/50 shadow-sm"
-        [class.border-danger]="isFieldInvalid('title')"
-        [class.border-border]="!isFieldInvalid('title')"
-      >
-      <p *ngIf="isFieldInvalid('title')" class="text-danger text-[10px] mt-1">Mínimo 5 caracteres.</p>
-    </div>
-
-    <div class="form-group">
-      <label class="block text-xs font-semibold text-text mb-1.5">Descripción detallada <span class="text-danger">*</span></label>
-      <textarea
-        formControlName="description"
-        rows="3"
-        placeholder="Describe el problema, materiales necesarios..."
-        class="w-full px-4 py-2.5 rounded-lg border bg-background text-text text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-light/50 resize-none shadow-sm"
-        [class.border-danger]="isFieldInvalid('description')"
-        [class.border-border]="!isFieldInvalid('description')"
-      ></textarea>
-      <p *ngIf="isFieldInvalid('description')" class="text-danger text-[10px] mt-1">Mínimo 10 caracteres.</p>
-    </div>
-
-    <div class="p-4 bg-background rounded-xl border border-border">
-      <div class="flex justify-between items-center mb-2">
-        <label class="block text-xs font-semibold text-text">Ubicación del trabajo <span class="text-danger">*</span></label>
-        <span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">Mueve el pin rojo</span>
-      </div>
-      <div class="rounded-lg overflow-hidden border border-border mb-3 shadow-sm">
-        <app-map-location-picker
-          [initialLat]="initialLat"
-          [initialLng]="initialLng"
-          [height]="'250px'"
-          [showReverseGeocode]="true"
-          (locationSelected)="onMapLocationSelected($event)">
-        </app-map-location-picker>
-      </div>
-      <div class="relative">
-        <svg class="absolute top-2.5 left-3 h-4 w-4 text-text-light pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <input type="text" formControlName="address" placeholder="Dirección exacta"
-          class="w-full pl-9 pr-4 py-2 rounded-lg border bg-surface text-text text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
-          [class.border-danger]="isFieldInvalid('address')"
-          [class.border-border]="!isFieldInvalid('address')">
-      </div>
-    </div>
-
-    <div>
-      <label class="block text-xs font-semibold text-text mb-2">Nivel de Urgencia <span class="text-danger">*</span></label>
-
-      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <button
-          *ngFor="let level of urgencyLevels"
           type="button"
-          (click)="setUrgency(level.value)"
-          class="flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 group"
-          [ngClass]="form.get('urgency')?.value === level.value ? level.activeClasses + ' shadow-md scale-[1.02]' : level.classes + ' bg-background opacity-80 hover:opacity-100'"
-        >
-          <span class="text-sm font-bold">{{ level.label }}</span>
-          <span class="text-[10px] opacity-80 mt-0.5 text-center leading-tight">{{ level.desc }}</span>
+          (click)="initialData ? changeCategory.emit() : back.emit()"
+          class="text-[10px] font-bold text-primary hover:text-white hover:bg-primary transition-all uppercase border border-primary/30 px-4 py-2 rounded-lg">
+          {{ initialData ? 'Editar Categorías' : 'Cambiar Categoría' }}
         </button>
       </div>
+
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div>
-        <label class="block text-xs font-semibold text-text mb-1.5">Presupuesto (Bs)</label>
-        <div class="relative">
-          <span class="absolute left-3 top-2 text-text-light text-sm font-semibold pointer-events-none">Bs.</span>
-          <input
-            type="number"
-            formControlName="budget"
-            placeholder="0.00"
-            class="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-background text-text text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-light/50"
-          >
+    <div class="xl:col-span-4 space-y-6">
+
+      <div class="bg-background/40 border border-border/50 rounded-xl p-6 hover:border-border/80 transition-colors">
+        <h3 class="text-xs font-bold text-text mb-5 uppercase tracking-wide border-b border-border/40 pb-3 flex items-center justify-between">
+          <span>Ubicación</span>
+        </h3>
+
+        <div class="space-y-5">
+          <div>
+            <label class="block text-[10px] font-bold text-text-light mb-1.5 uppercase opacity-70">Ciudad</label>
+            <div class="w-full px-4 py-3 rounded-lg border border-border/30 bg-card-bg/50 text-text-light text-sm font-medium select-none cursor-not-allowed">
+              {{ applicantCityName }}
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold text-text-light mb-1.5 uppercase">Dirección Exacta <span class="text-primary">*</span></label>
+            <input
+              type="text"
+              formControlName="address"
+              placeholder="Av. Principal #123..."
+              class="w-full bg-card-bg border border-border rounded-lg px-4 py-3 text-sm text-text focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+              [class.border-red-500]="isFieldInvalid('address')"
+            >
+          </div>
         </div>
       </div>
 
-      <div class="flex gap-2">
-        <div class="flex-1">
-          <label class="block text-xs font-semibold text-text mb-1.5">Fecha</label>
-          <input type="date" formControlName="dateNeeded"
-            class="w-full px-2 py-2 rounded-lg border border-border bg-background text-text text-sm focus:border-primary outline-none">
+      <div class="bg-background/40 border border-border/50 rounded-xl p-6 hover:border-border/80 transition-colors space-y-6">
+
+        <div>
+           <h3 class="text-[10px] font-bold text-text-light uppercase tracking-widest mb-3">Nivel de Urgencia</h3>
+           <div class="grid grid-cols-2 gap-2">
+            <button
+              *ngFor="let level of urgencyLevels"
+              type="button"
+              (click)="setUrgency(level.value)"
+              class="relative flex flex-col items-center justify-center py-2.5 px-2 rounded-lg border transition-all duration-200"
+              [ngClass]="form.get('urgency')?.value === level.value
+                ? level.activeClasses
+                : level.classes + ' bg-card-bg'"
+            >
+              <span class="text-[10px] font-bold uppercase tracking-wider">{{ level.label }}</span>
+            </button>
+          </div>
         </div>
-        <div class="flex-1">
-          <label class="block text-xs font-semibold text-text mb-1.5">Hora</label>
-          <input type="time" formControlName="hourPreferred"
-            class="w-full px-2 py-2 rounded-lg border border-border bg-background text-text text-sm focus:border-primary outline-none">
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-bold text-text-light mb-1.5 uppercase">Presupuesto</label>
+            <div class="relative group">
+               <span class="absolute left-3 top-2.5 text-text-light text-xs font-bold pointer-events-none group-focus-within:text-primary transition-colors">Bs.</span>
+               <input
+                type="number"
+                formControlName="budget"
+                placeholder="0.00"
+                class="w-full pl-8 pr-3 py-2.5 rounded-lg bg-card-bg border border-border text-sm text-text focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+              >
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold text-text-light mb-1.5 uppercase">Para el día</label>
+            <input
+              type="date"
+              formControlName="dateNeeded"
+              class="w-full px-3 py-2.5 rounded-lg bg-card-bg border border-border text-xs text-text focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+            >
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="pt-6 flex justify-end gap-3 border-t border-border mt-4">
-      <button type="button" (click)="back.emit()" class="px-5 py-2.5 border border-border rounded-lg text-text-light hover:bg-background hover:text-text transition-all duration-200 text-xs font-semibold">
-        Atrás
-      </button>
+      <div class="pt-4 sticky bottom-0 z-10 bg-surface pb-2 md:static md:bg-transparent md:pb-0">
+        <button
+          type="submit"
+          [disabled]="form.invalid || isSubmitting"
+          class="w-full py-4 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold text-sm tracking-widest uppercase shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center gap-2 group"
+        >
+          <span *ngIf="isSubmitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
 
-      <button type="submit" [disabled]="form.invalid || isSubmitting"
-        class="px-6 py-2.5 bg-primary text-white rounded-lg font-semibold text-xs shadow-lg shadow-primary/20 hover:bg-primary-dark hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center gap-2">
-        <span *ngIf="isSubmitting" class="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-        {{ isSubmitting ? 'Publicando...' : 'Publicar Solicitud' }}
-      </button>
+          <span *ngIf="!isSubmitting">
+            {{ initialData ? 'Guardar Cambios' : 'Publicar Solicitud' }}
+          </span>
+
+          <svg *ngIf="!isSubmitting" class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+        </button>
+
+        <button
+          *ngIf="!initialData"
+          type="button"
+          (click)="back.emit()"
+          class="w-full py-3 mt-2 text-xs font-bold text-text-light hover:text-text transition-colors uppercase"
+        >
+          Volver Atrás
+        </button>
+
+        <p class="text-[10px] text-center text-text-light mt-3 opacity-60">
+          {{ initialData ? 'Los cambios se reflejarán inmediatamente.' : 'Al publicar, aceptas nuestros términos.' }}
+        </p>
+      </div>
+
     </div>
 
   </form>

@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
 
 import { ProfessionalService, UpgradeToProfessionalRequest } from '../../../services/professional.service';
 import { StorageService } from '../../../services/storage.service';
 import { DialogService } from '../../../services/dialog.service';
-import { LocationCoordinates, MapLocationPickerComponent } from '../../../components/map-location-picker/map-location-picker';
-
+import { LocationService } from '../../../services/location.service';
+import { City, Country } from '../../../models/location.model';
 
 @Component({
   selector: 'app-professional-upgrade',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MapLocationPickerComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './professional-upgrade.html',
   styleUrl: './professional-upgrade.css'
 })
@@ -23,17 +22,24 @@ export class ProfessionalUpgrade implements OnInit {
   errorMessage = '';
   user: any = null;
 
+  countries: Country[] = [];
+  cities: City[] = [];
+  selectedCountryId: number | null = null;
+  selectedCityId: number | null = null;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private professionalService: ProfessionalService,
     private storageService: StorageService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private locationService: LocationService
   ) {}
 
   ngOnInit() {
     this.loadUserData();
     this.initializeForm();
+    this.loadCountries();
   }
 
   private loadUserData() {
@@ -56,7 +62,6 @@ export class ProfessionalUpgrade implements OnInit {
     }
 
     this.form = this.fb.group({
-
       name: [
         this.user?.name || '',
         [Validators.required, Validators.minLength(2), Validators.maxLength(50)]
@@ -73,35 +78,36 @@ export class ProfessionalUpgrade implements OnInit {
         formattedBirthDate,
         [Validators.required, this.ageValidator()]
       ],
-
-      lat: [null, [Validators.required]],
-      lng: [null, [Validators.required]],
-
-      address: [''],
-      city: [''],
-      state: [''],
-      country: ['Bolivia']
+      countryId: [null, Validators.required],
+    cityId: [null, Validators.required]
     });
   }
 
-
-  onLocationSelected(coords: LocationCoordinates) {
-    console.log('📍 Ubicación recibida:', coords);
-
-    this.form.patchValue({
-      lat: coords.lat,
-      lng: coords.lng,
-      address: coords.address?.fullAddress || '',
-      city: coords.address?.city || '',
-      state: coords.address?.state || '',
-      country: coords.address?.country || 'Bolivia'
+  private loadCountries() {
+    this.locationService.getCountries().subscribe({
+      next: (data) => {
+        this.countries = data;
+        const bolivia = this.countries.find(c => c.code === 'BO' || c.name === 'Bolivia');
+        if (bolivia) {
+          this.selectedCountryId = bolivia.id;
+          this.onCountryChange();
+        }
+      },
+      error: (err) => console.error(err)
     });
-
-    this.form.get('lat')?.markAsTouched();
-    this.form.get('lng')?.markAsTouched();
-    this.form.get('address')?.markAsTouched();
   }
 
+  onCountryChange() {
+  const countryId = this.form.get('countryId')?.value;
+  this.cities = [];
+  this.form.patchValue({ cityId: null });
+
+  if (countryId) {
+    this.locationService.CitiesByCountry(countryId).subscribe({
+      next: (data) => this.cities = data
+    });
+  }
+}
 
   private ageValidator() {
     return (control: any) => {
@@ -128,10 +134,6 @@ export class ProfessionalUpgrade implements OnInit {
   getFieldError(fieldName: string): string {
     const field = this.form.get(fieldName);
     if (!field || !field.errors || !field.touched) return '';
-
-    if (fieldName === 'lat' || fieldName === 'lng') {
-        return 'Debes seleccionar una ubicación en el mapa.';
-    }
 
     const labels: any = {
       name: 'El nombre',
@@ -167,18 +169,20 @@ export class ProfessionalUpgrade implements OnInit {
   onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-
-      if (this.form.get('lat')?.invalid) {
-        this.dialogService.error('Falta Ubicación', 'Por favor selecciona tu ubicación de servicio en el mapa.');
-      }
-
       return;
     }
+
 
     this.isLoading = true;
     this.errorMessage = '';
 
-    const requestData: UpgradeToProfessionalRequest = this.form.value;
+    const requestData: UpgradeToProfessionalRequest = {
+      name: this.form.value.name,
+      lastName: this.form.value.lastName,
+      phone: this.form.value.phone,
+      birthDate: this.form.value.birthDate,
+      cityId: this.form.value.cityId
+    };
 
     this.professionalService.upgradeToProfessional(requestData).subscribe({
       next: (response) => {

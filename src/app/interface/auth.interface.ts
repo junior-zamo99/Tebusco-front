@@ -30,7 +30,7 @@ export interface User {
 
 export interface Applicant {
     id: number;
-    ci: string;
+    ci?: string;
     isFrequentCustomer: boolean;
     city?: City | null;
 }
@@ -70,7 +70,7 @@ export interface RegisterRequest {
     lastName: string;
     email: string;
     password: string;
-    ci: string;
+    ci?: string;
     phone?: string;
     sex?: Sex;
     cityid?: number;
@@ -89,4 +89,10 @@ export interface AuthResponse {
     professional?: Professional | null;
     company?: Company | null;
     userAddress?: UserAddress | null;
+}
+
+export interface backendResponse {
+    message: string;
+    succes: boolean;
+    data:AuthResponse;
 }

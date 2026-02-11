@@ -129,7 +129,7 @@
                   <div
                     *ngIf="provider.photoUrl"
                     class="w-10 h-10 rounded-full bg-cover bg-center ring-1 ring-yellow-400/30 group-hover:ring-yellow-400 transition-all"
-                    [style.background-image]="'url(' + provider.photoUrl + ')'"
+                    [style.background-image]="'url(' + photoURL(provider) + ')'"
                   ></div>
                   <div
                     *ngIf="!provider.photoUrl"

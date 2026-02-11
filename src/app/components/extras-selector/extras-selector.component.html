@@ -1,0 +1,115 @@
+<div class="extras-container">
+
+
+  <!-- Sin extras disponibles -->
+  <div *ngIf="featureGroups.length === 0" class="no-extras">
+    <div class="no-extras-icon">📦</div>
+    <p>No hay extras disponibles en este momento. Puedes continuar con tu plan base.</p>
+  </div>
+
+  <!-- Sistema de pestañas -->
+  <div class="tabs-container" *ngIf="featureGroups.length > 0">
+    <div class="tabs-navigation">
+      <button *ngFor="let group of featureGroups"
+              [class.active]="activeTab === group.featureKey"
+              (click)="setActiveTab(group.featureKey)"
+              class="tab-button"
+              type="button">
+        <span class="tab-icon" [innerHTML]="getTabIconSVG(group.featureKey)"></span>
+        <span class="tab-label">{{ group.displayName }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido de la pestaña activa -->
+  <div class="tab-content" *ngIf="activeGroup && activeGroup.packages.length > 0">
+    <div class="packages-list">
+
+      <div *ngFor="let pkg of activeGroup.packages"
+           class="package-item"
+           [class.selected]="isPackageSelected(pkg.id)">
+
+        <div class="package-main">
+
+          <!-- Checkbox o Indicador -->
+          <div class="package-selector">
+            <label class="custom-checkbox">
+              <input type="checkbox"
+                     [checked]="isPackageSelected(pkg.id)"
+                     (change)="toggleCheckbox(pkg)">
+              <span class="checkmark"></span>
+            </label>
+          </div>
+
+          <!-- Info del paquete -->
+          <div class="package-info">
+            <h4 class="package-name">{{ pkg.name }}</h4>
+            <p class="package-description">{{ pkg.description }}</p>
+            <div class="package-details">
+              <span class="package-quantity" *ngIf="pkg.quantity > 1">
+                {{ pkg.quantity }} unidades
+              </span>
+            </div>
+          </div>
+
+          <!-- Precio -->
+          <div class="package-price">
+            <span class="price-amount">{{ pkg.price }}</span>
+            <span class="price-currency">{{ pkg.currency }}</span>
+          </div>
+
+        </div>
+
+        <!-- Controles de cantidad (solo para acumulables) -->
+        <div class="package-quantity-controls"
+             *ngIf="activeGroup.isAccumulable && isPackageSelected(pkg.id)">
+          <button type="button"
+                  class="qty-btn"
+                  (click)="decrementQuantity(pkg)"
+                  [disabled]="getPackageQuantity(pkg.id) <= 1">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+            </svg>
+          </button>
+
+          <div class="qty-display">
+            <span class="qty-number">{{ getPackageQuantity(pkg.id) }}</span>
+          </div>
+
+          <button type="button"
+                  class="qty-btn"
+                  (click)="incrementQuantity(pkg)">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+
+          <div class="qty-total">
+            <span class="qty-total-label">Total:</span>
+            <span class="qty-total-amount">
+              {{ pkg.price * getPackageQuantity(pkg.id) }} {{ pkg.currency }}
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Mensaje si no hay paquetes en la categoría activa -->
+  <div *ngIf="activeGroup && activeGroup.packages.length === 0" class="no-packages">
+    <p>No hay paquetes disponibles en esta categoría.</p>
+  </div>
+
+  <!-- Mensaje informativo si no hay extras seleccionados -->
+  <div class="info-message" *ngIf="!hasSelectedExtras && featureGroups.length > 0">
+    <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+    <p>No has seleccionado ningún extra. Puedes continuar sin extras si lo deseas.</p>
+  </div>
+
+</div>

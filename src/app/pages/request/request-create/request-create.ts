@@ -3,12 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CategorySelectorRequest } from '../../../components/category-selector-request/category-selector-request';
 import { RequestForm } from '../../../components/request-form/request-form';
-import { CategoryNode } from '../../../models';
-import { CategoryRequestInput, CreateRequestDTO } from '../../../models/request.models';
+import { CategoryNode } from '../../../models/category.model';
+import { RequestCategoryInput, CreateRequestDTO } from '../../../models/request.models';
 import { DialogService } from '../../../services/dialog.service';
 import { RequestService } from '../../../services/request.service';
-
-
 
 @Component({
   selector: 'app-request-create',
@@ -31,6 +29,7 @@ export class RequestCreate {
   onCategoriesConfirmed(categories: CategoryNode[]): void {
     this.selectedCategories = categories;
     this.currentStep = 2;
+    // Scroll al inicio para mejorar la UX al cambiar de paso
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -38,8 +37,8 @@ export class RequestCreate {
     this.currentStep = 1;
   }
 
-
   onCreateRequest(formData: any): void {
+    // 1. Validar categorías
     if (this.selectedCategories.length === 0) {
       this.dialogService.warning(
         'Faltan datos',
@@ -50,12 +49,15 @@ export class RequestCreate {
 
     this.isSubmitting = true;
 
-    const categoriesInput: CategoryRequestInput[] = this.selectedCategories.map(cat => ({
+    // 2. Mapear categorías al formato que espera el Backend (CategoryRequestInput)
+    const categoriesInput: RequestCategoryInput[] = this.selectedCategories.map(cat => ({
       categoryId: cat.id,
       level: cat.level,
-      parentId: cat.parentId || undefined
+      parentId: cat.parentId || null
     }));
 
+    // 3. Construir el DTO
+    // Nota: formData ya incluye cityId y address del RequestForm actualizado
     const payload: CreateRequestDTO = {
       title: formData.title,
       description: formData.description,
@@ -63,19 +65,20 @@ export class RequestCreate {
       budget: formData.budget,
       dateNeeded: formData.dateNeeded,
       hourPreferred: formData.hourPreferred,
+      cityId: formData.cityId, // Dato crítico agregado
       address: formData.address,
-      lat: formData.lat,
-      lng: formData.lng,
-      categories: categoriesInput
+      categories: categoriesInput,
+      // lat y lng son opcionales en el DTO, no los enviamos si no usamos mapa
     };
 
+    // 4. Llamar al servicio
     this.requestService.create(payload).subscribe({
       next: () => {
         this.isSubmitting = false;
 
         this.dialogService.success(
           '¡Solicitud Publicada!',
-          'Tu solicitud ha sido creada correctamente. Los profesionales te contactarán pronto.'
+          'Tu solicitud ha sido creada correctamente. Los profesionales en tu ciudad podrán verla pronto.'
         ).subscribe(() => {
           this.router.navigate(['/applicant/dashboard']);
         });

@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-// 🆕 Interfaces para tipado fuerte
+
 export interface UpgradeToProfessionalRequest {
   name: string;
   lastName: string;
   phone: string;
-  birthDate: string; // Formato: "YYYY-MM-DD"
+  birthDate: string;
+  cityId: number;
 }
 
 export interface ProfessionalStatus {

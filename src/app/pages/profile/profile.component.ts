@@ -100,7 +100,7 @@ export class ProfileComponent implements OnInit {
     return this.addresses.find(addr => addr.isDefault) || null;
   }
 
-  formatDate(date: Date | undefined): string {
+  formatDate(date: string | Date | null | undefined): string {
     if (!date) return 'Nunca';
     return new Date(date).toLocaleDateString('es-ES', {
       year: 'numeric',

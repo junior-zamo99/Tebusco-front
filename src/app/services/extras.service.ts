@@ -6,17 +6,30 @@ import { environment } from '../../environments/environment';
 export interface ExtraFeature {
   id: number;
   name: string;
+  key: string;
   displayName: string;
+  isAccumulable: boolean;
 }
 
 export interface ExtraPackage {
   id: number;
   name: string;
   description: string;
-  price: string;
+  price: number;
   currency: string;
   quantity: number;
+  isActive: boolean;
+  sortOrder: number;
+  featureId: number;
   feature: ExtraFeature;
+}
+
+export interface SelectedExtra {
+  packageId: number;
+  quantity: number;
+  name: string;
+  price: number;
+  totalPrice: number;
 }
 
 export interface ExtrasResponse {

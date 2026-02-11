@@ -101,6 +101,48 @@
           </div>
         </div>
 
+        <!-- Extras Summary (if any) -->
+        <div *ngIf="hasExtras" class="bg-surface rounded-2xl shadow-xl p-6 border border-border">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-text flex items-center gap-2">
+              <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                </svg>
+              </div>
+              Extras Seleccionados
+            </h3>
+          </div>
+
+          <div class="space-y-3">
+            <div *ngFor="let extra of selectedExtras"
+                 class="flex items-center justify-between p-4 rounded-lg bg-background border border-border hover:border-primary/50 transition-colors">
+              <div class="flex items-center gap-3 flex-1">
+                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <span class="text-primary font-bold text-lg">{{ extra.quantity }}</span>
+                </div>
+                <div class="flex-1">
+                  <p class="font-semibold text-text">{{ extra.name }}</p>
+                  <p class="text-xs text-text-light">{{ currency }} {{ extra.price.toFixed(2) }} c/u</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-text text-lg">{{ currency }} {{ extra.totalPrice.toFixed(2) }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total Extras -->
+          <div class="mt-4 pt-4 border-t border-border">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-text-light font-medium">Total Extras:</span>
+              <span class="text-xl font-bold text-primary">
+                {{ currency }} {{ extrasAmount.toFixed(2) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
         <!-- Features List -->
         <div class="bg-surface rounded-2xl shadow-xl p-6 border border-border" *ngIf="planInterval.features.length > 0">
           <h3 class="text-xl font-bold text-text mb-5 flex items-center gap-2">
@@ -176,6 +218,101 @@
 
         </div>
 
+        <!-- Coupon Section -->
+        <div class="bg-surface rounded-2xl shadow-xl p-6 border border-border">
+          <h3 class="text-xl font-bold text-text mb-5 flex items-center gap-2">
+            <div class="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clip-rule="evenodd" />
+                <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z" />
+              </svg>
+            </div>
+            Código de Descuento
+          </h3>
+
+          <!-- Coupon Input (if no coupon applied) -->
+          <div *ngIf="!hasCoupon" class="space-y-3">
+            <p class="text-text-light text-sm mb-4">¿Tienes un cupón de descuento? Ingrésalo aquí:</p>
+            
+            <div class="flex gap-3">
+              <input
+                type="text"
+                [(ngModel)]="couponCode"
+                [disabled]="isCouponValidating"
+                (keyup.enter)="validateCoupon()"
+                placeholder="Ejemplo: DESCUENTO2024"
+                class="flex-1 px-4 py-3 bg-background border-2 border-border rounded-lg text-text placeholder:text-text-light/50 focus:border-primary focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase"
+                maxlength="50">
+              <button
+                (click)="validateCoupon()"
+                [disabled]="!couponCode || couponCode.trim() === '' || isCouponValidating"
+                class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 font-semibold flex items-center gap-2">
+                <svg *ngIf="!isCouponValidating" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <div *ngIf="isCouponValidating" class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                <span *ngIf="!isCouponValidating">Aplicar</span>
+                <span *ngIf="isCouponValidating">Validando...</span>
+              </button>
+            </div>
+
+            <!-- Coupon Error -->
+            <div *ngIf="couponError" class="flex items-center gap-2 p-3 bg-danger/10 border border-danger/30 rounded-lg animate-fade-in">
+              <svg class="w-5 h-5 text-danger flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              </svg>
+              <p class="text-danger text-sm font-medium">{{ couponError }}</p>
+            </div>
+          </div>
+
+          <!-- Applied Coupon (if valid) -->
+          <div *ngIf="hasCoupon" class="space-y-4">
+            <!-- Success Message -->
+            <div class="flex items-center gap-3 p-4 bg-success/10 border border-success/30 rounded-lg animate-fade-in">
+              <svg class="w-6 h-6 text-success flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <div class="flex-1">
+                <p class="text-success font-bold">¡Cupón aplicado exitosamente!</p>
+                <p class="text-success/80 text-sm mt-1">{{ couponSuccess }}</p>
+              </div>
+            </div>
+
+            <!-- Coupon Details -->
+            <div class="bg-background border-2 border-success/30 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="px-3 py-1.5 bg-success/20 rounded-lg">
+                    <span class="font-mono font-bold text-success text-sm">{{ couponCode }}</span>
+                  </div>
+                  <span *ngIf="appliedCoupon?.coupon?.name" class="text-text font-semibold">
+                    {{ appliedCoupon?.coupon?.name }}
+                  </span>
+                </div>
+                <button
+                  (click)="removeCoupon()"
+                  class="text-danger hover:text-danger-dark transition-colors p-2 hover:bg-danger/10 rounded-lg"
+                  title="Remover cupón">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Discount Breakdown -->
+              <div class="space-y-2 pt-3 border-t border-border">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-text-light">Descuento:</span>
+                  <span class="font-bold text-success">
+                    - {{ currency }} {{ discountAmount.toFixed(2) }}
+                    <span *ngIf="discountPercentage > 0" class="text-xs ml-1">({{ discountPercentage }}%)</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Terms & Conditions -->
         <div class="bg-background border border-border rounded-xl p-4">
           <label class="flex items-start gap-3 cursor-pointer">
@@ -198,20 +335,66 @@
       <div class="lg:col-span-1 space-y-6">
 
         <!-- Price Card -->
-        <div class="bg-gradient-to-br from-primary via-primary-dark to-primary rounded-2xl p-6 text-center shadow-2xl sticky top-4">
-          <p class="text-white/80 text-xs font-bold uppercase tracking-wider mb-3">
-            Total a Pagar
-          </p>
-          <div class="flex items-baseline justify-center gap-2 mb-3">
-            <span class="text-white/90 text-2xl font-bold">{{ planInterval.currency }}</span>
-            <span class="text-6xl font-black text-white">
-              {{ totalPrice }}
-            </span>
-          </div>
-          <p class="text-white/70 text-sm font-medium mb-6">
-            por {{ planInterval.intervalDisplay }}
-          </p>
+        <div class="bg-gradient-to-br from-primary via-primary-dark to-primary rounded-2xl p-6 shadow-2xl sticky top-4">
+          
+          <!-- Price Breakdown -->
+          <div class="mb-6 pb-6 border-b border-white/20">
+            <p class="text-white/80 text-xs font-bold uppercase tracking-wider mb-4 text-center">
+              Resumen de Compra
+            </p>
+            
+            <div class="space-y-3">
+              <!-- Plan Price -->
+              <div class="flex items-center justify-between text-white/90">
+                <span class="text-sm font-medium">Plan {{ plan?.name }}</span>
+                <span class="font-semibold">{{ currency }} {{ planAmount.toFixed(2) }}</span>
+              </div>
 
+              <!-- Extras (if any) -->
+              <div *ngIf="hasExtras" class="space-y-2">
+                <div *ngFor="let extra of selectedExtras" class="flex items-center justify-between text-white/80 text-sm">
+                  <span>{{ extra.name }} (x{{ extra.quantity }})</span>
+                  <span>{{ currency }} {{ extra.totalPrice.toFixed(2) }}</span>
+                </div>
+              </div>
+
+              <!-- Subtotal -->
+              <div *ngIf="hasExtras || hasCoupon" class="flex items-center justify-between text-white/90 pt-2 border-t border-white/10">
+                <span class="text-sm font-medium">Subtotal</span>
+                <span class="font-semibold">{{ currency }} {{ subtotal.toFixed(2) }}</span>
+              </div>
+
+              <!-- Discount (if coupon applied) -->
+              <div *ngIf="hasCoupon" class="flex items-center justify-between text-success">
+                <span class="text-sm font-semibold flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clip-rule="evenodd" />
+                  </svg>
+                  Descuento
+                  <span *ngIf="discountPercentage > 0" class="text-xs">({{ discountPercentage }}%)</span>
+                </span>
+                <span class="font-bold">- {{ currency }} {{ discountAmount.toFixed(2) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total -->
+          <div class="text-center mb-6">
+            <p class="text-white/80 text-xs font-bold uppercase tracking-wider mb-3">
+              Total a Pagar
+            </p>
+            <div class="flex items-baseline justify-center gap-2 mb-3">
+              <span class="text-white/90 text-2xl font-bold">{{ currency }}</span>
+              <span class="text-6xl font-black text-white">
+                {{ totalPrice.toFixed(2) }}
+              </span>
+            </div>
+            <p class="text-white/70 text-sm font-medium">
+              por {{ planInterval.intervalDisplay }}
+            </p>
+          </div>
+
+          <!-- Confirm Button -->
           <div class="pt-6 border-t border-white/20">
             <button
               (click)="onConfirmPayment()"

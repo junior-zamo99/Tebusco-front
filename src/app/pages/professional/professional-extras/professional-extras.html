@@ -1,0 +1,87 @@
+<div *ngIf="isVisible" class="extras-wrapper">
+  
+  <!-- Header Section -->
+  <div class="extras-header">
+    <h2 class="extras-title">Configura tus <span class="text-primary">Extras</span></h2>
+    <p class="extras-subtitle">Potencia tu plan con características adicionales (Opcional)</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Cargando extras disponibles...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="error-message">
+    <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <div class="error-content">
+      <p class="error-title">{{ errorMessage }}</p>
+      <p class="error-subtitle">Puedes continuar sin extras si lo deseas.</p>
+    </div>
+  </div>
+
+  <!-- Extras Selector -->
+  <div *ngIf="!isLoading && !errorMessage && packages.length > 0" class="extras-content">
+    <app-extras-selector 
+      [packages]="packages"
+      (extrasSelected)="onExtrasChange($event)">
+    </app-extras-selector>
+  </div>
+
+  <!-- No Extras Available -->
+  <div *ngIf="!isLoading && !errorMessage && packages.length === 0" class="no-extras-message">
+    <div class="no-extras-icon">📦</div>
+    <p class="no-extras-title">No hay extras disponibles</p>
+    <p class="no-extras-subtitle">Puedes continuar con tu plan base sin problema.</p>
+  </div>
+
+  <!-- Footer Sticky con Botones y Resumen -->
+  <div class="extras-footer" *ngIf="!isLoading">
+    
+    <!-- Botón Volver -->
+    <button (click)="onBackClick()" class="btn-back" type="button">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+      Volver a Planes
+    </button>
+
+    <!-- Resumen de Extras -->
+    <div class="extras-summary">
+      <div *ngIf="selectedExtrasCount > 0" class="summary-with-extras">
+        <span class="summary-count">
+          {{ selectedExtrasCount }} extra{{ selectedExtrasCount > 1 ? 's' : '' }} seleccionado{{ selectedExtrasCount > 1 ? 's' : '' }}
+        </span>
+        <span class="summary-price">
+          {{ totalExtrasPrice }} {{ currency }}
+        </span>
+      </div>
+      
+      <div *ngIf="selectedExtrasCount === 0" class="summary-no-extras">
+        <svg class="summary-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <span class="summary-text">Sin extras adicionales</span>
+      </div>
+    </div>
+
+    <!-- Botón Continuar -->
+    <button (click)="onContinueClick()" class="btn-continue" type="button">
+      Continuar al Pago
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </button>
+
+  </div>
+
+</div>

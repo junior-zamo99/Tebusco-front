@@ -1,0 +1,24 @@
+<div class="phone-container">
+  <div class="country-selector">
+    <img [src]="selectedCountry.flag" alt="Bandera" class="flag-img">
+    <span class="arrow">▼</span>
+
+    <select (change)="onCountryChange($event)" class="hidden-select">
+      <option *ngFor="let c of countries" [value]="c.iso2">
+        {{ c.nameES }} (+{{ c.phoneCode }})
+      </option>
+    </select>
+  </div>
+
+  <div class="dial-code">
+    +{{ dialCodeClean }}
+  </div>
+
+  <input
+    type="tel"
+    [(ngModel)]="phoneNumber"
+    (input)="onInputChange()"
+    placeholder="Número de celular"
+    class="number-input"
+  />
+</div>

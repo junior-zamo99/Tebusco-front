@@ -14,7 +14,8 @@ import {
   User,
   Applicant,
   Professional,
-  UserAddress
+  UserAddress,
+  backendResponse
 } from '../interface/auth.interface';
 
 @Injectable({
@@ -49,23 +50,21 @@ export class AuthService {
   }
 
   // --- REGISTER ---
-  register(data: RegisterRequest): Observable<AuthResponse> {
+  register(data: RegisterRequest): Observable<backendResponse> {
     this.loadingService.show('Registrando usuario...');
 
-    return this.http.post<AuthResponse>(
+    return this.http.post<backendResponse>(
       `${this.apiUrl}/auth/register`,
       data,
       { withCredentials: true }
     ).pipe(
-      tap(response => {
-        console.log('Register response:', response);
-
-        // CORRECCIÓN: Accedemos directo, sin .data
+      tap(res => {
+        console.log('Register response:', res);
+        const response = res.data
         this.currentUser.set(response.user);
         this.currentApplicant.set(response.applicant);
         this.currentProfessional.set(response.professional || null);
 
-        // Si el backend devuelve userAddress en el registro
         if (response.userAddress) {
             this.currentAddresses.set(response.userAddress);
         }
@@ -81,19 +80,18 @@ export class AuthService {
     );
   }
 
-  // --- LOGIN ---
-  login(data: LoginRequest): Observable<AuthResponse> {
+
+  login(data: LoginRequest): Observable<backendResponse> {
     this.loadingService.show('Iniciando sesión...');
 
-    return this.http.post<AuthResponse>(
+    return this.http.post<backendResponse>(
       `${this.apiUrl}/auth/login`,
       data,
       { withCredentials: true }
     ).pipe(
-      tap(response => {
-        console.log('Login response:', response);
-
-        // CORRECCIÓN: Accedemos directo, sin .data
+      tap(res => {
+        console.log('Login response:', res);
+        const response = res.data;
         if(response.user){
            this.currentUser.set(response.user);
         }
@@ -151,23 +149,29 @@ export class AuthService {
       tap(response => {
         console.log('GetMe response:', response);
 
-        // Asumiendo que GetMe devuelve la misma estructura plana o similar
+        // Manejar respuesta que puede venir con o sin 'data' wrapper
+        const userData = response.data || response;
+
+        console.log('GetMe userData extraído:', userData);
+
         // Ajusta esto si tu endpoint /me devuelve algo distinto
-        this.currentUser.set(response.user);
-        this.currentApplicant.set(response.applicant);
-        this.currentProfessional.set(response.professional || null);
+        this.currentUser.set(userData.user);
+        this.currentApplicant.set(userData.applicant);
+        this.currentProfessional.set(userData.professional || null);
 
         // Si /me devuelve array de direcciones
-        if (response.userAddresses && response.userAddresses.length > 0) {
+        if (userData.userAddresses && userData.userAddresses.length > 0) {
              // Tomamos la primera o la default
-             this.currentAddresses.set(response.userAddresses[0]);
+             this.currentAddresses.set(userData.userAddresses[0]);
+        } else if (userData.userAddress) {
+             this.currentAddresses.set(userData.userAddress);
         }
 
         this.isAuthenticated.set(true);
-        console.log('Sesión activa:', response.user.name);
+        console.log('Sesión activa:', userData.user?.name || 'Usuario');
       }),
       catchError(error => {
-        console.log('No hay sesión activa');
+        console.log('No hay sesión activa', error);
         this.isAuthenticated.set(false);
         return throwError(() => error);
       })

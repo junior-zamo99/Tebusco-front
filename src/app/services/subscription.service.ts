@@ -11,6 +11,17 @@ export interface PaymentMethod {
   isActive: boolean;
 }
 
+export interface ExtraRequest {
+  packageId: number;
+  quantity: number;
+}
+
+
+export interface PurchaseOptions {
+  couponCode?: string;
+  useCreditAmount?: number;
+}
+
 export interface SubscriptionUsage {
   id?: number;
   featureKey: 'offers' | 'categories';
@@ -58,6 +69,8 @@ export interface CreateSubscriptionResponse {
   };
 }
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -78,11 +91,29 @@ export class SubscriptionService {
   createSubscription(
     planIntervalId: number,
     paymentMethodId: number,
-    autoRenew: boolean = true
+    autoRenew: boolean = true,
+    extras?: ExtraRequest[],
+    options?: PurchaseOptions
   ): Observable<CreateSubscriptionResponse> {
+    const body: any = {
+      planIntervalId,
+      paymentMethodId,
+      autoRenew
+    };
+
+    // Agregar extras si existen
+    if (extras && extras.length > 0) {
+      body.extras = extras;
+    }
+
+    // ✅ Agregar options como objeto completo (no aplanado)
+    if (options) {
+      body.options = options;
+    }
+
     return this.http.post<CreateSubscriptionResponse>(
       `${this.apiUrl}`,
-      { planIntervalId, paymentMethodId, autoRenew },
+      body,
       { withCredentials: true }
     );
   }

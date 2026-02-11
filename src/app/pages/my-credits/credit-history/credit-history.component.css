@@ -1,0 +1,101 @@
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Component animations */
+.container-custom > * {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Transaction card hover effect */
+.bg-card-bg:hover {
+  transform: translateY(-2px);
+}
+
+/* Skeleton loader pulse */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom date inputs */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+}
+
+/* Pagination buttons */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Filter section animation */
+.grid {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Transaction amount badge */
+.text-xl {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .grid-cols-1 {
+    gap: 1rem;
+  }
+  
+  .flex-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Print styles */
+@media print {
+  button {
+    display: none !important;
+  }
+  
+  .bg-card-bg {
+    border: 1px solid #ddd !important;
+    page-break-inside: avoid;
+  }
+}

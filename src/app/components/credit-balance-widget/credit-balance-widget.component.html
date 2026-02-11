@@ -1,0 +1,162 @@
+<div class="credit-balance-widget relative" [class.mobile]="isMobile">
+  
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" [class]="isMobile ? 'mobile-loader' : 'desktop-loader'">
+    <div class="skeleton-loader animate-pulse bg-card-bg-light rounded-lg"
+         [class]="isMobile ? 'h-12 w-full' : 'h-8 w-28'">
+    </div>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div *ngIf="!isLoading && hasError" 
+       [class]="isMobile ? 'mobile-error' : 'desktop-error'">
+    <button (click)="onRetry()" 
+            class="credit-widget-button error-state flex items-center gap-2 w-full justify-center"
+            [class]="isMobile ? 'py-3 px-4' : 'py-1.5 px-3'">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span class="text-sm font-medium text-danger">Error</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- LOADED STATE -->
+  <div *ngIf="!isLoading && !hasError && balance" 
+       [class]="isMobile ? 'mobile-content' : 'desktop-content'">
+    
+    <!-- Desktop Version -->
+    <div *ngIf="!isMobile" class="relative">
+      <button (click)="toggleTooltip()" 
+              class="credit-widget-button relative flex items-center gap-2 py-1.5 px-3 text-text hover:text-primary hover:bg-card-bg-light rounded-lg transition-all duration-300 border border-transparent hover:border-border">
+        
+        <!-- Icono de moneda -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" [class.text-success]="hasCredits()" [class.text-text-light]="!hasCredits()" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        
+        <!-- Balance amount -->
+        <span class="text-sm font-semibold" 
+              [class.text-success]="hasCredits()" 
+              [class.text-text-light]="!hasCredits()">
+          {{ formatBalance() }} BOB
+        </span>
+        
+        <!-- Warning badge -->
+        <span *ngIf="shouldShowWarning()" 
+              class="absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center"
+              [ngClass]="getWarningBadgeClass()">
+          {{ getWarningIcon() }}
+        </span>
+      </button>
+
+      <!-- Tooltip (Desktop) -->
+      <div *ngIf="showTooltip" 
+           class="credit-tooltip absolute top-full right-0 mt-2 w-72 bg-card-bg border border-border rounded-lg shadow-xl z-50 overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-primary/20 to-accent/20 p-3 border-b border-border">
+          <p class="text-text-light text-xs font-medium uppercase tracking-wide">Balance de Créditos</p>
+          <p class="text-text text-2xl font-bold mt-1">{{ formatBalance() }} <span class="text-sm font-normal text-text-light">{{ balance.currency }}</span></p>
+        </div>
+
+        <!-- Body -->
+        <div class="p-3 space-y-3">
+          
+          <!-- Sin advertencia - Estado normal -->
+          <div *ngIf="!shouldShowWarning()" class="text-center py-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-success mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-sm text-text-light">Tus créditos están disponibles</p>
+          </div>
+
+          <!-- Con advertencia - Créditos por expirar -->
+          <div *ngIf="shouldShowWarning()" 
+               class="bg-warning/10 border-l-4 p-3 rounded"
+               [class.border-danger]="daysUntilExpiration === 0"
+               [class.border-warning]="daysUntilExpiration! > 0 && daysUntilExpiration! <= 7"
+               [class.border-yellow-500]="daysUntilExpiration! > 7">
+            <div class="flex items-start gap-2">
+              <span class="text-xl">{{ getWarningIcon() }}</span>
+              <div class="flex-1">
+                <p class="text-sm font-semibold" 
+                   [class.text-danger]="daysUntilExpiration === 0"
+                   [class.text-warning]="daysUntilExpiration! > 0 && daysUntilExpiration! <= 7"
+                   [class.text-yellow-600]="daysUntilExpiration! > 7">
+                  {{ getWarningMessage() }}
+                </p>
+                <p class="text-xs text-text-light mt-1">
+                  <span class="font-semibold">{{ formatExpiringCredits() }} BOB</span> expirarán el {{ formatExpirationDate() }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA Button -->
+          <button (click)="navigateToCredits()" 
+                  class="w-full bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-lg font-medium text-sm transition-colors duration-300 flex items-center justify-center gap-2">
+            Ver detalles
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Version -->
+    <div *ngIf="isMobile" class="mobile-widget">
+      <button (click)="navigateToCredits()" 
+              class="w-full bg-card-bg-light border border-border rounded-lg p-3 hover:border-primary transition-all">
+        
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="p-2 rounded-lg"
+                 [class.bg-success/20]="hasCredits()"
+                 [class.bg-card-bg]="!hasCredits()">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" 
+                   [class.text-success]="hasCredits()" 
+                   [class.text-text-light]="!hasCredits()" 
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="text-left">
+              <p class="text-xs text-text-light font-medium">Mis Créditos</p>
+              <p class="text-lg font-bold" 
+                 [class.text-success]="hasCredits()" 
+                 [class.text-text-light]="!hasCredits()">
+                {{ formatBalance() }} <span class="text-sm font-normal">{{ balance.currency }}</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span *ngIf="shouldShowWarning()" 
+                  class="text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center"
+                  [ngClass]="getWarningBadgeClass()">
+              {{ getWarningIcon() }}
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Warning message (mobile) -->
+        <div *ngIf="shouldShowWarning()" class="mt-3 pt-3 border-t border-border">
+          <p class="text-xs font-medium"
+             [class.text-danger]="daysUntilExpiration === 0"
+             [class.text-warning]="daysUntilExpiration! > 0 && daysUntilExpiration! <= 7"
+             [class.text-yellow-600]="daysUntilExpiration! > 7">
+            {{ getWarningIcon() }} {{ getWarningMessage() }}: {{ formatExpiringCredits() }} BOB
+          </p>
+        </div>
+      </button>
+    </div>
+  </div>
+
+</div>

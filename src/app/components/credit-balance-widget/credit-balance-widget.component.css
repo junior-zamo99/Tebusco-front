@@ -1,0 +1,102 @@
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Skeleton loader con efecto shimmer */
+.skeleton-loader {
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 800px 100px;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Tooltip con animación de entrada */
+.credit-tooltip {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Botón con hover effect */
+.credit-widget-button {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.credit-widget-button:active {
+  transform: scale(0.98);
+}
+
+/* Badge de advertencia con ping animation */
+.credit-widget-button span[class*="bg-danger"],
+.credit-widget-button span[class*="bg-warning"],
+.credit-widget-button span[class*="bg-yellow"] {
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Mobile específico */
+.mobile-widget button {
+  touch-action: manipulation;
+}
+
+/* Error state hover */
+.error-state:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Smooth transitions */
+.credit-balance-widget * {
+  transition-property: color, background-color, border-color, transform, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Focus states para accesibilidad */
+.credit-widget-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1023px) {
+  .credit-tooltip {
+    right: -1rem;
+    left: -1rem;
+    width: auto;
+  }
+}

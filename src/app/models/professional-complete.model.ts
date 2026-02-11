@@ -137,3 +137,12 @@ export interface UpdateProfessionalProfileDTO {
   totalExperience?: number;
   visible?: boolean;
 }
+
+export interface RegistrationStatus {
+  status: 'pending' | 'approved' | 'rejected';
+  documentsUploaded: number;
+  documentsRequired: number;
+  message: string;
+  categoriesConfigured: number;
+}
+
