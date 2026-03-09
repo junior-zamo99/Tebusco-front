@@ -158,8 +158,26 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  photoUrl(): string {
-    return environment.backendUrl + this.authService.currentUser()?.photoUrl;
+  photoUrl(): string | null {
+    // Si estoy en modo profesional, usar avatar del professional
+    if (this.currentView === 'pl') {
+      const professional = this.authService.currentProfessional();
+      if (professional?.avatarThumbnailUrl) {
+        return professional.avatarThumbnailUrl;
+      }
+    }
+
+    // Si estoy en modo solicitante, usar foto del applicant
+    const applicant = this.authService.currentApplicant();
+    if (applicant?.photoThumbnailUrl) {
+      return applicant.photoThumbnailUrl;
+    }
+
+    return null;
+  }
+
+  hasPhoto(): boolean {
+    return !!this.photoUrl();
   }
 
   onOffers(): void {

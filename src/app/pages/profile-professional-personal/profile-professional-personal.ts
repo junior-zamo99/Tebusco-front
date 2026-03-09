@@ -81,8 +81,8 @@ export class ProfileProfessionalPersonal implements OnInit {
 
   getPhotoUrl(): string {
      // Lógica simple para el avatar del sidebar
-    if (!this.professionalData?.user?.photoUrl) return 'assets/default-avatar.png';
-    if (this.professionalData.user.photoUrl.startsWith('http')) return this.professionalData.user.photoUrl;
-    return `${environment.backendUrl}${this.professionalData.user.photoUrl}`;
+    if (!this.professionalData?.professional?.avatarThumbnailUrl) return 'assets/default-avatar.png';
+    if (this.professionalData.professional.avatarThumbnailUrl.startsWith('http')) return this.professionalData.professional.avatarThumbnailUrl;
+    return `${environment.backendUrl}${this.professionalData.professional.avatarThumbnailUrl}`;
   }
 }

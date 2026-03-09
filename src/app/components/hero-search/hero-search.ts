@@ -47,7 +47,7 @@ export class HeroSearch implements OnChanges, OnInit {
       distinctUntilChanged(),
       switchMap(term => {
 
-        // Validación básica
+
         if (!term || term.trim().length < 2) {
           return of(null);
         }
@@ -58,7 +58,7 @@ export class HeroSearch implements OnChanges, OnInit {
 
         const query: SearchQuery = {
             term: term,
-            city: this.selectedCityId || undefined, // Aquí va el number
+            city: this.selectedCityId || undefined,
 
         };
 
@@ -82,11 +82,7 @@ export class HeroSearch implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {
-    // Ya no intentamos leer la ciudad string del AuthService,
-    // porque ahora dependemos del selector del padre (HeroSolicitante).
 
-    // OBTENER GPS (Si el navegador lo permite)
-    // Esto sirve como fallback si el usuario no selecciona ciudad
     this.searchService.getCurrentPosition()
       .then(pos => {
         this.userLat = pos.coords.latitude;
@@ -98,8 +94,7 @@ export class HeroSearch implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // 4. DETECCIÓN DE CAMBIOS
-    // Si cambia el texto O si cambia la ciudad seleccionada en el padre
+
     if (changes['searchTerm'] || changes['selectedCityId']) {
       if (this.searchTerm && this.searchTerm.length >= 2) {
         this.searchSubject.next(this.searchTerm);
@@ -119,7 +114,6 @@ export class HeroSearch implements OnChanges, OnInit {
     } else if (category.level === 2) {
       this.router.navigate(['/professionals/category', category.id]);
     } else {
-      // Guardamos el ID en el estado para que la página de categorías lo lea
       this.router.navigate(['/categories'], {
         state: { selectedCategoryId: category.id }
       });
@@ -149,8 +143,7 @@ export class HeroSearch implements OnChanges, OnInit {
       this.closeResults();
       return;
     }
-    // Aquí podrías navegar a una página de búsqueda avanzada pasando los parámetros
-    // this.router.navigate(['/search'], { queryParams: { q: this.searchTerm, city: this.selectedCityId } });
+
   }
 
   closeResults(): void {
@@ -164,12 +157,10 @@ export class HeroSearch implements OnChanges, OnInit {
     return `${provider.name.charAt(0)}${provider.lastName?.charAt(0) || ''}`.toUpperCase();
   }
 
-  // Normalizamos para asegurar que la estructura sea segura para el template
   private normalizeSearchResults(data: any): SearchGeneralData {
     return {
       query: data.query || '',
       totalResults: data.totalResults || 0,
-      // executionTime eliminado ya que dijimos que el backend no lo enviaba
       categories: data.categories || { total: 0, results: [] },
       providers: data.providers || { total: 0, professionals: 0, companies: 0, results: [] },
       suggestions: data.suggestions || []

@@ -1,8 +1,8 @@
 <div class="animate-fadeIn space-y-5">
-  
+
   <!-- Grid de Estadísticas -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-    
+
     <!-- Vistas del Perfil -->
     <div class="bg-[#161b26] border border-slate-800 rounded-xl p-5 text-center hover:border-indigo-500/30 transition-all group">
       <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">👁️</div>
@@ -10,7 +10,7 @@
       <div class="text-xs text-slate-500 uppercase tracking-wide">Vistas del Perfil</div>
       <div class="text-[10px] text-slate-600 mt-1">Últimos 30 días</div>
     </div>
-    
+
     <!-- Contactos Recibidos -->
     <div class="bg-[#161b26] border border-slate-800 rounded-xl p-5 text-center hover:border-emerald-500/30 transition-all group">
       <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">📧</div>
@@ -18,15 +18,15 @@
       <div class="text-xs text-slate-500 uppercase tracking-wide">Contactos</div>
       <div class="text-[10px] text-slate-600 mt-1">Total recibidos</div>
     </div>
-    
+
     <!-- Ofertas Enviadas -->
     <div class="bg-[#161b26] border border-slate-800 rounded-xl p-5 text-center hover:border-purple-500/30 transition-all group">
       <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">📤</div>
-      <div class="text-3xl font-bold text-white mb-1">{{ data.usage.offers.used }}</div>
+      <div class="text-3xl font-bold text-white mb-1">{{ data.usage?.offers?.used ?? 0 }}</div>
       <div class="text-xs text-slate-500 uppercase tracking-wide">Ofertas Enviadas</div>
       <div class="text-[10px] text-slate-600 mt-1">Este periodo</div>
     </div>
-    
+
     <!-- Categorías Activas -->
     <div class="bg-[#161b26] border border-slate-800 rounded-xl p-5 text-center hover:border-blue-500/30 transition-all group">
       <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">💼</div>
@@ -42,7 +42,7 @@
       <i class="fas fa-chart-line text-indigo-400"></i>
       Visualizaciones en el tiempo
     </h3>
-    
+
     <div class="h-64 flex items-center justify-center bg-[#0B0E14] rounded-lg border border-dashed border-slate-700">
       <div class="text-center">
         <div class="text-4xl mb-3">📊</div>
@@ -58,7 +58,7 @@
       <i class="fas fa-history text-indigo-400"></i>
       Actividad Reciente
     </h3>
-    
+
     <div class="space-y-3">
       <div class="flex items-center gap-3 p-3 bg-[#0B0E14] rounded-lg border border-slate-800">
         <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
@@ -80,7 +80,7 @@
     </div>
     <h3 class="text-white font-bold text-sm mb-2">Estadísticas Avanzadas Próximamente</h3>
     <p class="text-slate-400 text-xs max-w-md mx-auto">
-      Estamos trabajando en un sistema completo de analíticas que te permitirá ver métricas detalladas sobre tu perfil, 
+      Estamos trabajando en un sistema completo de analíticas que te permitirá ver métricas detalladas sobre tu perfil,
       incluyendo vistas por categoría, tasas de conversión, y mucho más.
     </p>
     <div class="mt-4 flex flex-wrap gap-2 justify-center text-[10px] text-slate-500">

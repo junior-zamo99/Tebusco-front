@@ -187,16 +187,16 @@ export class ProfessionalUpgrade implements OnInit {
     this.professionalService.upgradeToProfessional(requestData).subscribe({
       next: (response) => {
         this.isLoading = false;
-        console.log('✅ Upgrade iniciado:', response);
+        console.log(' Upgrade iniciado:', response);
 
         const professionalId = response.data.id;
         localStorage.setItem('professionalId', professionalId.toString());
 
         this.dialogService.success(
           '¡Proceso Iniciado!',
-          'Tu solicitud fue procesada correctamente. Ahora debes subir tus documentos.'
+          'Tu solicitud fue procesada correctamente. Ahora selecciona tu plan de suscripción.'
         ).subscribe(() => {
-          this.router.navigate(['/professional/documents']);
+          this.router.navigate(['/professional/plans']);
         });
       },
       error: (error) => {
@@ -208,7 +208,7 @@ export class ProfessionalUpgrade implements OnInit {
             'Ya eres Profesional',
             'Ya tienes una cuenta profesional activa. Te redirigiremos a tu perfil.'
           ).subscribe(() => {
-            this.router.navigate(['/professional/documents']);
+            this.router.navigate(['/professional/dashboard']);
           });
         } else if (error.error?.error === 'INVALID_USER_DATA') {
           this.errorMessage = 'Datos de usuario incompletos. Por favor verifica tu perfil.';

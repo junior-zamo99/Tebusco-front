@@ -27,7 +27,6 @@ import { AddressDialogService } from '../../services/address-dialog.service';
   templateUrl: './applicant-home.html',
   styleUrls: ['./applicant-home.css'],
 })
-// 2. Implementar la interfaz AfterViewInit
 export class ApplicantHome implements OnInit {
   userName: string = '';
   isLoadingRedirect = false;

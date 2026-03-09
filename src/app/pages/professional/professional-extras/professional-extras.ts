@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ExtrasSelectorComponent } from '../../../components/extras-selector/extras-selector.component';
 import { ExtrasService, ExtraPackage, SelectedExtra } from '../../../services/extras.service';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector: 'app-professional-extras',
@@ -27,7 +29,9 @@ export class ProfessionalExtras implements OnInit, OnDestroy {
 
   constructor(
     private extrasService: ExtrasService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialogService: DialogService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -71,6 +75,19 @@ export class ProfessionalExtras implements OnInit, OnDestroy {
   onBackClick() {
     console.log('⬅️ Volver a planes');
     this.back.emit();
+  }
+
+  onCancelClick() {
+    this.dialogService.confirm(
+      'Cancelar proceso',
+      '¿Estás seguro de que deseas cancelar? Perderás el progreso actual.',
+      'Sí, cancelar',
+      'No, continuar'
+    ).pipe(takeUntil(this.destroy$)).subscribe(result => {
+      if (result.confirmed) {
+        this.router.navigate(['/applicant/dashboard']);
+      }
+    });
   }
 
   onContinueClick() {

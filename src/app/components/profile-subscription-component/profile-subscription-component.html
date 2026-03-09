@@ -21,7 +21,7 @@
            </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
+        <div *ngIf="data.usage" class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
            <div>
               <div class="flex justify-between text-xs mb-1.5">
                  <span class="text-indigo-100">Categorías</span>
@@ -43,6 +43,11 @@
                       [style.width.%]="getUsagePercent('offers')"></div>
               </div>
            </div>
+        </div>
+
+        <!-- Sin datos de uso -->
+        <div *ngIf="!data.usage" class="mt-2 text-center py-3">
+           <span class="text-indigo-200 text-xs">Datos de uso no disponibles</span>
         </div>
      </div>
   </div>

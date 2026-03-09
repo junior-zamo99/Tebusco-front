@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProfessionalService } from '../../services/professional.service';
-import { FileService } from '../../services/file.service';
 import { ProfessionalCompleteData, UpdateProfessionalProfileDTO } from '../../models/professional-complete.model';
 import { environment } from '../../../environments/environment';
 
@@ -22,14 +21,12 @@ export class EditProfileProfesionalComponent implements OnInit {
   imageLoadFailed = false;
   profileForm!: FormGroup;
 
-  uploadingPhoto = false;
   uploadingAvatar = false;
-  selectedPhotoUrl: string | null = null;
   selectedAvatarUrl: string | null = null;
+  avatarPreview: string | null = null;
 
   constructor(
     private professionalService: ProfessionalService,
-    private fileService: FileService,
     private fb: FormBuilder,
     private router: Router
   ) {}
@@ -85,10 +82,6 @@ export class EditProfileProfesionalComponent implements OnInit {
     this.saving = true;
     const updateData: UpdateProfessionalProfileDTO = this.profileForm.value;
 
-    if (this.selectedPhotoUrl) {
-      updateData.photoUrl = this.selectedPhotoUrl;
-    }
-
     if (this.selectedAvatarUrl) {
       updateData.avatarUrl = this.selectedAvatarUrl;
     }
@@ -118,42 +111,6 @@ export class EditProfileProfesionalComponent implements OnInit {
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
-  onPhotoSelect(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-
-    const file = input.files[0];
-
-    if (file.size > 7 * 1024 * 1024) {
-      alert('La imagen no debe superar 7MB');
-      return;
-    }
-
-    if (!file.type.startsWith('image/')) {
-      alert('Solo se permiten imágenes');
-      return;
-    }
-
-    this.uploadingPhoto = true;
-
-    this.fileService.uploadPhoto(file).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.selectedPhotoUrl = response.data.url;
-          if (this.professionalData && this.professionalData.user) {
-            this.professionalData.user.photoUrl = response.data.url;
-          }
-        }
-        this.uploadingPhoto = false;
-      },
-      error: (err) => {
-        alert('Error al subir la imagen');
-        console.error(err);
-        this.uploadingPhoto = false;
-      }
-    });
-  }
-
   onAvatarSelect(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -170,20 +127,28 @@ export class EditProfileProfesionalComponent implements OnInit {
       return;
     }
 
+    // Mostrar preview local inmediatamente
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.avatarPreview = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
     this.uploadingAvatar = true;
 
-    this.fileService.uploadAvatar(file).subscribe({
+    this.professionalService.uploadAvatar(file).subscribe({
       next: (response) => {
         if (response.success) {
           this.selectedAvatarUrl = response.data.url;
           if (this.professionalData && this.professionalData.professional) {
             this.professionalData.professional.avatarUrl = response.data.url;
+            this.professionalData.professional.avatarThumbnailUrl = response.data.thumbnailUrl || response.data.url;
           }
         }
         this.uploadingAvatar = false;
       },
       error: (err) => {
-        alert('Error al subir el logo');
+        alert('Error al subir la foto de perfil');
         console.error(err);
         this.uploadingAvatar = false;
       }
@@ -200,15 +165,11 @@ export class EditProfileProfesionalComponent implements OnInit {
     this.imageLoadFailed = true;
   }
 
-  getAvatarUrl(): string {
-    if (!this.professionalData?.professional?.avatarUrl) return 'assets/default-business.png';
-    if (this.professionalData.professional.avatarUrl.startsWith('http')) return this.professionalData.professional.avatarUrl;
-    return `${environment.backendUrl}${this.professionalData.professional.avatarUrl}`;
-  }
-
-  getPhotoUrl(): string {
-    if (!this.professionalData?.user?.photoUrl) return 'assets/default-avatar.png';
-    if (this.professionalData.user.photoUrl.startsWith('http')) return this.professionalData.user.photoUrl;
-    return `${environment.backendUrl}${this.professionalData.user.photoUrl}`;
+  getAvatarThumbnailUrl(): string {
+    // Si hay preview local, mostrarlo primero
+    if (this.avatarPreview) return this.avatarPreview;
+    if (!this.professionalData?.professional?.avatarThumbnailUrl) return 'assets/default-avatar.png';
+    if (this.professionalData.professional.avatarThumbnailUrl.startsWith('http')) return this.professionalData.professional.avatarThumbnailUrl;
+    return `${environment.backendUrl}${this.professionalData.professional.avatarThumbnailUrl}`;
   }
 }

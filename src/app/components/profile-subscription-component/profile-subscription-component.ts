@@ -19,6 +19,7 @@ export class ProfileSubscriptionComponent {
 
   // Calcula el porcentaje para las barras de progreso
   getUsagePercent(type: 'categories' | 'offers'): number {
+     if (!this.data.usage) return 0;
      const usage = this.data.usage[type];
      if (!usage || !usage.limit || typeof usage.limit !== 'number') return 0;
      return Math.min(100, (usage.used / usage.limit) * 100);

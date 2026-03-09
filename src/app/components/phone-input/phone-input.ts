@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { COUNTRIES, Country } from '../../utils/country';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,10 @@ import { PhoneNumberUtil } from 'google-libphonenumber';
   templateUrl: './phone-input.html',
   styleUrl: './phone-input.css',
 })
-export class PhoneInput{
+export class PhoneInput implements OnInit {
+
+  @Input() initialPhone: string = '';
+  @Output() numberChange = new EventEmitter<any>();
 
   countries = COUNTRIES.filter(c => c.phoneCode);
 
@@ -17,7 +20,41 @@ export class PhoneInput{
 
   phoneNumber = '';
   phoneUtil = PhoneNumberUtil.getInstance();
-  @Output() numberChange = new EventEmitter<any>();
+
+  ngOnInit(): void {
+    if (this.initialPhone) {
+      // Si hay un teléfono inicial, intentar parsearlo
+      try {
+        // Intentar parsear el número completo (con código de país)
+        const parsedNumber = this.phoneUtil.parseAndKeepRawInput(this.initialPhone);
+        
+        // Obtener el código de país
+        const countryCode = parsedNumber.getCountryCode();
+        const nationalNumber = parsedNumber.getNationalNumber();
+        
+        // Encontrar el país correspondiente
+        const country = this.countries.find(c => {
+          const cleanCode = c.phoneCode.replace(/\s/g, '');
+          return cleanCode === countryCode?.toString();
+        });
+        
+        if (country) {
+          this.selectedCountry = country;
+          this.phoneNumber = nationalNumber?.toString() || '';
+        } else {
+          // Si no se encuentra el país, usar el número tal cual (sin código)
+          this.phoneNumber = this.initialPhone.replace(/^\+\d+\s*/, '');
+        }
+        
+        // Validar inmediatamente
+        this.validate();
+      } catch (e) {
+        // Si hay error al parsear, usar el número tal cual
+        this.phoneNumber = this.initialPhone.replace(/^\+\d+\s*/, '');
+      }
+    }
+  }
+
   get dialCodeClean(): string {
     return this.selectedCountry.phoneCode.replace(/\s/g, '');
   }

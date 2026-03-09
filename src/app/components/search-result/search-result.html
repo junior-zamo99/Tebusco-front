@@ -29,7 +29,24 @@
       <p class="text-red-400 text-sm font-medium">{{ error }}</p>
     </div>
 
-    <div *ngIf="!isLoading && !error && searchResults" class="max-h-[400px] overflow-y-auto custom-scrollbar">
+    <div *ngIf="!isLoading && !hasCity" class="p-6 text-center">
+      <div class="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-sm border border-yellow-500/30">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+      <p class="text-white font-bold text-sm mb-1">Debes configurar tu ciudad</p>
+      <p class="text-slate-400 text-xs mb-4">Para buscar profesionales necesitas configurar tu ubicación.</p>
+      <button
+        (click)="goToEditProfile()"
+        class="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-slate-900 font-bold py-2 px-4 rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-yellow-400/30"
+      >
+        Configurar ubicación
+      </button>
+    </div>
+
+    <div *ngIf="!isLoading && !error && hasCity && searchResults" class="max-h-[400px] overflow-y-auto custom-scrollbar">
 
       <div *ngIf="searchResults.totalResults === 0" class="p-6 text-center">
         <div class="w-12 h-12 bg-white/5 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-2 border border-white/10">
@@ -127,12 +144,12 @@
 
                 <div class="relative flex-shrink-0">
                   <div
-                    *ngIf="provider.photoUrl"
+                    *ngIf="provider.avatarThumbnailUrl"
                     class="w-10 h-10 rounded-full bg-cover bg-center ring-1 ring-yellow-400/30 group-hover:ring-yellow-400 transition-all"
                     [style.background-image]="'url(' + photoURL(provider) + ')'"
                   ></div>
                   <div
-                    *ngIf="!provider.photoUrl"
+                    *ngIf="!provider.avatarThumbnailUrl"
                     class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center ring-1 ring-yellow-400/30 group-hover:ring-yellow-400 transition-all"
                   >
                     <span class="text-xs font-bold text-white">{{ getProviderInitials(provider) }}</span>

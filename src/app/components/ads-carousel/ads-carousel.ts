@@ -49,7 +49,10 @@ export class AdsCarousel implements OnInit, OnDestroy {
 
 
   getDetailUrl(imagePath: string): string {
-    return `${environment.backendUrl}${imagePath}`;
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    return `${environment.backendUrl}/${imagePath}`;
   }
 
 

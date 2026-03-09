@@ -19,13 +19,17 @@
   animation: fadeIn 0.2s ease-out;
 }
 
-/* Hover Scale Effect */
-.hover\:scale-\[1\.02\]:hover {
-  transform: scale(1.02);
+/* Line clamp utility */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.hover\:scale-110:hover {
-  transform: scale(1.1);
+/* Aspect ratio fallback */
+.aspect-\[4\/3\] {
+  aspect-ratio: 4 / 3;
 }
 
 /* Drag and Drop Active State */

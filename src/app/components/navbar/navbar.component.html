@@ -78,10 +78,10 @@
           <div *ngIf="authService.isAuthenticated()" class="relative">
             <button (click)="toggleUserMenu()"
               class="flex items-center gap-2 p-1 rounded-lg hover:bg-card-bg-light transition-colors user-menu-button border border-transparent hover:border-border">
-              <div *ngIf="authService.currentUser()?.photoUrl"
+              <div *ngIf="hasPhoto()"
                 class="w-8 h-8 rounded-full bg-cover bg-center border border-primary"
                 [style.background-image]="'url(' + photoUrl() + ')'"></div>
-              <div *ngIf="!authService.currentUser()?.photoUrl"
+              <div *ngIf="!hasPhoto()"
                 class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center border border-primary">
                 <span class="text-xs font-bold text-white">{{ getInitials() }}</span>
               </div>

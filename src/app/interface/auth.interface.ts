@@ -33,6 +33,9 @@ export interface Applicant {
     ci?: string;
     isFrequentCustomer: boolean;
     city?: City | null;
+    photoUrl?: string | null;
+    photoMediumUrl?: string | null;
+    photoThumbnailUrl?: string | null;
 }
 
 export interface Professional {
@@ -40,6 +43,9 @@ export interface Professional {
     isVerified: boolean;
     status: string;
     city?: City | null;
+    avatarUrl?: string;
+    avatarMediumUrl?: string;
+    avatarThumbnailUrl?: string;
 }
 
 export interface Company {
@@ -79,6 +85,18 @@ export interface RegisterRequest {
 export interface LoginRequest {
     email: string;
     password: string;
+}
+
+
+export interface UpdateApplicantDTO {
+    name?: string;
+    lastName?: string;
+    phone?: string;
+    photoUrl?: string;
+    sex?: Sex;
+    ci?: string;
+    cityId?: number;
+    isFrequentCustomer?: boolean;
 }
 
 export interface AuthResponse {

@@ -15,7 +15,8 @@ import {
   Applicant,
   Professional,
   UserAddress,
-  backendResponse
+  backendResponse,
+  UpdateApplicantDTO
 } from '../interface/auth.interface';
 
 @Injectable({
@@ -178,7 +179,6 @@ export class AuthService {
     );
   }
 
-  // --- CHECK SESSION ---
   private checkSession(): void {
     if (typeof window === 'undefined') {
       this.isInitialLoading.set(false);
@@ -190,7 +190,7 @@ export class AuthService {
     ).subscribe({
       next: (response) => {
         // CORRECCIÓN: Acceso directo
-        console.log('Sesión restaurada:', response.user.name);
+        console.log('Sesión restaurada:', response.data.user.name);
       },
       error: () => {
         console.log('No hay sesión activa');
@@ -207,17 +207,127 @@ export class AuthService {
     ).pipe(
       tap((response: any) => {
         console.log('Token refrescado correctamente');
-        // Si el refresh devuelve nuevo token o usuario, actualiza aquí si es necesario
       }),
       catchError(error => {
-        // Si falla el refresh, cerramos sesión
         this.doLogout();
         return throwError(() => error);
       })
     );
   }
 
-  // --- HELPERS ---
+  updateApplicant(id:number, data:UpdateApplicantDTO): Observable<any> {
+    return this.http.put(
+      `${this.apiUrl}/applicants/${id}`,
+      data,
+      { withCredentials: true }
+    ).pipe(
+      tap((response: any) => {
+        console.log('Applicant actualizado correctamente');
+
+        const updatedData = response.data;
+
+        this.currentApplicant.set(updatedData);
+
+        if (updatedData.user) {
+          this.currentUser.set(updatedData.user);
+
+          // 3. Sincronizar User en localStorage
+          this.storageService.saveUser({
+            id: updatedData.user.id,
+            name: updatedData.user.name,
+            lastName: updatedData.user.lastName,
+            email: updatedData.user.email,
+            phone: updatedData.user.phone || '',
+            photoUrl: updatedData.user.photoUrl,
+            status: updatedData.user.status
+          });
+
+          console.log('User actualizado en localStorage');
+        }
+
+        // 4. Sincronizar Applicant en localStorage
+        this.storageService.saveApplicant({
+          id: updatedData.id,
+          ci: updatedData.ci,
+          isFrequentCustomer: updatedData.isFrequentCustomer,
+          city: updatedData.city || undefined,
+          photoUrl: updatedData.photoUrl || null,
+          photoMediumUrl: updatedData.photoMediumUrl || null,
+          photoThumbnailUrl: updatedData.photoThumbnailUrl || null
+        });
+
+        console.log('Applicant actualizado en localStorage');
+      }),
+      catchError(error => {
+        console.error('Error al actualizar applicant:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  updateApplicantWithFile(id: number, data: UpdateApplicantDTO, file?: File): Observable<any> {
+    const formData = new FormData();
+
+    if (data.name !== undefined) formData.append('name', data.name);
+    if (data.lastName !== undefined) formData.append('lastName', data.lastName);
+    if (data.phone !== undefined && data.phone !== null) formData.append('phone', data.phone);
+    if (data.cityId !== undefined && data.cityId !== null) formData.append('cityId', String(data.cityId));
+    if (data.sex !== undefined) formData.append('sex', data.sex);
+    if (data.ci !== undefined && data.ci !== null) formData.append('ci', data.ci);
+
+    if (file) {
+      formData.append('photo', file, file.name);
+      console.log('Archivo agregado al FormData:', file.name, file.type, file.size);
+    }
+
+    console.log('FormData entries:');
+    formData.forEach((value, key) => {
+      console.log(`  ${key}:`, value instanceof File ? `File(${value.name})` : value);
+    });
+
+    return this.http.put(
+      `${this.apiUrl}/applicants/${id}`,
+      formData,
+      { withCredentials: true }
+    ).pipe(
+      tap((response: any) => {
+        console.log('Applicant actualizado correctamente (con archivo)');
+
+        const updatedData = response.data;
+
+        this.currentApplicant.set(updatedData);
+
+        if (updatedData.user) {
+          this.currentUser.set(updatedData.user);
+
+          this.storageService.saveUser({
+            id: updatedData.user.id,
+            name: updatedData.user.name,
+            lastName: updatedData.user.lastName,
+            email: updatedData.user.email,
+            phone: updatedData.user.phone || '',
+            photoUrl: updatedData.user.photoUrl,
+            status: updatedData.user.status
+          });
+        }
+
+        this.storageService.saveApplicant({
+          id: updatedData.id,
+          ci: updatedData.ci,
+          isFrequentCustomer: updatedData.isFrequentCustomer,
+          city: updatedData.city || undefined,
+          photoUrl: updatedData.photoUrl || null,
+          photoMediumUrl: updatedData.photoMediumUrl || null,
+          photoThumbnailUrl: updatedData.photoThumbnailUrl || null
+        });
+      }),
+      catchError(error => {
+        console.error('Error al actualizar applicant con archivo:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   private clearState() {
     this.currentUser.set(null);
     this.currentApplicant.set(null);

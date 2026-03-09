@@ -1,0 +1,42 @@
+/* Animaciones personalizadas */
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos para el preview de foto */
+.photo-preview {
+  transition: transform 0.2s ease;
+}
+
+.photo-preview:hover {
+  transform: scale(1.05);
+}
+
+/* Mejora visual para inputs disabled */
+input:disabled,
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estados de validación visual */
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: rgb(239, 68, 68);
+}
+
+input.ng-valid.ng-touched,
+select.ng-valid.ng-touched {
+  border-color: rgb(34, 197, 94);
+}

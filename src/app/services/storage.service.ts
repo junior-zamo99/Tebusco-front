@@ -21,6 +21,9 @@ export interface StorageApplicant {
     code?: string;
     country?: any;
   };
+  photoUrl?: string | null;
+  photoMediumUrl?: string | null;
+  photoThumbnailUrl?: string | null;
 }
 
 export interface StorageUserAddress {

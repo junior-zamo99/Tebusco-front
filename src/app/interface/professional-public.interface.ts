@@ -81,7 +81,9 @@ export interface ProfessionalStatsWithSelection {
 export interface PublicProfessional {
   id: number;
   fullName: string;
-  photoUrl: string | null;
+  avatarUrl: string | null;
+  avatarMediumUrl: string | null;
+  avatarThumbnailUrl: string | null;
   isVerified: boolean;
   isPromocional: boolean;
   yearsOfExperience?: number;
@@ -99,7 +101,9 @@ export interface PublicProfessional {
 export interface ProfessionalListItem {
   id: number;
   fullName: string;
-  photoUrl: string | null;
+  avatarUrl: string | null;
+  avatarMediumUrl: string | null;
+  avatarThumbnailUrl: string | null;
   isVerified: boolean;
   rating?: number;
   reviewsCount?: number;
@@ -133,7 +137,9 @@ export interface ProfessionalListResponse {
 export interface PublicProfessionalProfile {
   professionalId: number;
   fullName: string;
-  photoUrl: string | null;
+  avatarUrl: string | null;
+  avatarMediumUrl: string | null;
+  avatarThumbnailUrl: string | null;
   email: string;
   phone: string | null;
   isVerified: boolean;
@@ -155,7 +161,9 @@ export interface PublicProfessionalProfile {
 export interface PublicProfessionalWithSelectedProfiles {
   id: number;
   fullName: string;
-  photoUrl: string | null;
+  avatarUrl: string | null;
+  avatarMediumUrl: string | null;
+  avatarThumbnailUrl: string | null;
   email: string;
   phone: string | null;
   isPromocional: boolean;

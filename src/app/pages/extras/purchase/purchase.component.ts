@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ExtrasService, ExtraPackage } from '../../../services/extras.service';
+import { ExtrasService, ExtraPackage, PurchaseResponse, CityExtraInfo } from '../../../services/extras.service';
 import { SubscriptionService, PaymentMethod } from '../../../services/subscription.service';
 import { DialogService } from '../../../services/dialog.service';
 
@@ -112,20 +112,15 @@ export class ExtrasPurchaseComponent implements OnInit, OnDestroy {
     this.isProcessing = true;
     this.error = '';
 
-    this. extrasService.purchasePackage({
-      packageId: this. packageId,
+    this.extrasService.purchasePackage({
+      packageId: this.packageId,
       paymentMethodId: this.selectedPaymentMethodId,
-      quantity: this. quantity
+      quantity: this.quantity
     }).subscribe({
       next: (response) => {
         this.isProcessing = false;
         if (response.success) {
-          this.dialogService.success(
-            '¡Éxito!',
-            'Compra realizada con éxito'
-          ). subscribe(() => {
-            this.router. navigate(['/professional/dashboard']);
-          });
+          this.handlePurchaseSuccess(response);
         } else {
           this.error = response.message;
         }
@@ -136,6 +131,52 @@ export class ExtrasPurchaseComponent implements OnInit, OnDestroy {
         console.error(err);
       }
     });
+  }
+
+  /**
+   * Maneja la respuesta exitosa de compra
+   * Si es un City Extra, redirige a la selección correspondiente
+   */
+  private handlePurchaseSuccess(response: PurchaseResponse): void {
+    const { cityExtraInfo, purchasedExtra } = response.data;
+
+    // Si NO es City Extra, mostrar éxito y volver al dashboard
+    if (!cityExtraInfo) {
+      this.dialogService.success(
+        '¡Éxito!',
+        'Compra realizada con éxito'
+      ).subscribe(() => {
+        this.router.navigate(['/professional/dashboard']);
+      });
+      return;
+    }
+
+    // Es un City Extra - necesita configuración adicional
+    console.log('🏙️ City Extra comprado, requiere configuración:', cityExtraInfo);
+    const purchasedExtraId = purchasedExtra.id;
+
+    if (cityExtraInfo.nextStep === 'select_cities') {
+      // Redirigir a selección de ciudades
+      this.dialogService.info(
+        '¡Compra exitosa!',
+        `Ahora selecciona hasta ${cityExtraInfo.maxCities} ciudad(es) donde quieres aparecer`
+      ).subscribe(() => {
+        this.router.navigate(['/extras/select-cities', purchasedExtraId], {
+          queryParams: {
+            max: cityExtraInfo.maxCities,
+            type: cityExtraInfo.extraType
+          }
+        });
+      });
+    } else if (cityExtraInfo.nextStep === 'select_country') {
+      // Redirigir a selección de país (nacional)
+      this.dialogService.info(
+        '¡Compra exitosa!',
+        'Ahora selecciona tu país para activar la cobertura nacional'
+      ).subscribe(() => {
+        this.router.navigate(['/extras/select-national', purchasedExtraId]);
+      });
+    }
   }
 
   cancel(): void {

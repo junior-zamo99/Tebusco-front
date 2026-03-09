@@ -5,12 +5,44 @@ export interface ProfessionalCompleteResponse {
 }
 
 export interface ProfessionalCompleteData {
+  registrationStatus: RegistrationStatus;
+  infoExtra: InfoExtra;
   professional: ProfessionalInfo;
   user: UserInfo;
   subscription: SubscriptionInfo | null;
-  usage: UsageInfo;
+  usage: UsageInfo | null;
+  extras: ExtrasInfo;
   profileCategories: ProfileCategoryDetail[];
   documents: DocumentsSummary;
+}
+
+export interface InfoExtra {
+  hasExtraCities: boolean;
+  hasNationalVisibility: boolean;
+  hadSubscription: boolean;
+}
+
+export interface ExtrasInfo {
+  extraCities: {
+    cities: CityInfo[];
+    totalCount: number;
+  };
+  nationalVisibility: {
+    isActive: boolean;
+    country: string | null;
+    expiresAt: string | null;
+  };
+}
+
+export interface CityInfo {
+  id: number;
+  name: string;
+  code: string;
+  country?: {
+    id: number;
+    name: string;
+    code: string;
+  };
 }
 
 export interface ProfessionalInfo {
@@ -23,8 +55,10 @@ export interface ProfessionalInfo {
   companyId: number | null;
   documentsDeadline: string;
 
-  // ⭐ NUEVOS CAMPOS
+  // Campos de perfil
   avatarUrl: string | null;
+  avatarMediumUrl: string | null;
+  avatarThumbnailUrl: string | null;
   whatsappNumber: string | null;
   websiteUrl: string | null;
   facebookProfile: string | null;
@@ -34,6 +68,10 @@ export interface ProfessionalInfo {
   businessEmail: string | null;
   bio: string | null;
   totalExperience: number | null;
+
+  // Ubicación
+  city: CityInfo | null;
+  extraCities: CityInfo[];
 
   createdAt: string;
   updatedAt: string;
@@ -139,10 +177,29 @@ export interface UpdateProfessionalProfileDTO {
 }
 
 export interface RegistrationStatus {
+  isProfessional: boolean;
   status: 'pending' | 'approved' | 'rejected';
-  documentsUploaded: number;
-  documentsRequired: number;
+  currentStep: 'profile' | 'documents' | 'categories' | 'payment' | 'complete';
+  canProceed: boolean;
   message: string;
   categoriesConfigured: number;
+  hasActiveSubscription: boolean;
+  documentsUploaded?: number;
+  documentsRequired?: number;
+}
+
+// Tipos para el sistema de banners de prioridad
+export type BannerPriority = 1 | 2 | 3 | 4;
+
+export interface PriorityBanner {
+  priority: BannerPriority;
+  type: 'subscription' | 'renewal' | 'documents' | 'categories' | 'profile';
+  title: string;
+  message: string;
+  icon: string;
+  actionText: string;
+  actionRoute: string;
+  urgencyLevel: 'blocking' | 'urgent' | 'functional' | 'optional';
+  deadline?: Date;
 }
 

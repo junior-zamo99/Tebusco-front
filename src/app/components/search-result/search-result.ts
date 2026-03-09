@@ -34,6 +34,7 @@ export class SearchResult implements OnInit, OnChanges, OnDestroy {
   searchResults: SearchGeneralData | null = null;
 
   cityName: string = '';
+  hasCity: boolean = false;
 
   isLoading: boolean = false;
   error: string | null = null;
@@ -54,6 +55,9 @@ export class SearchResult implements OnInit, OnChanges, OnDestroy {
     const applicant = this.storageService.getApplicant();
     if (applicant && applicant.city) {
         this.cityName = applicant.city.name;
+        this.hasCity = true;
+    } else {
+        this.hasCity = false;
     }
 
     this.setupSearchPipeline();
@@ -84,9 +88,13 @@ export class SearchResult implements OnInit, OnChanges, OnDestroy {
 
         if (!applicant || !applicant.city || !applicant.city.id) {
           console.warn('⚠️ El solicitante no tiene una ciudad configurada con ID.');
+          this.hasCity = false;
+          this.isLoading = false;
+          this.searchResults = null;
           return of(null);
         }
 
+        this.hasCity = true;
         this.isLoading = true;
         this.error = null;
 
@@ -175,10 +183,15 @@ export class SearchResult implements OnInit, OnChanges, OnDestroy {
 
   photoURL(provider: ProviderSearchResult): string {
 
-    if (provider.photoUrl) {
-      const url =  this.backendUrl  + provider.photoUrl;
+    if (provider.avatarThumbnailUrl) {
+      const url = provider.avatarThumbnailUrl;
       return url;
     }
     return 'assets/img/user-placeholder.png';
+  }
+
+  goToEditProfile(): void {
+    this.router.navigate(['/edit-profile']);
+    this.closeResults();
   }
 }

@@ -44,16 +44,21 @@
 
             <div class="px-6 pb-6">
                 <div class="flex flex-col sm:flex-row gap-4 items-start -mt-10 relative z-10">
-                    <div class="relative">
+                    <div class="relative cursor-pointer" (click)="openImageModal()">
                         <div
-                            *ngIf="professional.photoUrl"
-                            class="w-24 h-24 rounded-full border-4 border-slate-800 shadow-xl bg-cover bg-center"
+                            *ngIf="professional.avatarThumbnailUrl"
+                            class="w-24 h-24 rounded-full border-4 border-slate-800 shadow-xl bg-cover bg-center hover:opacity-90 transition-opacity"
                             [style.background-image]="'url(' + photoUrl() + ')'">
                         </div>
                         <div
-                            *ngIf="!professional.photoUrl"
+                            *ngIf="!professional.avatarThumbnailUrl"
                             class="w-24 h-24 rounded-full border-4 border-slate-800 shadow-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-xl font-bold text-white">
                             {{ getInitials(professional.fullName) }}
+                        </div>
+                        <div *ngIf="professional.avatarUrl" class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                            <div class="bg-black/50 rounded-full p-2">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                            </div>
                         </div>
                         <div *ngIf="professional.isVerified" class="absolute bottom-0 right-0 bg-green-500 text-white p-1 rounded-full border-2 border-slate-800 shadow-sm" title="Verificado">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -227,5 +232,16 @@
 
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Modal de imagen grande -->
+<div *ngIf="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" (click)="closeImageModal()">
+  <div class="relative max-w-3xl max-h-[90vh] p-4" (click)="$event.stopPropagation()">
+    <button (click)="closeImageModal()" class="absolute top-2 right-2 z-10 bg-slate-800/80 hover:bg-slate-700 text-white p-2 rounded-full transition-colors">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+    <img [src]="fullPhotoUrl()" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl object-contain" alt="Foto de perfil de {{ professional?.fullName }}">
+    <p class="text-center text-white mt-4 text-lg font-medium">{{ professional?.fullName }}</p>
   </div>
 </div>

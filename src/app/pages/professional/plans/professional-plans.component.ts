@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PlansService, Plan, PlanInterval } from '../../../services/plans.service';
 import { ProfessionalExtras } from '../professional-extras/professional-extras';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector: 'app-professional-plans',
@@ -37,7 +38,8 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private plansService: PlansService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit() {
@@ -198,6 +200,19 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
     this.router.navigate(['/professional/payment'], {
       queryParams: {
         planIntervalId: this.selectedPlanIntervalId
+      }
+    });
+  }
+
+  onCancel() {
+    this.dialogService.confirm(
+      'Cancelar proceso',
+      '¿Estás seguro de que deseas cancelar? Perderás el progreso actual.',
+      'Sí, cancelar',
+      'No, continuar'
+    ).pipe(takeUntil(this.destroy$)).subscribe(result => {
+      if (result.confirmed) {
+        this.router.navigate(['/applicant/dashboard']);
       }
     });
   }

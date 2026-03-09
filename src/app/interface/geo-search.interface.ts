@@ -66,7 +66,9 @@ export interface GeoProvider {
   name: string;
   lastName?: string;
   fullName: string;
-  photoUrl: string | null;
+  avatarUrl: string | null;
+  avatarMediumUrl: string | null;
+  avatarThumbnailUrl: string | null;
   email: string;
   phone: string | null;
   categories: CategoryInfo[];

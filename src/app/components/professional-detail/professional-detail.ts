@@ -21,6 +21,7 @@ export class ProfessionalDetailComponent implements OnInit {
   loading = true;
   error: string | null = null;
   showContactModal = false;
+  showImageModal = false;
 
   professionalId!: number;
   categoryIds: number[] = [];
@@ -112,16 +113,27 @@ export class ProfessionalDetailComponent implements OnInit {
     this.professionalService.getProfessionalById(this.professionalId).subscribe({
       next: (response) => {
         if (response.success) {
-          const data = response.data;
+          const data = response.data as any;
           this.professional = {
             id: data.id,
             fullName: data.fullName,
-            photoUrl: data.photoUrl,
-            email: '',
-            phone: '',
+            avatarUrl: data.avatarUrl,
+            avatarMediumUrl: data.avatarMediumUrl,
+            avatarThumbnailUrl: data.avatarThumbnailUrl,
+            email: data.email || '',
+            phone: data.phone || '',
             isVerified: data.isVerified,
             isPromocional: data.isPromocional,
-            location: data.location,
+            location: data.location ? {
+              city: data.location.cityName || data.location.city,
+              country: data.location.countryName || data.location.country,
+              state: null,
+              address: null,
+              fullAddress: null,
+              lat: 0,
+              lng: 0,
+              label: ''
+            } : null,
             profiles: data.categories,
             subscription: data.subscription,
             publicDocuments: data.publicDocuments,
@@ -129,8 +141,9 @@ export class ProfessionalDetailComponent implements OnInit {
               totalCategories: data.stats.activeCategories,
               selectedCategories: data.stats.activeCategories
             },
-            createdAt: data.createdAt
-          };
+            createdAt: data.createdAt,
+            professional: data.Professional
+          } as any;
           this.prepareLocationData();
           this.loading = false;
         }
@@ -209,7 +222,21 @@ export class ProfessionalDetailComponent implements OnInit {
   }
 
   photoUrl() {
-    return this.backendUrl + this.professional?.photoUrl;
+    return this.professional?.avatarThumbnailUrl || null;
+  }
+
+  fullPhotoUrl() {
+    return this.professional?.avatarUrl || null;
+  }
+
+  openImageModal(): void {
+    if (this.professional?.avatarUrl) {
+      this.showImageModal = true;
+    }
+  }
+
+  closeImageModal(): void {
+    this.showImageModal = false;
   }
 
   openWhatsApp(): void {

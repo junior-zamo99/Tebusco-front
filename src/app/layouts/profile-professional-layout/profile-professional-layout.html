@@ -1,0 +1,74 @@
+<div class="min-h-screen bg-[#0B0E14] font-sans text-slate-300 flex text-sm">
+
+  <!-- Loading Overlay -->
+  <div *ngIf="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0B0E14]/90 backdrop-blur-sm">
+    <div class="flex flex-col items-center gap-3">
+      <div class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-indigo-400 font-medium animate-pulse text-xs">Cargando...</p>
+    </div>
+  </div>
+
+  <!-- Sidebar Desktop -->
+  <aside class="w-56 bg-[#11161F] border-r border-slate-800 hidden lg:flex flex-col fixed h-full z-10">
+    <div class="p-5">
+      <button (click)="goBack()" class="flex items-center gap-2 text-slate-400 hover:text-white text-xs mb-3 transition-colors">
+        <i class="fas fa-arrow-left"></i>
+        <span>Volver al Dashboard</span>
+      </button>
+      <h2 class="text-lg font-bold text-white mb-0.5">Mi Cuenta</h2>
+      <p class="text-[10px] text-slate-500">Gestión de perfil</p>
+    </div>
+
+    <nav class="flex-1 px-3 space-y-1">
+      <a *ngFor="let tab of tabs"
+         [routerLink]="['/professional/profile', tab.path]"
+         routerLinkActive="bg-indigo-600 text-white shadow-md shadow-indigo-900/20"
+         class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 group text-slate-400 hover:bg-[#1f2937] hover:text-white">
+        <i [class]="tab.icon" class="text-slate-500 group-hover:text-white"></i>
+        {{ tab.label }}
+      </a>
+    </nav>
+
+    <!-- User Info Footer -->
+    <div class="p-3 border-t border-slate-800" *ngIf="professionalData">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-slate-700 overflow-hidden flex-shrink-0">
+          <img [src]="getPhotoUrl()" class="w-full h-full object-cover">
+        </div>
+        <div class="overflow-hidden min-w-0">
+          <p class="text-xs font-bold text-white truncate">{{ professionalData.user.name }}</p>
+          <p class="text-[10px] text-slate-500 truncate">Profesional</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 lg:ml-56 p-4 lg:p-6">
+    <!-- Mobile Header -->
+    <div class="lg:hidden mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <button (click)="goBack()" class="flex items-center gap-2 text-slate-400 hover:text-white text-xs">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </button>
+        <h1 class="text-lg font-bold text-white">Mi Perfil</h1>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <a *ngFor="let tab of tabs"
+           [routerLink]="['/professional/profile', tab.path]"
+           routerLinkActive="bg-indigo-600 text-white"
+           class="flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-[#1f2937] text-slate-400 hover:text-white transition-colors">
+          {{ tab.label }}
+        </a>
+      </div>
+    </div>
+
+    <!-- Router Outlet for child routes -->
+    <div *ngIf="!loading" class="max-w-4xl mx-auto">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

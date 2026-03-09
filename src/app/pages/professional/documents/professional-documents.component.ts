@@ -342,11 +342,11 @@ export class ProfessionalDocumentsComponent implements OnInit, OnDestroy {
 
 
   onContinue() {
-    this.router.navigate(['/professional/plans']);
+    this.router.navigate(['/professional/dashboard']);
   }
 
   onBack() {
-    this.router.navigate(['/professional/upgrade']);
+    this.router.navigate(['/professional/dashboard']);
   }
 
   canUpload(document: DocumentInfo): boolean {

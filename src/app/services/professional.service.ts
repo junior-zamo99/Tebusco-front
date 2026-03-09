@@ -212,6 +212,12 @@ export class ProfessionalService {
     );
   }
 
+  uploadAvatar(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return this.http.post(`${this.apiUrl}/me/avatar`, formData, { withCredentials: true });
+  }
+
   setCategoryVisible(professionalId: number, profileCategoryId: number): Observable<any> {
     return this.http.patch(
       `${this.apiUrl}/${professionalId}/categories/${profileCategoryId}/visible`,

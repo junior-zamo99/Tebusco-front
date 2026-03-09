@@ -83,13 +83,13 @@
 
           <div class="flex items-start gap-4 mb-4 relative z-10 pt-1">
 
-            <div *ngIf="professional.photoUrl"
+            <div *ngIf="professional.avatarThumbnailUrl"
                  class="w-14 h-14 rounded-full bg-cover bg-center flex-shrink-0 transition-all duration-300"
                  [ngClass]="professional.isPromocional ? 'border-2 border-yellow-500 shadow-md shadow-yellow-500/20' : 'border border-[var(--color-border)] group-hover:border-[var(--color-primary)]'"
-                 [style.background-image]="'url(' + professional.photoUrl + ')'">
+                 [style.background-image]="'url(' + professional.avatarThumbnailUrl + ')'">
             </div>
 
-            <div *ngIf="!professional.photoUrl"
+            <div *ngIf="!professional.avatarThumbnailUrl"
                  class="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
                  [ngClass]="professional.isPromocional
                     ? 'bg-yellow-500 text-black border-2 border-white/20 shadow-md'

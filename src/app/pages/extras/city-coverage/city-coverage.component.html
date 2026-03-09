@@ -1,0 +1,192 @@
+<div class="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-6 px-4">
+
+  <div *ngIf="isLoading" class="flex justify-center items-center h-[50vh]">
+    <div class="flex flex-col items-center">
+      <div class="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin mb-3"></div>
+      <p class="text-xs text-text-light font-medium animate-pulse">Cargando cobertura...</p>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && error" class="max-w-md mx-auto mt-10">
+    <div class="bg-surface border border-danger/20 rounded-xl p-6 text-center shadow-sm">
+      <div class="w-10 h-10 bg-danger/10 rounded-full flex items-center justify-center mx-auto mb-3">
+        <svg class="w-5 h-5 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-base font-bold text-text mb-1">Error</h3>
+      <p class="text-xs text-text-light mb-4">{{ error }}</p>
+      <button (click)="goBack()" class="px-4 py-2 bg-surface border border-border rounded text-xs hover:bg-background transition-colors">
+        Volver
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && !error && coverage" class="max-w-2xl mx-auto animate-fade-in-up">
+
+    <div class="mb-6">
+      <button (click)="goBack()" class="mb-4 flex items-center text-xs text-text-light hover:text-primary transition-colors group">
+        <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Volver
+      </button>
+
+      <div class="bg-surface rounded-xl border border-border/50 shadow-sm p-5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-xl font-bold text-text">Mi Cobertura</h1>
+              <p class="text-sm text-text-light">Ciudades donde apareces en búsquedas</p>
+            </div>
+          </div>
+
+          <div class="text-right">
+            <div class="text-2xl font-bold text-primary">{{ coverage.totalCitiesCovered }}</div>
+            <div class="text-xs text-text-light">ciudades</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="coverage.hasNationalCoverage" class="mb-4">
+      <div class="bg-gradient-to-r from-primary to-primary-dark rounded-xl p-4 text-white">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-2xl">
+            🌎
+          </div>
+          <div>
+            <h3 class="font-bold text-lg">Cobertura Nacional Activa</h3>
+            <p class="text-sm text-white/80">
+              Apareces en todas las ciudades de {{ coverage.nationalCountry?.name || 'tu país' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="pendingExtras.length > 0" class="mb-4">
+      <div class="bg-warning/10 border border-warning/30 rounded-xl p-4">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-text mb-1">Extras pendientes de configurar</h3>
+            <p class="text-sm text-text-light mb-3">
+              Tienes {{ pendingExtras.length }} extra(s) comprado(s) que necesitan configuración
+            </p>
+            <div class="space-y-2">
+              <div
+                *ngFor="let extra of pendingExtras"
+                (click)="configurePendingExtra(extra)"
+                class="flex items-center justify-between p-3 bg-surface rounded-lg border border-border cursor-pointer hover:border-warning/50 transition-colors"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">{{ getExtraTypeIcon(extra.extraType) }}</span>
+                  <span class="text-sm font-medium text-text">{{ extra.packageName }}</span>
+                </div>
+                <span class="text-xs px-2 py-1 bg-warning/10 text-warning rounded-full">
+                  Configurar
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="coverage.primaryCity" class="mb-4">
+      <h3 class="text-sm font-bold text-text-light mb-2 px-1">CIUDAD PRINCIPAL</h3>
+      <div class="bg-surface rounded-xl border border-success/30 p-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-text">{{ coverage.primaryCity.name }}</div>
+            <div class="text-xs text-text-light">{{ coverage.primaryCity.country?.name }}</div>
+          </div>
+          <span class="ml-auto text-xs px-2 py-1 bg-success/10 text-success rounded-full">
+            Incluida en tu plan
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="coverage.extraCities.length > 0" class="mb-4">
+      <h3 class="text-sm font-bold text-text-light mb-2 px-1">CIUDADES ADICIONALES</h3>
+      <div class="bg-surface rounded-xl border border-border/50 overflow-hidden">
+        <div
+          *ngFor="let city of coverage.extraCities; let last = last"
+          class="flex items-center gap-3 p-4"
+          [ngClass]="{'border-b border-border/50': !last}"
+        >
+          <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-sm">
+            📍
+          </div>
+          <div class="flex-1">
+            <div class="font-medium text-text">{{ city.name }}</div>
+            <div class="text-xs text-text-light">{{ city.code }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="configuredExtras.length > 0" class="mb-4">
+      <h3 class="text-sm font-bold text-text-light mb-2 px-1">EXTRAS ACTIVOS</h3>
+      <div class="space-y-2">
+        <div
+          *ngFor="let extra of configuredExtras"
+          class="bg-surface rounded-xl border border-border/50 p-4"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">{{ getExtraTypeIcon(extra.extraType) }}</span>
+              <span class="font-bold text-text">{{ extra.packageName }}</span>
+            </div>
+            <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
+              {{ getExtraTypeLabel(extra.extraType) }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between text-xs text-text-light">
+            <span>{{ extra.usedCities }}/{{ extra.maxCities === -1 ? '∞' : extra.maxCities }} ciudades</span>
+            <span>Expira: {{ formatDate(extra.expiresAt) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!hasCoverage" class="text-center py-10">
+      <div class="w-16 h-16 rounded-full bg-background flex items-center justify-center mx-auto mb-4 text-3xl">
+        🗺️
+      </div>
+      <h3 class="font-bold text-text mb-2">Sin cobertura adicional</h3>
+      <p class="text-sm text-text-light mb-4">
+        Compra extras de ciudades para aparecer en más lugares
+      </p>
+    </div>
+
+    <div class="mt-6">
+      <button
+        (click)="buyMoreExtras()"
+        class="w-full py-4 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl text-base font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Comprar más ciudades
+      </button>
+    </div>
+
+  </div>
+</div>

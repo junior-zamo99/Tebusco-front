@@ -26,6 +26,40 @@ export const routes: Routes = [
     path: 'auth-required',
     loadComponent: () => import('./components/auth-require/auth-require').then(m => m.AuthRequire)
   },
+  {
+    path: 'professional/upgrade',
+    loadComponent: () => import('./pages/professional/professional-upgrade/professional-upgrade').then(m => m.ProfessionalUpgrade)
+  },
+          {
+            path: 'professional/documents',
+            loadComponent: () => import('./pages/professional/documents/professional-documents.component').then(m => m.ProfessionalDocumentsComponent)
+          },
+          {
+            path: 'professional/plans',
+            loadComponent: () => import('./pages/professional/plans/professional-plans.component').then(m => m.ProfessionalPlansComponent)
+          },
+          {
+            path: 'professional/payment',
+            loadComponent: () => import('./pages/professional/payment/professional-payment.component').then(m => m.ProfessionalPaymentComponent)
+          },
+          {
+            path: 'professional/categories',
+            loadComponent: () => import('./pages/professional/categories/professional-categories.component').then(m => m.ProfessionalCategoriesComponent)
+          },
+          {
+            path: 'professional/complete',
+            loadComponent: () => import('./pages/professional/complete/professional-complete.component').then(m => m.ProfessionalCompleteComponent)
+          },
+          {
+            path: 'professional/payment-success',
+            loadComponent: () => import('./pages/professional/payment-success/professional-payment-success.component').then(m => m.ProfessionalPaymentSuccessComponent)
+          },
+          {
+            path: 'professional/category-success',
+            loadComponent: () => import('./pages/professional/category-success/professional-category-success.component').then(m => m.ProfessionalCategorySuccessComponent)
+          },
+
+
 
   {
     path: '',
@@ -54,7 +88,7 @@ export const routes: Routes = [
         ]
       },
 
-      // Rutas Protegidas de PROFESSIONAL
+
       {
         path: 'professional',
         canActivate: [authGuard],
@@ -64,9 +98,37 @@ export const routes: Routes = [
             loadComponent: () => import('./pages/professional-home/professional-home').then(m => m.ProfessionalHome),
           },
           {
+            path: 'profile',
+            loadComponent: () => import('./layouts/profile-professional-layout/profile-professional-layout').then(m => m.ProfileProfessionalLayout),
+            children: [
+              { path: '', redirectTo: 'info', pathMatch: 'full' },
+              {
+                path: 'info',
+                loadComponent: () => import('./pages/professional-profile/info/profile-info.page').then(m => m.ProfileInfoPage)
+              },
+              {
+                path: 'categories',
+                loadComponent: () => import('./pages/professional-profile/categories/profile-categories.page').then(m => m.ProfileCategoriesPage)
+              },
+              {
+                path: 'stats',
+                loadComponent: () => import('./pages/professional-profile/stats/profile-stats.page').then(m => m.ProfileStatsPage)
+              },
+              {
+                path: 'subscription',
+                loadComponent: () => import('./pages/professional-profile/subscription/profile-subscription.page').then(m => m.ProfileSubscriptionPage)
+              },
+              {
+                path: 'documents',
+                loadComponent: () => import('./pages/professional-profile/documents/profile-documents.page').then(m => m.ProfileDocumentsPage)
+              }
+            ]
+          },
+          /*{
             path: 'upgrade',
             loadComponent: () => import('./pages/professional/professional-upgrade/professional-upgrade').then(m => m.ProfessionalUpgrade)
           },
+
           {
             path: 'documents',
             loadComponent: () => import('./pages/professional/documents/professional-documents.component').then(m => m.ProfessionalDocumentsComponent)
@@ -95,10 +157,11 @@ export const routes: Routes = [
             path: 'category-success',
             loadComponent: () => import('./pages/professional/category-success/professional-category-success.component').then(m => m.ProfessionalCategorySuccessComponent)
           }
+            */
         ]
       },
 
-      // Rutas Protegidas de APPLICANT
+
       {
         path: 'applicant',
         canActivate: [authGuard],
@@ -122,12 +185,16 @@ export const routes: Routes = [
         ]
       },
 
-      // Rutas Protegidas GENERALES (Perfil, etc)
-      // Nota: Eliminé el path padre '' repetido y las puse directas bajo MainLayout para evitar conflictos
+
       {
         path: 'profile',
         canActivate: [authGuard],
         loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
+      },
+      {
+        path: 'edit-profile',
+        canActivate: [authGuard],
+        loadComponent: () => import('./pages/edit-profile/edit-profile.component').then(m => m.EditProfileComponent)
       },
       {
         path: 'profile-professional-personal',
@@ -160,15 +227,25 @@ export const routes: Routes = [
             {
                 path: 'purchase/:id',
                 loadComponent: () => import('./pages/extras/purchase/purchase.component').then(m => m.ExtrasPurchaseComponent)
+            },
+            {
+                path: 'select-cities/:id',
+                loadComponent: () => import('./pages/extras/select-cities/select-cities.component').then(m => m.SelectCitiesComponent)
+            },
+            {
+                path: 'select-national/:id',
+                loadComponent: () => import('./pages/extras/select-national/select-national.component').then(m => m.SelectNationalComponent)
+            },
+            {
+                path: 'coverage',
+                loadComponent: () => import('./pages/extras/city-coverage/city-coverage.component').then(m => m.CityCoverageComponent)
             }
         ]
       }
     ]
   },
 
-  // ==============================================
-  // 3. WILDCARD (404)
-  // ==============================================
+
   {
     path: '**',
     redirectTo: '' // O redirigir a login

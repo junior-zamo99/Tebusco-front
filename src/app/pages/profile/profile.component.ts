@@ -17,17 +17,6 @@ export class ProfileComponent implements OnInit {
   applicant: Applicant | null = null;
   addresses: UserAddress | null = null;
 
-  activeTab: 'info' | 'addresses' | 'security' = 'info';
-  isEditing: boolean = false;
-
-  // Form data for editing
-  editForm = {
-    name: '',
-    lastName: '',
-    phone: '',
-    email: ''
-  };
-
   constructor(
     public authService: AuthService,
     private router: Router
@@ -41,40 +30,6 @@ export class ProfileComponent implements OnInit {
     this.user = this.authService.currentUser();
     this.applicant = this.authService.currentApplicant();
     this.addresses = this.authService.currentAddresses();
-
-    if (this.user) {
-      this.editForm = {
-        name: this.user.name,
-        lastName: this.user.lastName,
-        phone: this.user.phone || '',
-        email: this.user.email
-      };
-    }
-  }
-
-  setActiveTab(tab: 'info' | 'addresses' | 'security'): void {
-    this.activeTab = tab;
-  }
-
-  toggleEdit(): void {
-    if (this.isEditing) {
-      // Save changes
-      console.log('Guardando cambios:', this.editForm);
-      // TODO: Implementar llamada al API para actualizar perfil
-    }
-    this.isEditing = !this.isEditing;
-  }
-
-  cancelEdit(): void {
-    this.isEditing = false;
-    if (this.user) {
-      this.editForm = {
-        name: this.user.name,
-        lastName: this.user.lastName,
-        phone: this.user.phone || '',
-        email: this.user.email
-      };
-    }
   }
 
   onLogout(): void {
@@ -95,19 +50,18 @@ export class ProfileComponent implements OnInit {
     return `${this.user.name.charAt(0)}${this.user.lastName.charAt(0)}`.toUpperCase();
   }
 
-  getDefaultAddress(): UserAddress | null {
-    if (!this.addresses || !Array.isArray(this.addresses)) return null;
-    return this.addresses.find(addr => addr.isDefault) || null;
+  getPhotoUrl(): string | null {
+    return this.applicant?.photoMediumUrl || this.applicant?.photoUrl || null;
   }
 
-  formatDate(date: string | Date | null | undefined): string {
-    if (!date) return 'Nunca';
-    return new Date(date).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  getSexLabel(): string {
+    const sexMap: Record<string, string> = {
+      'male': 'Masculino',
+      'female': 'Femenino',
+      'other': 'Otro'
+    };
+    return sexMap[this.user?.sex || ''] || 'No especificado';
   }
+
+
 }

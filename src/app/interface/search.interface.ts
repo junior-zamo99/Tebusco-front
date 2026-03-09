@@ -34,6 +34,9 @@ export interface ProviderSearchResult {
   name: string;
   lastName?: string;
   fullName: string;
+  avatarUrl: string | null;
+  avatarMediumUrl: string | null;
+  avatarThumbnailUrl: string | null;
   photoUrl: string | null;
   email: string;
   phone: string | null;
@@ -59,11 +62,9 @@ export interface ProviderSearchResult {
   distanceInMeters?: number;
 }
 
-// 4. Estructura de DATOS (lo que viene dentro de 'data' en la respuesta JSON)
 export interface SearchGeneralData {
   query: string;
   totalResults: number;
-  // executionTime: string; // ELIMINADO: Tu backend no envía esto
   categories: {
     total: number;
     results: CategorySearchResult[];
