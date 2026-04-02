@@ -158,7 +158,7 @@ export class ActiveProfiles implements OnInit {
 
   onAddProfileClick() {
     if (!this.usage) {
-      this.dialogService.error('Error', 'No se pudo obtener la información de uso');
+      this.dialogService.error('Error', 'No tiene ninguna suscripción activa. Por favor, adquiere una suscripción para agregar perfiles.');
       return;
     }
 

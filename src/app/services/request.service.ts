@@ -47,7 +47,8 @@ export class RequestService {
   getRequestsByProfessional(
     professionalId: number,
     status: RequestStatusEnum,
-    pagination?: PaginationParams
+    pagination?: PaginationParams,
+    activeProfileIds?: number[]
   ): Observable<PaginatedResponse<RequestResponse>> {
 
     let params = new HttpParams().set('status', status);
@@ -55,6 +56,10 @@ export class RequestService {
     if (pagination) {
       if (pagination.page) params = params.set('page', pagination.page);
       if (pagination.limit) params = params.set('limit', pagination.limit);
+    }
+
+    if (activeProfileIds && activeProfileIds.length > 0) {
+      params = params.set('activeProfileIds', activeProfileIds.join(','));
     }
 
     return this.http.get<PaginatedResponse<RequestResponse>>(
@@ -97,7 +102,7 @@ export class RequestService {
   }
 
   update(id: number, data: UpdateRequestDTO): Observable<RequestResponse> {
-    return this.http.put<RequestResponse>(
+    return this.http.patch<RequestResponse>(
       `${this.apiUrl}/${id}`,
       data,
       { withCredentials: true }

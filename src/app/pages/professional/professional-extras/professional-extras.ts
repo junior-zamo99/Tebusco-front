@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { DialogService } from '../../../services/dialog.service';
 @Component({
   selector: 'app-professional-extras',
   standalone: true,
-  imports: [CommonModule, ExtrasSelectorComponent],
+  imports: [ExtrasSelectorComponent],
   templateUrl: './professional-extras.html',
   styleUrls: ['./professional-extras.css']
 })

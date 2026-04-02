@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { UserAddressService } from '../../services/user-address.service';
 import { StorageService, StorageUserAddress } from '../../services/storage.service'; // Importamos la interfaz
@@ -10,7 +10,7 @@ import { LocationCoordinates, MapLocationPickerComponent } from '../map-location
 @Component({
   selector: 'app-create-address-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, MapLocationPickerComponent],
+  imports: [FormsModule, MapLocationPickerComponent],
   templateUrl: './create-address-dialog.html',
   styleUrl: './create-address-dialog.css',
 })

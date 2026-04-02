@@ -1,49 +1,71 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { OfferService } from '../../services/offer.service';
+import { OfferResponse, OfferStatusEnum } from '../../models/offer.model';
 
 @Component({
   selector: 'app-pending-offers',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './pending-offers.html',
-  styleUrl: './pending-offers.css',
 })
-export class PendingOffers {
-    offers = [
-    {
-      id: 1,
-      clientInitials: 'CR',
-      clientName: 'Carlos Ruiz',
-      distance: '2.3 km',
-      time: 'Hace 15 min',
-      title: 'Reparación de aire acondicionado',
-      description: 'El aire acondicionado no enfría correctamente',
-      price: 150,
-      isUrgent: true,
-      color: 'from-yellow-500 to-yellow-600'
-    },
-    {
-      id: 2,
-      clientInitials: 'MG',
-      clientName: 'María González',
-      distance: '5.1 km',
-      time: 'Hace 2 horas',
-      title: 'Instalación de ducha eléctrica',
-      description: 'Necesito instalar una ducha eléctrica nueva',
-      price: 200,
-      isUrgent: false,
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      id: 3,
-      clientInitials: 'JP',
-      clientName: 'Juan Pérez',
-      distance: '1.8 km',
-      time: 'Hace 4 horas',
-      title: 'Reparación de tubería',
-      description: 'Hay una fuga de agua en la cocina',
-      price: 120,
-      isUrgent: false,
-      color: 'from-purple-500 to-purple-600'
+export class PendingOffers implements OnInit {
+  private offerService = inject(OfferService);
+  private router = inject(Router);
+
+  offers: OfferResponse[] = [];
+  isLoading = true;
+
+  readonly OfferStatus = OfferStatusEnum;
+
+  ngOnInit(): void {
+    this.loadOffers();
+  }
+
+  loadOffers(): void {
+    this.offerService.getMyHistory('active', { page: 1, limit: 4 }).subscribe({
+      next: (res) => {
+        this.offers = res.data ?? [];
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  viewAll(): void {
+    this.router.navigate(['/professional/offers']);
+  }
+
+  viewRequest(requestId: number): void {
+    this.router.navigate(['/professional/request', requestId]);
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      'PENDING': 'Pendiente', 'ACCEPTED': 'Aceptada',
+      'REJECTED': 'Rechazada', 'CANCELLED': 'Cancelada', 'VOIDED': 'Vencida'
+    };
+    return labels[status] ?? status;
+  }
+
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'PENDING':   return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30';
+      case 'ACCEPTED':  return 'bg-green-500/10 text-green-400 border-green-500/30';
+      case 'REJECTED':  return 'bg-red-500/10 text-red-400 border-red-500/30';
+      case 'CANCELLED': return 'bg-slate-500/10 text-slate-400 border-slate-500/30';
+      case 'VOIDED':    return 'bg-gray-500/10 text-gray-400 border-gray-500/30';
+      default:          return 'bg-slate-500/10 text-slate-400 border-slate-500/30';
     }
-  ];
+  }
+
+  getUrgencyLabel(urgency: string): string {
+    const labels: Record<string, string> = {
+      'low': 'Baja', 'medium': 'Media', 'high': 'Alta', 'urgent': 'Urgente', 'emergency': 'Emergencia'
+    };
+    return labels[urgency?.toLowerCase()] ?? urgency;
+  }
 }

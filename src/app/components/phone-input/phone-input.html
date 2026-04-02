@@ -4,9 +4,11 @@
     <span class="arrow">▼</span>
 
     <select (change)="onCountryChange($event)" class="hidden-select">
-      <option *ngFor="let c of countries" [value]="c.iso2">
-        {{ c.nameES }} (+{{ c.phoneCode }})
-      </option>
+      @for (c of countries; track c) {
+        <option [value]="c.iso2">
+          {{ c.nameES }} (+{{ c.phoneCode }})
+        </option>
+      }
     </select>
   </div>
 
@@ -20,5 +22,5 @@
     (input)="onInputChange()"
     placeholder="Número de celular"
     class="number-input"
-  />
-</div>
+    />
+  </div>

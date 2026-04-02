@@ -5,7 +5,7 @@ import { LocationService } from '../../services/location.service';
 import { RegisterRequest } from '../../interface/auth.interface';
 
 import { MapLocationPickerComponent, LocationCoordinates } from '../../components/map-location-picker/map-location-picker';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../../services/storage.service';
 import { City, Country } from '../../models/location.model';
@@ -15,7 +15,7 @@ import { PhoneInput } from '../../components/phone-input/phone-input';
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
-  imports: [ CommonModule, FormsModule, PhoneInput]
+  imports: [FormsModule, PhoneInput]
 })
 export class RegisterComponent implements OnInit {
 

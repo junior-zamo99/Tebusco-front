@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterLink } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
 
@@ -20,7 +20,6 @@ import { HeroProfessional } from '../../components/hero-professional/hero-profes
   selector: 'app-home',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     HeroComponent,
     ProfessionalHero,
@@ -32,8 +31,8 @@ import { HeroProfessional } from '../../components/hero-professional/hero-profes
     ProfessionalCta,
     LoadingScreen,
     HeroSolicitante,
-    HeroProfessional,
-  ],
+    HeroProfessional
+],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })

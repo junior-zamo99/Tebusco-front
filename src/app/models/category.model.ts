@@ -13,6 +13,7 @@ export interface CategoryNode {
   parentId: number | null;
 }
 
+
 export interface CategoriesResponse {
   success: boolean;
   message: string;

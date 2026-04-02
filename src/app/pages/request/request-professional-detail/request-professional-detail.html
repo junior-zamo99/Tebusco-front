@@ -1,0 +1,370 @@
+<div class="min-h-screen bg-background text-white py-8 px-4 md:px-8">
+  <div class="max-w-4xl mx-auto">
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="flex flex-col items-center justify-center py-20">
+        <div class="w-12 h-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-orange-500 font-bold tracking-widest text-xs uppercase">Cargando...</p>
+      </div>
+    }
+
+    @if (!isLoading && request) {
+
+      <!-- Nav -->
+      <nav class="flex items-center justify-between mb-8">
+        <button (click)="goBack()" class="group flex items-center gap-2 text-slate-400 hover:text-orange-400 transition-colors">
+          <div class="w-8 h-8 rounded-full bg-card-bg border border-slate-700 flex items-center justify-center group-hover:border-orange-500 transition-all">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+          </div>
+          <span class="text-sm font-medium">Volver a solicitudes</span>
+        </button>
+      </nav>
+
+      <!-- Request card -->
+      <div class="bg-card-bg rounded-2xl border border-slate-800 overflow-hidden mb-6">
+        <div class="h-1 w-full bg-gradient-to-r from-orange-400 to-orange-600"></div>
+        <div class="p-6">
+
+          <!-- Top badges -->
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span [class]="'text-[10px] font-bold uppercase tracking-[0.15em] px-2.5 py-1 rounded-md border flex items-center gap-1.5 ' + getUrgencyColor(request.urgency)">
+              <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+              {{ getUrgencyLabel(request.urgency) }}
+            </span>
+            <span class="text-[10px] font-semibold px-2.5 py-1 rounded-md border border-slate-600 bg-slate-700/30 text-slate-300">
+              {{ request.status }}
+            </span>
+            @if (request.totalOffers > 0) {
+              <span class="text-[10px] font-semibold px-2.5 py-1 rounded-md border border-slate-700 bg-slate-800 text-slate-400 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+                {{ request.totalOffers }} {{ request.totalOffers === 1 ? 'oferta' : 'ofertas' }}
+              </span>
+            }
+          </div>
+
+          <!-- Applicant info -->
+          @if (request.applicant) {
+            <div class="flex items-center gap-3 mb-4 p-3 bg-slate-800/40 rounded-xl border border-slate-700/30">
+              <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-slate-600 flex-shrink-0 bg-slate-700 flex items-center justify-center">
+                @if (request.applicant.userPhotoUrl) {
+                  <img [src]="request.applicant.userPhotoUrl" [alt]="request.applicant.userName" class="w-full h-full object-cover">
+                } @else {
+                  <span class="text-sm font-bold text-slate-300 uppercase">{{ request.applicant.userName?.charAt(0) }}{{ request.applicant.userLastName?.charAt(0) }}</span>
+                }
+              </div>
+              <div>
+                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Solicitante</p>
+                <p class="text-sm font-bold text-white">{{ request.applicant.userName }} {{ request.applicant.userLastName }}</p>
+              </div>
+            </div>
+          }
+
+          <!-- Title -->
+          <h1 class="text-2xl font-black text-white mb-2 tracking-tight">{{ request.title }}</h1>
+
+          <!-- Description -->
+          <div class="bg-slate-800/50 rounded-xl p-4 mb-5 border border-slate-700/50">
+            <p class="text-sm text-slate-300 leading-relaxed">{{ request.description }}</p>
+          </div>
+
+          <!-- Meta grid -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+            <div class="bg-slate-800/40 rounded-xl p-3 border border-slate-700/30">
+              <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1">Creada</p>
+              <p class="text-xs font-semibold text-white">{{ request.createdAt | date:'d MMM yyyy' }}</p>
+            </div>
+            @if (request.dateNeeded) {
+              <div class="bg-slate-800/40 rounded-xl p-3 border border-slate-700/30">
+                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1">Para el</p>
+                <p class="text-xs font-semibold text-white">{{ request.dateNeeded | date:'d MMM yyyy' }}</p>
+              </div>
+            }
+            @if (request.budget) {
+              <div class="bg-slate-800/40 rounded-xl p-3 border border-slate-700/30">
+                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1">Presupuesto</p>
+                <p class="text-xs font-semibold text-white">Bs. {{ request.budget | number:'1.2-2' }}</p>
+              </div>
+            }
+            @if (request.city) {
+              <div class="bg-slate-800/40 rounded-xl p-3 border border-slate-700/30">
+                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1">Ciudad</p>
+                <p class="text-xs font-semibold text-white">{{ request.city.name }}</p>
+              </div>
+            }
+          </div>
+
+          <!-- Categories -->
+          @if (request.categories?.length > 0) {
+            <div>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2">Categorías requeridas</p>
+              <div class="flex flex-wrap gap-2">
+                @for (cat of request.categories; track cat.id) {
+                  <span class="px-3 py-1 bg-white/5 border border-slate-700/50 rounded-md text-xs font-medium text-slate-300">
+                    {{ cat.name }}
+                  </span>
+                }
+              </div>
+            </div>
+          }
+
+        </div>
+      </div>
+
+      <!-- === MY OFFER SECTION === -->
+
+      <!-- No offer yet + request is PENDING -> Postulate -->
+      @if (!myOffer && request.status === 'PENDING') {
+        <div class="bg-card-bg rounded-2xl border border-slate-800 overflow-hidden">
+          <div class="p-6">
+
+            @if (!showPostulateForm) {
+              <div class="text-center py-4">
+                <div class="w-14 h-14 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-7 h-7 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                  </svg>
+                </div>
+                <h2 class="text-lg font-bold text-white mb-1">¿Te interesa este trabajo?</h2>
+                <p class="text-slate-400 text-sm mb-6">Envía tu oferta y el solicitante podrá contactarte.</p>
+                <button
+                  (click)="openPostulateForm()"
+                  class="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-orange-900/30 active:scale-95">
+                  Postularme a esta solicitud
+                </button>
+              </div>
+            }
+
+            <!-- Postulate Form -->
+            @if (showPostulateForm) {
+              <form [formGroup]="postulateForm" (ngSubmit)="submitPostulate()">
+                <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                  <span class="w-1.5 h-5 rounded-full bg-orange-500"></span>
+                  Tu propuesta
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Monto (BOB)</label>
+                    <input
+                      type="number"
+                      formControlName="amount"
+                      min="0.01"
+                      step="0.01"
+                      class="w-full bg-slate-800/80 border border-slate-600 focus:border-orange-500 rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors"
+                      placeholder="500.00">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Duración estimada</label>
+                    <input
+                      type="text"
+                      formControlName="estimatedDuration"
+                      class="w-full bg-slate-800/80 border border-slate-600 focus:border-orange-500 rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors"
+                      placeholder="Ej: 2-3 días">
+                  </div>
+                </div>
+                <div class="mb-5">
+                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Descripción de tu propuesta</label>
+                  <textarea
+                    formControlName="description"
+                    rows="3"
+                    class="w-full bg-slate-800/80 border border-slate-600 focus:border-orange-500 rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors resize-none"
+                    placeholder="Cuéntale al solicitante por qué eres el indicado para este trabajo..."></textarea>
+                </div>
+                <div class="flex gap-3">
+                  <button
+                    type="submit"
+                    [disabled]="isSubmitting"
+                    class="flex-1 sm:flex-none px-8 py-3 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-lg shadow-orange-900/30 flex items-center justify-center gap-2">
+                    @if (isSubmitting) {
+                      <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    }
+                    Enviar postulación
+                  </button>
+                  <button
+                    type="button"
+                    (click)="closePostulateForm()"
+                    class="px-5 py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-slate-300 font-semibold rounded-xl transition-all">
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            }
+          </div>
+        </div>
+      }
+
+      @if (!myOffer && request.status !== 'PENDING') {
+        <div class="bg-card-bg rounded-2xl border border-dashed border-slate-700 p-8 text-center">
+          <p class="text-slate-500 font-medium">Esta solicitud ya no acepta nuevas postulaciones.</p>
+        </div>
+      }
+
+      @if (myOffer) {
+        <div class="bg-card-bg rounded-2xl border border-slate-700 overflow-hidden">
+          <div [class]="'h-1 w-full ' + (myOffer.status === 'PENDING' ? 'bg-yellow-500' : myOffer.status === 'ACCEPTED' ? 'bg-green-500' : myOffer.status === 'REJECTED' ? 'bg-red-500' : 'bg-slate-600')"></div>
+          <div class="p-6">
+
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <span class="w-1.5 h-5 rounded-full bg-orange-500"></span>
+                Tu oferta
+              </h2>
+              <span [class]="'text-[10px] font-bold px-3 py-1 rounded-md border uppercase ' + getStatusColor(myOffer.status)">
+                {{ getStatusLabel(myOffer.status) }}
+              </span>
+            </div>
+
+            @if (myOffer.professional) {
+              <a [routerLink]="['/professionals', myOffer.professional.id]"
+                 class="flex items-center gap-3 mb-5 p-3 bg-slate-800/40 hover:bg-slate-800/70 rounded-xl border border-slate-700/30 hover:border-orange-500/30 transition-all group cursor-pointer">
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-orange-500/40 shrink-0 bg-slate-700 flex items-center justify-center">
+                  @if (myOffer.professional.photoUrl) {
+                    <img [src]="myOffer.professional.photoUrl" [alt]="myOffer.professional.name" class="w-full h-full object-cover">
+                  } @else {
+                    <span class="text-sm font-bold text-slate-300 uppercase">{{ myOffer.professional.name?.charAt(0) }}{{ myOffer.professional.lastName.charAt(0) }}</span>
+                  }
+                </div>
+                <div class="flex-1">
+                  <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Profesional</p>
+                  <p class="text-sm font-bold text-white">{{ myOffer.professional.name }} {{ myOffer.professional.lastName }}</p>
+                </div>
+                <svg class="w-4 h-4 text-slate-600 group-hover:text-orange-400 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
+            }
+
+            @if (!showEditForm) {
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-5">
+                <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+                  <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1">Cotización</p>
+                  <p class="text-xl font-black text-white">
+                    <span class="text-sm font-bold text-slate-400">{{ myOffer.currency }} </span>{{ myOffer.amount | number:'1.2-2' }}
+                  </p>
+                </div>
+                @if (myOffer.estimatedDuration) {
+                  <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+                    <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1">Duración</p>
+                    <p class="text-sm font-bold text-white">{{ myOffer.estimatedDuration }}</p>
+                  </div>
+                }
+                <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+                  <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1">Enviada</p>
+                  <p class="text-sm font-bold text-white">{{ myOffer.createdAt | date:'d MMM yyyy' }}</p>
+                </div>
+              </div>
+
+              @if (myOffer.description) {
+                <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 mb-5">
+                  <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-2">Tu descripción</p>
+                  <p class="text-sm text-slate-300 italic">"{{ myOffer.description }}"</p>
+                </div>
+              }
+
+              @if (myOffer.status === OfferStatus.ACCEPTED) {
+                <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-4 text-center">
+                  <p class="text-green-400 font-bold text-sm flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    ¡Fuiste contratado para este trabajo!
+                  </p>
+                  <p class="text-green-400/70 text-xs mt-1">El solicitante elegirá la forma de contactarte.</p>
+                </div>
+              }
+
+              @if (myOffer.status === OfferStatus.REJECTED) {
+                <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-4 text-center">
+                  <p class="text-red-400 font-semibold text-sm">El solicitante eligió a otro profesional en esta ocasión.</p>
+                </div>
+              }
+
+              @if (myOffer.status === OfferStatus.VOIDED) {
+                <div class="bg-gray-500/10 border border-gray-500/20 rounded-xl p-4 mb-4 text-center">
+                  <p class="text-gray-400 font-semibold text-sm">Esta solicitud venció sin ser atendida.</p>
+                </div>
+              }
+
+              @if (canEditOffer || canCancelOffer) {
+                <div class="flex gap-2 pt-4 border-t border-slate-800">
+                  @if (canEditOffer) {
+                    <button
+                      (click)="openEditForm()"
+                      class="flex items-center gap-1.5 px-4 py-2 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-white text-xs font-semibold rounded-lg transition-all">
+                      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                      Editar oferta
+                    </button>
+                  }
+                  @if (canCancelOffer) {
+                    <button
+                      (click)="cancelOffer()"
+                      [disabled]="isCancelling"
+                      class="flex items-center gap-1.5 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold rounded-lg transition-all disabled:opacity-50">
+                      @if (isCancelling) {
+                        <span class="w-3 h-3 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin"></span>
+                      } @else {
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                      }
+                      Retirar oferta
+                    </button>
+                  }
+                </div>
+              }
+            }
+
+            @if (showEditForm) {
+              <form [formGroup]="editForm" (ngSubmit)="saveEdit()" class="space-y-4">
+                <h3 class="text-sm font-bold text-white">Editar tu oferta</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Monto (BOB)</label>
+                    <input
+                      type="number"
+                      formControlName="amount"
+                      min="0.01"
+                      step="0.01"
+                      class="w-full bg-slate-800/80 border border-slate-600 focus:border-orange-500 rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Duración estimada</label>
+                    <input
+                      type="text"
+                      formControlName="estimatedDuration"
+                      class="w-full bg-slate-800/80 border border-slate-600 focus:border-orange-500 rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors"
+                      placeholder="Ej: 2-3 días">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Descripción</label>
+                  <textarea
+                    formControlName="description"
+                    rows="2"
+                    class="w-full bg-slate-800/80 border border-slate-600 focus:border-orange-500 rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors resize-none"></textarea>
+                </div>
+                <div class="flex gap-3">
+                  <button
+                    type="submit"
+                    [disabled]="isSavingEdit"
+                    class="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-2">
+                    @if (isSavingEdit) {
+                      <span class="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    }
+                    Guardar
+                  </button>
+                  <button
+                    type="button"
+                    (click)="closeEditForm()"
+                    class="px-5 py-2.5 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 text-slate-300 text-xs font-semibold rounded-xl transition-all">
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            }
+
+          </div>
+        </div>
+      }
+
+    }
+  </div>
+</div>

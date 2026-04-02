@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { UserAddressService } from '../../services/user-address.service';
 import { StorageService, StorageUserAddress } from '../../services/storage.service';
 import { UserAddress } from '../../models/user-address.models';
@@ -8,7 +8,7 @@ import { AddressDialogService } from '../../services/address-dialog.service';
 @Component({
   selector: 'app-address-dialog',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './addres-dialog.html',
   // No necesitamos styleUrls si usas Tailwind con las variables globales que me pasaste
 })

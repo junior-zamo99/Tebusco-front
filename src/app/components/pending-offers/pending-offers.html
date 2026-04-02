@@ -1,51 +1,70 @@
-<section class="my-4">
-  <div class="flex justify-between items-center mb-3">
-    <h2 class="text-lg font-bold text-text">Ofertas Pendientes</h2>
-    <button class="text-primary text-xs font-medium hover:underline">Ver todas</button>
-  </div>
+<section class="my-6">
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <h2 class="text-xl font-bold text-white flex items-center gap-2">
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-    <div
-      *ngFor="let offer of offers"
-      class="bg-card-bg rounded-xl p-3 hover:shadow-md transition-all relative border border-border/50 group"
-      [class.border-yellow-500/50]="offer.isUrgent"
-      [class.bg-yellow-500/5]="offer.isUrgent"
-    >
-      <span
-        *ngIf="offer.isUrgent"
-        class="absolute top-2 right-2 bg-yellow-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm z-10"
-      >
-        🔥 URGENTE
-      </span>
-
-      <div class="flex items-start gap-3 mb-2">
-        <div
-          class="w-10 h-10 bg-gradient-to-br rounded-full flex items-center justify-center flex-shrink-0 shadow-sm"
-          [ngClass]="offer.color"
-        >
-          <span class="text-sm font-bold text-white">{{ offer.clientInitials }}</span>
-        </div>
-        <div class="flex-1 min-w-0 pr-16"> <h3 class="font-bold text-text text-sm truncate">{{ offer.clientName }}</h3>
-          <p class="text-[10px] text-text-light flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            </svg>
-            {{ offer.distance }} • {{ offer.time }}
-          </p>
-        </div>
-      </div>
-
-      <h4 class="font-semibold text-text text-xs mb-1 truncate">{{ offer.title }}</h4>
-      <p class="text-[10px] text-text-light mb-3 line-clamp-2 leading-tight">
-        {{ offer.description }}
-      </p>
-
-      <div class="flex items-center justify-between pt-2 border-t border-border/50">
-        <span class="text-sm font-bold text-green-500">$ {{ offer.price }}</span>
-        <button class="px-3 py-1.5 bg-primary text-white text-[10px] font-bold rounded-lg hover:bg-primary-dark transition-colors shadow-sm">
-          Ver Oferta
-        </button>
-      </div>
+        Mis Ofertas Activas
+      </h2>
+      <p class="text-xs text-slate-400 mt-1">Ofertas que has enviado recientemente</p>
     </div>
+    <button (click)="viewAll()" class="text-orange-500 font-bold text-sm hover:text-orange-400 transition-colors flex items-center gap-1 group">
+      Ver todo
+      <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </button>
   </div>
+
+  @if (isLoading) {
+    <div class="flex flex-col items-center justify-center py-10 bg-card-bg rounded-xl border border-slate-800">
+      <div class="w-8 h-8 border-2 border-orange-500/20 border-t-orange-500 rounded-full animate-spin mb-3"></div>
+      <p class="text-orange-500 font-bold tracking-widest text-[10px] uppercase">Cargando...</p>
+    </div>
+  }
+
+  @if (!isLoading && offers.length === 0) {
+    <div class="py-12 text-center bg-card-bg rounded-xl border border-dashed border-slate-700">
+      <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <p class="text-slate-400 text-sm font-medium">No tienes ofertas activas en este momento.</p>
+    </div>
+  }
+
+  @if (!isLoading && offers.length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      @for (offer of offers; track offer.id) {
+        <div
+          (click)="viewRequest(offer.request.id)"
+          class="group bg-card-bg rounded-xl overflow-hidden border border-slate-800 hover:border-slate-700 transition-all cursor-pointer relative shadow-lg flex flex-col h-full">
+
+          <div [class]="'h-1 w-full ' + (offer.status === 'PENDING' ? 'bg-yellow-500' : offer.status === 'ACCEPTED' ? 'bg-green-500' : 'bg-slate-600')"></div>
+
+          <div class="p-4 pt-5 flex flex-col h-full">
+            <div class="flex items-center justify-between mb-3">
+              <span [class]="'text-[9px] font-bold px-2 py-0.5 rounded border uppercase ' + getStatusColor(offer.status)">
+                {{ getStatusLabel(offer.status) }}
+              </span>
+              <p class="text-sm font-black text-white">
+                <span class="text-[10px] text-slate-400 mr-0.5">{{ offer.currency }}</span>{{ offer.amount | number:'1.2-2' }}
+              </p>
+            </div>
+
+            <h3 class="text-sm font-bold text-white mb-2 leading-tight group-hover:text-orange-400 transition-colors line-clamp-2">
+              {{ offer.request.title }}
+            </h3>
+
+            <div class="mt-auto pt-3 border-t border-slate-800/50 flex flex-col gap-1.5">
+              <div class="flex items-center gap-1.5 text-[10px] text-slate-400">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                {{ offer.estimatedDuration || 'Duración a convenir' }}
+              </div>
+              <div class="flex items-center gap-1.5 text-[10px] text-slate-500">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                {{ offer.createdAt | date:'d MMM' }} • {{ getUrgencyLabel(offer.request.urgency) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
 </section>

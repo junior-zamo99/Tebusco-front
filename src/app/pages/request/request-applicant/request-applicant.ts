@@ -33,10 +33,15 @@ export class RequestApplicant implements OnInit {
 
   // Configuración de Tabs
   statusTabs = [
-    { value: RequestStatusEnum.PENDING, label: 'Pendientes', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
-    { value: RequestStatusEnum.COMPLETED, label: 'Completadas', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
-    { value: RequestStatusEnum.CANCELLED, label: 'Canceladas', icon: 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z' }
+    { value: RequestStatusEnum.PENDING, label: 'Pendientes' },
+    { value: RequestStatusEnum.ACCEPTED, label: 'Aceptadas' },
+    { value: RequestStatusEnum.COMPLETED, label: 'Completadas' },
+    { value: RequestStatusEnum.CANCELLED, label: 'Canceladas' },
+    { value: RequestStatusEnum.EXPIRED, label: 'Vencidas' },
+    { value: RequestStatusEnum.REJECTED, label: 'Rechazadas' },
   ];
+
+  hasNextPage = false;
 
   private urgencyLabels: Record<string, string> = {
     'low': 'Baja',
@@ -72,9 +77,11 @@ export class RequestApplicant implements OnInit {
       { page: this.currentPage, limit: this.itemsPerPage }
     ).subscribe({
       next: (response: any) => {
-        // Maneja tanto si el backend devuelve data[] o el array directo
         this.requests = response.data || response;
-        if (response.meta) this.totalItems = response.meta.totalItems;
+        if (response.pagination) {
+          this.totalItems = response.pagination.totalItems;
+          this.hasNextPage = response.pagination.hasNextPage;
+        }
         this.loading = false;
       },
       error: (err) => {
@@ -96,7 +103,7 @@ export class RequestApplicant implements OnInit {
   }
 
   nextPage(): void {
-    if (this.requests.length >= this.itemsPerPage) {
+    if (this.hasNextPage) {
       this.currentPage++;
       this.loadRequests();
     }
@@ -166,7 +173,7 @@ export class RequestApplicant implements OnInit {
   }
 
   editRequest(id: number): void {
-    this.router.navigate(['/request-edit', id]);
+    this.router.navigate(['/applicant/request', id, 'edit']);
   }
 
   deleteRequest(id: number): void {

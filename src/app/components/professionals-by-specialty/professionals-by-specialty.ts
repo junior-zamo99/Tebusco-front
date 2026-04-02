@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProfessionalPublicService } from '../../services/professional-public.service';
 import { CategoryService } from '../../services/category.service';
+import { NavigationHistoryService } from '../../services/navigation-history.service';
 import { ProfessionalListItem } from '../../interface/professional-public.interface';
 import { CategoryNode } from '../../models/category.model';
 
@@ -44,7 +45,8 @@ export class ProfessionalsBySpecialty implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private professionalService: ProfessionalPublicService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private navHistory: NavigationHistoryService
   ) {}
 
   ngOnInit(): void {
@@ -132,11 +134,7 @@ export class ProfessionalsBySpecialty implements OnInit {
   }
 
   goBack(): void {
-    if (this.parentCategory) {
-      this.router.navigate(['/professionals/category', this.parentCategory.id]);
-    } else {
-      this.router.navigate(['/categories']);
-    }
+    this.navHistory.goBack('/categories');
   }
 
   getPaginationPages(): number[] {

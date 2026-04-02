@@ -1,213 +1,225 @@
-<div
-  *ngIf="isOpen"
-  class="absolute top-full left-0 right-0 mt-2 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 rounded-xl shadow-2xl z-50 max-h-[400px] overflow-hidden border border-white/10 backdrop-blur-xl"
->
-  <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-1/4 -left-20 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl animate-pulse"></div>
-    <div class="absolute bottom-1/4 right-1/4 w-24 h-24 bg-yellow-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
-  </div>
-
-  <div class="absolute inset-0 opacity-[0.02] pointer-events-none">
-    <div class="absolute inset-0"
-      style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 40px 40px;">
+@if (isOpen) {
+  <div
+    class="absolute top-full left-0 right-0 mt-2 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 rounded-xl shadow-2xl z-50 max-h-[400px] overflow-hidden border border-white/10 backdrop-blur-xl"
+    >
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-1/4 -left-20 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl animate-pulse"></div>
+      <div class="absolute bottom-1/4 right-1/4 w-24 h-24 bg-yellow-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
     </div>
-  </div>
-
-  <div class="relative z-10">
-
-    <div *ngIf="isLoading" class="p-6 text-center">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-yellow-400 border-t-transparent"></div>
-      <p class="mt-2 text-slate-300 text-sm font-medium">Buscando...</p>
-    </div>
-
-    <div *ngIf="error" class="p-6 text-center">
-      <div class="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-2 backdrop-blur-sm border border-red-500/30">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+    <div class="absolute inset-0 opacity-[0.02] pointer-events-none">
+      <div class="absolute inset-0"
+        style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 40px 40px;">
       </div>
-      <p class="text-red-400 text-sm font-medium">{{ error }}</p>
     </div>
-
-    <div *ngIf="!isLoading && !hasCity" class="p-6 text-center">
-      <div class="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-sm border border-yellow-500/30">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      </div>
-      <p class="text-white font-bold text-sm mb-1">Debes configurar tu ciudad</p>
-      <p class="text-slate-400 text-xs mb-4">Para buscar profesionales necesitas configurar tu ubicación.</p>
-      <button
-        (click)="goToEditProfile()"
-        class="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-slate-900 font-bold py-2 px-4 rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-yellow-400/30"
-      >
-        Configurar ubicación
-      </button>
-    </div>
-
-    <div *ngIf="!isLoading && !error && hasCity && searchResults" class="max-h-[400px] overflow-y-auto custom-scrollbar">
-
-      <div *ngIf="searchResults.totalResults === 0" class="p-6 text-center">
-        <div class="w-12 h-12 bg-white/5 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-2 border border-white/10">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+    <div class="relative z-10">
+      @if (isLoading) {
+        <div class="p-6 text-center">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-yellow-400 border-t-transparent"></div>
+          <p class="mt-2 text-slate-300 text-sm font-medium">Buscando...</p>
         </div>
-        <p class="text-white font-bold text-sm mb-1">Sin resultados</p>
-        <p class="text-slate-400 text-xs">Intenta con otros términos o cambia la ciudad.</p>
-      </div>
-
-      <div *ngIf="searchResults.totalResults > 0">
-
-        <div class="px-4 py-2 bg-white/5 backdrop-blur-sm border-b border-white/10 sticky top-0 z-20">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center shadow-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <div class="flex items-center gap-2">
-                  <p class="text-white font-bold text-xs">{{ searchResults.totalResults }} encontrados</p>
-                </div>
-              </div>
-            </div>
-
-            <button
-              (click)="viewAllResults()"
-              class="text-xs font-semibold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1 group"
-            >
-              Ver todos
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </button>
+      }
+      @if (error) {
+        <div class="p-6 text-center">
+          <div class="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-2 backdrop-blur-sm border border-red-500/30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
+          <p class="text-red-400 text-sm font-medium">{{ error }}</p>
         </div>
-
-        <div *ngIf="searchResults.categories.total > 0" class="border-b border-white/10">
-          <div class="px-4 py-1.5 bg-white/5 backdrop-blur-sm">
-            <div class="flex items-center gap-2">
-              <h3 class="text-white/60 font-bold text-[10px] uppercase tracking-wider">Categorías</h3>
-            </div>
+      }
+      @if (!isLoading && !hasCity) {
+        <div class="p-6 text-center">
+          <div class="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-sm border border-yellow-500/30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
           </div>
-
-          <div class="divide-y divide-white/5">
-            <button
-              *ngFor="let category of searchResults.categories.results.slice(0, 3)"
-              (click)="onCategoryClick(category)"
-              class="w-full px-4 py-2 hover:bg-white/5 transition-all duration-200 text-left group"
-            >
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-400 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-105 transition-all">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-2">
-                    <p class="text-white text-sm font-bold group-hover:text-yellow-400 transition-colors truncate">
-                      {{ category.name }}
-                    </p>
-                    <span *ngIf="category.isTop" class="bg-gradient-to-r from-yellow-400 to-orange-400 text-slate-900 text-[10px] font-bold px-1.5 py-0 rounded">
-                      TOP
-                    </span>
-                  </div>
-                  <p class="text-slate-400 text-xs">
-                    {{ category.professionalsCount }} profesionales
-                  </p>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600 group-hover:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <div *ngIf="searchResults.providers.total > 0">
-          <div class="px-4 py-1.5 bg-white/5 backdrop-blur-sm">
-             <div class="flex items-center gap-2">
-              <h3 class="text-white/60 font-bold text-[10px] uppercase tracking-wider">Profesionales</h3>
-            </div>
-          </div>
-
-          <div class="divide-y divide-white/5">
-            <button
-              *ngFor="let provider of searchResults.providers.results.slice(0, 4)"
-              (click)="onProviderClick(provider)"
-              class="w-full px-4 py-2.5 hover:bg-white/5 transition-all duration-200 text-left group"
-            >
-              <div class="flex items-center gap-3">
-
-                <div class="relative flex-shrink-0">
-                  <div
-                    *ngIf="provider.avatarThumbnailUrl"
-                    class="w-10 h-10 rounded-full bg-cover bg-center ring-1 ring-yellow-400/30 group-hover:ring-yellow-400 transition-all"
-                    [style.background-image]="'url(' + photoURL(provider) + ')'"
-                  ></div>
-                  <div
-                    *ngIf="!provider.avatarThumbnailUrl"
-                    class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center ring-1 ring-yellow-400/30 group-hover:ring-yellow-400 transition-all"
-                  >
-                    <span class="text-xs font-bold text-white">{{ getProviderInitials(provider) }}</span>
-                  </div>
-                  <div *ngIf="provider.isVerified" class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center ring-2 ring-slate-950">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-2">
-                    <p class="text-white text-sm font-bold group-hover:text-yellow-400 transition-colors truncate leading-tight">
-                      {{ provider.fullName }}
-                    </p>
-                    <span
-                      *ngIf="provider.type === 'company'"
-                      class="bg-blue-400/20 text-blue-300 text-[10px] font-bold px-1.5 py-0 rounded uppercase border border-blue-400/30"
-                    >
-                      Empresa
-                    </span>
-                  </div>
-
-                  <div class="flex flex-wrap gap-1 mt-0.5 mb-1">
-                    <span
-                      *ngFor="let category of provider.categories.slice(0, 2)"
-                      class="text-[10px] bg-white/10 text-slate-300 px-1.5 py-0.5 rounded font-medium"
-                    >
-                      {{ category.name }}
-                    </span>
-                  </div>
-
-                  <div class="flex items-center gap-2 text-[10px]">
-                      <span *ngIf="provider.hasActiveSubscription" class="flex items-center gap-1 text-green-400 font-semibold">
-                      <span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
-                      Disp.
-                    </span>
-                    <span class="text-slate-500" *ngIf="provider.hasActiveSubscription">•</span>
-                    <span class="text-slate-400 truncate">
-                        {{ provider.location?.city || 'Bolivia' }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <div class="px-4 py-3 bg-white/5 backdrop-blur-sm border-t border-white/10">
+          <p class="text-white font-bold text-sm mb-1">Debes configurar tu ciudad</p>
+          <p class="text-slate-400 text-xs mb-4">Para buscar profesionales necesitas configurar tu ubicación.</p>
           <button
-            (click)="viewAllResults()"
-            class="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-slate-900 font-bold py-2 px-4 rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-yellow-400/50"
-          >
-            Ver todos los resultados
+            (click)="goToEditProfile()"
+            class="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-slate-900 font-bold py-2 px-4 rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-yellow-400/30"
+            >
+            Configurar ubicación
           </button>
         </div>
-      </div>
+      }
+      @if (!isLoading && !error && hasCity && searchResults) {
+        <div class="max-h-[400px] overflow-y-auto custom-scrollbar">
+          @if (searchResults.totalResults === 0) {
+            <div class="p-6 text-center">
+              <div class="w-12 h-12 bg-white/5 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-2 border border-white/10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <p class="text-white font-bold text-sm mb-1">Sin resultados</p>
+              <p class="text-slate-400 text-xs">Intenta con otros términos o cambia la ciudad.</p>
+            </div>
+          }
+          @if (searchResults.totalResults > 0) {
+            <div>
+              <div class="px-4 py-2 bg-white/5 backdrop-blur-sm border-b border-white/10 sticky top-0 z-20">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center shadow-lg">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <p class="text-white font-bold text-xs">{{ searchResults.totalResults }} encontrados</p>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    (click)="viewAllResults()"
+                    class="text-xs font-semibold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1 group"
+                    >
+                    Ver todos
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              @if (searchResults.categories.total > 0) {
+                <div class="border-b border-white/10">
+                  <div class="px-4 py-1.5 bg-white/5 backdrop-blur-sm">
+                    <div class="flex items-center gap-2">
+                      <h3 class="text-white/60 font-bold text-[10px] uppercase tracking-wider">Categorías</h3>
+                    </div>
+                  </div>
+                  <div class="divide-y divide-white/5">
+                    @for (category of searchResults.categories.results.slice(0, 3); track category) {
+                      <button
+                        (click)="onCategoryClick(category)"
+                        class="w-full px-4 py-2 hover:bg-white/5 transition-all duration-200 text-left group"
+                        >
+                        <div class="flex items-center gap-3">
+                          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-400 flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-105 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                              <p class="text-white text-sm font-bold group-hover:text-yellow-400 transition-colors truncate">
+                                {{ category.name }}
+                              </p>
+                              @if (category.isTop) {
+                                <span class="bg-gradient-to-r from-yellow-400 to-orange-400 text-slate-900 text-[10px] font-bold px-1.5 py-0 rounded">
+                                  TOP
+                                </span>
+                              }
+                            </div>
+                            <p class="text-slate-400 text-xs">
+                              {{ category.professionalsCount }} profesionales
+                            </p>
+                          </div>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600 group-hover:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+              @if (searchResults.providers.total > 0) {
+                <div>
+                  <div class="px-4 py-1.5 bg-white/5 backdrop-blur-sm">
+                    <div class="flex items-center gap-2">
+                      <h3 class="text-white/60 font-bold text-[10px] uppercase tracking-wider">Profesionales</h3>
+                    </div>
+                  </div>
+                  <div class="divide-y divide-white/5">
+                    @for (provider of searchResults.providers.results.slice(0, 4); track provider) {
+                      <button
+                        (click)="onProviderClick(provider)"
+                        class="w-full px-4 py-2.5 hover:bg-white/5 transition-all duration-200 text-left group"
+                        >
+                        <div class="flex items-center gap-3">
+                          <div class="relative flex-shrink-0">
+                            @if (provider.photoUrl) {
+                              <div
+                                class="w-10 h-10 rounded-full bg-cover bg-center ring-1 ring-yellow-400/30 group-hover:ring-yellow-400 transition-all"
+                                [style.background-image]="'url(' + photoURL(provider) + ')'"
+                              ></div>
+                            }
+                            @if (!provider.photoUrl) {
+                              <div
+                                class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center ring-1 ring-yellow-400/30 group-hover:ring-yellow-400 transition-all"
+                                >
+                                <span class="text-xs font-bold text-white">{{ getProviderInitials(provider) }}</span>
+                              </div>
+                            }
+                            @if (provider.isVerified) {
+                              <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center ring-2 ring-slate-950">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                              </div>
+                            }
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                              <p class="text-white text-sm font-bold group-hover:text-yellow-400 transition-colors truncate leading-tight">
+                                {{ provider.fullName }}
+                              </p>
+                              @if (provider.type === 'company') {
+                                <span
+                                  class="bg-blue-400/20 text-blue-300 text-[10px] font-bold px-1.5 py-0 rounded uppercase border border-blue-400/30"
+                                  >
+                                  Empresa
+                                </span>
+                              }
+                            </div>
+                            <div class="flex flex-wrap gap-1 mt-0.5 mb-1">
+                              @for (category of provider.categories.slice(0, 2); track category) {
+                                <span
+                                  class="text-[10px] bg-white/10 text-slate-300 px-1.5 py-0.5 rounded font-medium"
+                                  >
+                                  {{ category.name }}
+                                </span>
+                              }
+                            </div>
+                            <div class="flex items-center gap-2 text-[10px]">
+                              @if (provider.hasActiveSubscription) {
+                                <span class="flex items-center gap-1 text-green-400 font-semibold">
+                                  <span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                                  Disp.
+                                </span>
+                              }
+                              @if (provider.hasActiveSubscription) {
+                                <span class="text-slate-500">•</span>
+                              }
+                              <span class="text-slate-400 truncate">
+                                {{ provider.location?.city || 'Bolivia' }}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+              <div class="px-4 py-3 bg-white/5 backdrop-blur-sm border-t border-white/10">
+                <button
+                  (click)="viewAllResults()"
+                  class="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-slate-900 font-bold py-2 px-4 rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-yellow-400/50"
+                  >
+                  Ver todos los resultados
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
     </div>
   </div>
-</div>
+}

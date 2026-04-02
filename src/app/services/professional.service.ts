@@ -10,6 +10,15 @@ export interface UpgradeToProfessionalRequest {
   phone: string;
   birthDate: string;
   cityId: number;
+  whatsappNumber?: string;
+  websiteUrl?: string;
+  facebookProfile?: string;
+  instagramProfile?: string;
+  linkedinProfile?: string;
+  youtubeChannel?: string;
+  businessEmail?: string;
+  bio?: string;
+  totalExperience?: number;
 }
 
 export interface ProfessionalStatus {
@@ -85,8 +94,24 @@ export class ProfessionalService {
   constructor(private http: HttpClient) {}
 
 
-  upgradeToProfessional(data: UpgradeToProfessionalRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/upgrade`, data, {
+  upgradeToProfessional(data: UpgradeToProfessionalRequest, avatar?: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('lastName', data.lastName);
+    formData.append('phone', data.phone);
+    formData.append('birthDate', data.birthDate);
+    formData.append('cityId', data.cityId.toString());
+    if (data.whatsappNumber) formData.append('whatsappNumber', data.whatsappNumber);
+    if (data.websiteUrl) formData.append('websiteUrl', data.websiteUrl);
+    if (data.facebookProfile) formData.append('facebookProfile', data.facebookProfile);
+    if (data.instagramProfile) formData.append('instagramProfile', data.instagramProfile);
+    if (data.linkedinProfile) formData.append('linkedinProfile', data.linkedinProfile);
+    if (data.youtubeChannel) formData.append('youtubeChannel', data.youtubeChannel);
+    if (data.businessEmail) formData.append('businessEmail', data.businessEmail);
+    if (data.bio) formData.append('bio', data.bio);
+    if (data.totalExperience != null) formData.append('totalExperience', data.totalExperience.toString());
+    if (avatar) formData.append('avatar', avatar);
+    return this.http.post(`${this.apiUrl}/upgrade`, formData, {
       withCredentials: true
     });
   }

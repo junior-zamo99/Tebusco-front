@@ -1,21 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ProfessionalService } from '../../../services/professional.service';
 import { ProfileDocumentsComponent } from '../../../components/profile-documents/profile-documents.component';
 
 @Component({
   selector: 'app-profile-documents-page',
   standalone: true,
-  imports: [CommonModule, ProfileDocumentsComponent],
+  imports: [ProfileDocumentsComponent],
   template: `
 
 
-    <app-profile-documents
-      *ngIf="!loading && professionalId"
-      [professionalId]="professionalId"
-      (documentsUpdated)="onDocumentsUpdated()">
-    </app-profile-documents>
-  `
+@if (!loading && professionalId) {
+  <app-profile-documents
+    [professionalId]="professionalId"
+    (documentsUpdated)="onDocumentsUpdated()">
+  </app-profile-documents>
+}
+`
 })
 export class ProfileDocumentsPage implements OnInit {
   professionalId: number | null = null;

@@ -1,58 +1,189 @@
 <div class="animate-fadeIn space-y-4">
+  <!-- Header con avatar y datos principales -->
   <div class="bg-[#161b26] border border-slate-800 rounded-xl relative overflow-hidden">
-
     <div class="h-24 w-full bg-gradient-to-r from-indigo-900/60 to-purple-900/60 relative">
       <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
     </div>
 
     <div class="px-5 pb-5">
       <div class="relative flex flex-col md:flex-row items-end gap-4 -mt-10">
-
         <div class="w-20 h-20 rounded-full border-4 border-[#161b26] bg-slate-700 overflow-hidden shadow-xl relative z-10">
-           <img [src]="getPhotoUrl()" alt="Avatar" class="w-full h-full object-cover">
+          <img [src]="getPhotoUrl()" alt="Avatar" class="w-full h-full object-cover">
         </div>
 
         <div class="flex-1 mb-1 pt-10 md:pt-0">
-          <h2 class="text-xl font-bold text-white">{{ data.user.name | titlecase }} {{ data.user.lastName | titlecase }}</h2>
+          <div class="flex items-center gap-2">
+            <h2 class="text-xl font-bold text-white">{{ data.user.name | titlecase }} {{ data.user.lastName | titlecase }}</h2>
+            @if (data.professional.isVerified) {
+              <span class="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                <i class="fa-solid fa-circle-check text-sm"></i>
+                Verificado
+              </span>
+            } @else {
+              <span class="bg-amber-500/20 text-amber-400 text-[10px] px-2 py-0.5 rounded-full font-medium">Pendiente</span>
+            }
+          </div>
           <p class="text-indigo-400 font-medium text-xs">{{ data.user.email }}</p>
+          @if (data.professional.city) {
+            <p class="text-slate-400 text-xs flex items-center gap-1 mt-0.5">
+              <i class="fa-solid fa-location-dot text-sm"></i>
+              {{ data.professional.city.name }}, {{ data.professional.city.country?.name }}
+            </p>
+          }
         </div>
 
         <button (click)="editClicked.emit()"
-                class="mb-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition-all shadow-md shadow-indigo-900/20 flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          class="mb-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition-all shadow-md shadow-indigo-900/20 flex items-center gap-1.5">
+          <i class="fa-solid fa-pen text-sm"></i>
           Editar
         </button>
       </div>
+    </div>
+  </div>
 
-      <div class="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-4">
-         <div class="lg:col-span-2 space-y-1">
-            <label class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Biografía</label>
-            <div class="text-slate-300 bg-[#0B0E14] p-3 rounded-lg border border-slate-800 leading-relaxed min-h-[80px] text-xs">
-              {{ data.professional.bio || 'Sin biografía disponible.' }}
-            </div>
-         </div>
+  <!-- Información de contacto -->
+  <div class="bg-[#161b26] border border-slate-800 rounded-xl p-5">
+    <h3 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+      <i class="fa-solid fa-address-card text-base text-indigo-400"></i>
+      Información de Contacto
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="space-y-1">
+        <label class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Teléfono</label>
+        <div class="text-white bg-[#0B0E14] p-2.5 rounded-lg border border-slate-800 flex items-center gap-2 text-xs">
+          <i class="fa-solid fa-phone text-base text-slate-400"></i>
+          {{ data.user.phone || 'No registrado' }}
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">WhatsApp</label>
+        <div class="text-white bg-[#0B0E14] p-2.5 rounded-lg border border-slate-800 flex items-center gap-2 text-xs">
+          <i class="fa-brands fa-whatsapp text-base text-emerald-500"></i>
+          {{ data.professional.whatsappNumber || 'No configurado' }}
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Fecha de Nacimiento</label>
+        <div class="text-white bg-[#0B0E14] p-2.5 rounded-lg border border-slate-800 flex items-center gap-2 text-xs">
+          <i class="fa-solid fa-cake-candles text-base text-slate-400"></i>
+          {{ data.user.birthDate | date:'dd/MM/yyyy' }}
+        </div>
+      </div>
+      @if (data.professional.businessEmail) {
+        <div class="space-y-1">
+          <label class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Email de Negocio</label>
+          <div class="text-white bg-[#0B0E14] p-2.5 rounded-lg border border-slate-800 flex items-center gap-2 text-xs">
+            <i class="fa-solid fa-at text-base text-slate-400"></i>
+            {{ data.professional.businessEmail }}
+          </div>
+        </div>
+      }
+      @if (data.professional.websiteUrl) {
+        <div class="space-y-1">
+          <label class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Sitio Web</label>
+          <a [href]="data.professional.websiteUrl" target="_blank" class="text-indigo-400 bg-[#0B0E14] p-2.5 rounded-lg border border-slate-800 flex items-center gap-2 text-xs hover:text-indigo-300 transition-colors">
+            <i class="fa-solid fa-globe text-base"></i>
+            {{ data.professional.websiteUrl }}
+          </a>
+        </div>
+      }
+    </div>
+  </div>
 
-         <div class="space-y-3">
-            <div>
-               <label class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">WhatsApp</label>
-               <div class="text-white bg-[#0B0E14] p-2 rounded-lg border border-slate-800 mt-1 flex items-center gap-2 text-xs">
-                  <span class="text-emerald-500"><i class="fab fa-whatsapp"></i></span>
-                  {{ data.professional.whatsappNumber || 'No configurado' }}
-               </div>
-            </div>
-            <div>
-               <label class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Redes</label>
-               <div class="flex gap-2 mt-1">
-                  <a *ngIf="data.professional.linkedinProfile" [href]="data.professional.linkedinProfile" target="_blank" class="flex-1 bg-[#0B0E14] border border-slate-800 p-2 rounded-lg text-center hover:border-blue-500 hover:text-blue-500 transition-colors text-slate-400 text-xs flex items-center justify-center gap-1">
-                    <i class="fab fa-linkedin"></i> LinkedIn
-                  </a>
-                  <a *ngIf="data.professional.instagramProfile" [href]="'https://instagram.com/'+data.professional.instagramProfile" target="_blank" class="flex-1 bg-[#0B0E14] border border-slate-800 p-2 rounded-lg text-center hover:border-pink-500 hover:text-pink-500 transition-colors text-slate-400 text-xs flex items-center justify-center gap-1">
-                    <i class="fab fa-instagram"></i> Instagram
-                  </a>
-               </div>
-            </div>
-         </div>
+  <!-- Biografía -->
+  <div class="bg-[#161b26] border border-slate-800 rounded-xl p-5">
+    <h3 class="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+      <i class="fa-solid fa-file-lines text-base text-indigo-400"></i>
+      Biografía
+    </h3>
+    <div class="text-slate-300 bg-[#0B0E14] p-3 rounded-lg border border-slate-800 leading-relaxed text-xs">
+      {{ data.professional.bio || 'Sin biografía disponible.' }}
+    </div>
+  </div>
+
+  <!-- Redes Sociales -->
+  <div class="bg-[#161b26] border border-slate-800 rounded-xl p-5">
+    <h3 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+      <i class="fa-solid fa-share-nodes text-base text-indigo-400"></i>
+      Redes Sociales
+    </h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      @if (data.professional.facebookProfile) {
+        <a [href]="'https://facebook.com/' + data.professional.facebookProfile" target="_blank"
+           class="bg-[#0B0E14] border border-slate-800 p-3 rounded-lg text-center hover:border-blue-600 hover:bg-blue-600/10 transition-all text-slate-400 hover:text-blue-400 group flex flex-col items-center">
+          <i class="fa-brands fa-facebook text-2xl mb-1"></i>
+          <p class="text-[10px] truncate w-full">{{ data.professional.facebookProfile }}</p>
+        </a>
+      }
+      @if (data.professional.instagramProfile) {
+        <a [href]="'https://instagram.com/' + data.professional.instagramProfile.replace('@', '')" target="_blank"
+           class="bg-[#0B0E14] border border-slate-800 p-3 rounded-lg text-center hover:border-pink-500 hover:bg-pink-500/10 transition-all text-slate-400 hover:text-pink-400 group flex flex-col items-center">
+          <i class="fa-brands fa-instagram text-2xl mb-1"></i>
+          <p class="text-[10px] truncate w-full">{{ data.professional.instagramProfile }}</p>
+        </a>
+      }
+      @if (data.professional.linkedinProfile) {
+        <a [href]="data.professional.linkedinProfile" target="_blank"
+           class="bg-[#0B0E14] border border-slate-800 p-3 rounded-lg text-center hover:border-blue-500 hover:bg-blue-500/10 transition-all text-slate-400 hover:text-blue-400 group flex flex-col items-center">
+          <i class="fa-brands fa-linkedin text-2xl mb-1"></i>
+          <p class="text-[10px] truncate w-full">LinkedIn</p>
+        </a>
+      }
+      @if (data.professional.youtubeChannel) {
+        <a [href]="'https://youtube.com/' + data.professional.youtubeChannel" target="_blank"
+           class="bg-[#0B0E14] border border-slate-800 p-3 rounded-lg text-center hover:border-red-500 hover:bg-red-500/10 transition-all text-slate-400 hover:text-red-400 group flex flex-col items-center">
+          <i class="fa-brands fa-youtube text-2xl mb-1"></i>
+          <p class="text-[10px] truncate w-full">{{ data.professional.youtubeChannel }}</p>
+        </a>
+      }
+      @if (!data.professional.facebookProfile && !data.professional.instagramProfile && !data.professional.linkedinProfile && !data.professional.youtubeChannel) {
+        <div class="col-span-full text-center text-slate-500 text-xs py-4 flex flex-col items-center gap-2">
+          <i class="fa-solid fa-link-slash text-2xl"></i>
+          No hay redes sociales configuradas
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Estado del Perfil -->
+  <div class="bg-[#161b26] border border-slate-800 rounded-xl p-5">
+    <h3 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+      <i class="fa-solid fa-shield-halved text-base text-indigo-400"></i>
+      Estado del Perfil
+    </h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="bg-[#0B0E14] border border-slate-800 rounded-lg p-3 text-center">
+        <i class="text-2xl mb-1" [class]="data.professional.isVisible ? 'fa-solid fa-eye text-emerald-400' : 'fa-solid fa-eye-slash text-slate-500'"></i>
+        <div class="text-sm font-bold" [class]="data.professional.isVisible ? 'text-emerald-400' : 'text-slate-500'">
+          {{ data.professional.isVisible ? 'Activo' : 'Inactivo' }}
+        </div>
+        <p class="text-[10px] text-slate-500 uppercase font-medium mt-1">Visibilidad</p>
+      </div>
+      <div class="bg-[#0B0E14] border border-slate-800 rounded-lg p-3 text-center">
+        <i class="text-2xl mb-1" [class]="data.professional.isVerified ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-solid fa-clock text-amber-400'"></i>
+        <div class="text-sm font-bold" [class]="data.professional.isVerified ? 'text-emerald-400' : 'text-amber-400'">
+          {{ data.professional.isVerified ? 'Sí' : 'Pendiente' }}
+        </div>
+        <p class="text-[10px] text-slate-500 uppercase font-medium mt-1">Verificado</p>
+      </div>
+      <div class="bg-[#0B0E14] border border-slate-800 rounded-lg p-3 text-center">
+        <i class="fa-solid fa-folder text-2xl mb-1 text-indigo-400"></i>
+        <div class="text-sm font-bold text-indigo-400">
+          {{ data.documents.uploaded }}/{{ data.documents.total }}
+        </div>
+        <p class="text-[10px] text-slate-500 uppercase font-medium mt-1">Documentos</p>
+      </div>
+      <div class="bg-[#0B0E14] border border-slate-800 rounded-lg p-3 text-center">
+        <i class="fa-solid fa-layer-group text-2xl mb-1 text-purple-400"></i>
+        <div class="text-sm font-bold text-purple-400">
+          {{ data.profileCategories.length }}
+        </div>
+        <p class="text-[10px] text-slate-500 uppercase font-medium mt-1">Categorías</p>
       </div>
     </div>
   </div>
+
+
+
+
 </div>

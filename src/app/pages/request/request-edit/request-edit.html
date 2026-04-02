@@ -1,1 +1,64 @@
-<p>request-edit works!</p>
+<div class="min-h-screen bg-background py-6 font-sans text-sm flex flex-col items-center">
+
+  @if (isLoading) {
+    <div class="flex items-center justify-center min-h-[60vh]">
+      <div class="text-center">
+        <div class="relative w-10 h-10 mx-auto mb-4">
+          <div class="absolute inset-0 border-4 border-card-bg rounded-full"></div>
+          <div class="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-primary font-bold text-xs tracking-widest animate-pulse">CARGANDO...</p>
+      </div>
+    </div>
+  }
+
+  @if (!isLoading && requestData) {
+    <div class="w-[95%] max-w-[1800px] transition-all duration-500 ease-in-out">
+
+      <div class="mb-6 text-center animate-fade-in-down">
+        <h1 class="text-3xl md:text-4xl font-black text-text leading-tight tracking-tight mb-2">
+          @if (currentStep === 1) {
+            Cambia las <span class="text-primary">categorías</span>
+          }
+          @if (currentStep === 2) {
+            Edita los <span class="text-primary">detalles</span>
+          }
+        </h1>
+
+        <div class="flex justify-center gap-1.5 mt-2 opacity-70">
+          <div class="h-1 rounded-full transition-all duration-500"
+            [ngClass]="currentStep === 1 ? 'w-12 bg-primary' : 'w-3 bg-border'"></div>
+          <div class="h-1 rounded-full transition-all duration-500"
+            [ngClass]="currentStep === 2 ? 'w-12 bg-primary' : 'w-3 bg-border'"></div>
+        </div>
+      </div>
+
+      <div class="bg-surface rounded-xl border border-border/50 overflow-hidden relative min-h-[75vh] shadow-2xl animate-fade-in-up flex flex-col">
+
+        @if (currentStep === 1) {
+          <div class="flex-1 h-full">
+            <app-category-selector-request
+              (selectionConfirmed)="onCategoriesConfirmed($event)">
+            </app-category-selector-request>
+          </div>
+        }
+
+        @if (currentStep === 2) {
+          <div class="animate-fade-in h-full">
+            <app-request-form
+              [selectedCategories]="selectedCategories"
+              [isSubmitting]="isSubmitting"
+              [initialData]="requestData"
+              (back)="onBackToCategories()"
+              (changeCategory)="onBackToCategories()"
+              (formSubmit)="onUpdateRequest($event)">
+            </app-request-form>
+          </div>
+        }
+
+      </div>
+
+    </div>
+  }
+
+</div>

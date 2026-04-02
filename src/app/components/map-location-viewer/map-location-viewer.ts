@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import * as L from 'leaflet';
 
 export interface LocationData {
@@ -15,7 +15,7 @@ export interface LocationData {
 
 @Component({
   selector: 'app-map-location-viewer',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './map-location-viewer.html',
   styleUrl: './map-location-viewer.css',
 })

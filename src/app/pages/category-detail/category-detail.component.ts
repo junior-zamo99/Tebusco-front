@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProfileCategoryService } from '../../services/profile-category.service';
+import { ProfileCategoryService, PortfolioPhoto, CategoryCertificate, ProfileCategoryCV } from '../../services/profile-category.service';
 import { CategoryService } from '../../services/category.service';
 import { CategoryNode } from '../../models/category.model';
 import { StorageService } from '../../services/storage.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-category-detail',
@@ -25,6 +26,14 @@ export class CategoryDetailComponent implements OnInit {
   error: string | null = null;
 
   selectedSpecialties: Set<number> = new Set();
+
+  portfolioPhotos: PortfolioPhoto[] = [];
+  certificates: CategoryCertificate[] = [];
+  cv: ProfileCategoryCV | null = null;
+  uploadingPhoto = false;
+  uploadingCert = false;
+  uploadingCv = false;
+  pendingCertTitle = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -104,6 +113,17 @@ export class CategoryDetailComponent implements OnInit {
               this.loading = false;
             }
           });
+
+          // 4. Cargar portfolio, certificados y CV
+          this.profileCategoryService.getPortfolio(this.professionalId!, this.categoryId!).subscribe({
+            next: (res) => { if (res.success) this.portfolioPhotos = res.data || []; }
+          });
+          this.profileCategoryService.getCertificates(this.professionalId!, this.categoryId!).subscribe({
+            next: (res) => { if (res.success) this.certificates = res.data || []; }
+          });
+          this.profileCategoryService.getCv(this.professionalId!, this.categoryId!).subscribe({
+            next: (res) => { if (res.success) this.cv = res.data || null; }
+          });
         } else {
           this.error = res.message || 'Error al obtener datos.';
           this.loading = false;
@@ -162,6 +182,84 @@ export class CategoryDetailComponent implements OnInit {
         console.error('Error en update:', err);
       }
     });
+  }
+
+  onPhotoFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length || this.portfolioPhotos.length >= 5 || !this.professionalId || !this.categoryId) return;
+    const file = input.files[0];
+    this.uploadingPhoto = true;
+    this.profileCategoryService.addPhoto(this.professionalId, this.categoryId, file).subscribe({
+      next: (r) => {
+        this.uploadingPhoto = false;
+        if (r.success && r.data) this.portfolioPhotos.push(r.data);
+        input.value = '';
+      },
+      error: () => { this.uploadingPhoto = false; this.error = 'Error al subir la foto.'; }
+    });
+  }
+
+  deletePhoto(photoId: number) {
+    if (!this.professionalId || !this.categoryId) return;
+    this.profileCategoryService.deletePhoto(this.professionalId, this.categoryId, photoId).subscribe({
+      next: () => { this.portfolioPhotos = this.portfolioPhotos.filter(p => p.id !== photoId); },
+      error: () => this.error = 'Error al eliminar la foto.'
+    });
+  }
+
+  onCertFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length || !this.pendingCertTitle.trim() || !this.professionalId || !this.categoryId) return;
+    const file = input.files[0];
+    const title = this.pendingCertTitle.trim();
+    this.uploadingCert = true;
+    this.profileCategoryService.addCertificate(this.professionalId, this.categoryId, file, title).subscribe({
+      next: (r) => {
+        this.uploadingCert = false;
+        if (r.success && r.data) this.certificates.push(r.data);
+        this.pendingCertTitle = '';
+        input.value = '';
+      },
+      error: () => { this.uploadingCert = false; this.error = 'Error al subir el certificado.'; }
+    });
+  }
+
+  deleteCertificate(certId: number) {
+    if (!this.professionalId || !this.categoryId) return;
+    this.profileCategoryService.deleteCertificate(this.professionalId, this.categoryId, certId).subscribe({
+      next: () => { this.certificates = this.certificates.filter(c => c.id !== certId); },
+      error: () => this.error = 'Error al eliminar el certificado.'
+    });
+  }
+
+  onCvFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length || !this.professionalId || !this.categoryId) return;
+    const file = input.files[0];
+    this.uploadingCv = true;
+    this.profileCategoryService.uploadCv(this.professionalId, this.categoryId, file).subscribe({
+      next: (r) => {
+        this.uploadingCv = false;
+        if (r.success && r.data) this.cv = r.data;
+        input.value = '';
+      },
+      error: () => { this.uploadingCv = false; this.error = 'Error al subir el CV.'; }
+    });
+  }
+
+  deleteCv() {
+    if (!this.professionalId || !this.categoryId || !this.cv) return;
+    const cvId = this.cv.id;
+    this.profileCategoryService.deleteCv(this.professionalId, this.categoryId, cvId).subscribe({
+      next: () => { this.cv = null; },
+      error: () => this.error = 'Error al eliminar el CV.'
+    });
+  }
+
+  resolveUrl(url: string | undefined | null): string {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    return `${environment.backendUrl}${url}`;
   }
 
   cancel() {

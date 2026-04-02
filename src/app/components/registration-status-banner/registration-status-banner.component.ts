@@ -26,12 +26,8 @@ export class RegistrationStatusBannerComponent {
   @Output() goToCategories = new EventEmitter<void>();
   @Output() goToProfile = new EventEmitter<void>();
 
-  /**
-   * Calcula el banner de máxima prioridad que debe mostrarse.
-   * Solo muestra UN banner a la vez, según el orden de prioridad.
-   */
+
   getCurrentBanner(): PriorityBanner | null {
-    // Prioridad 1: Suscripción inicial pendiente (bloqueante)
     if (this.shouldShowSubscriptionBanner()) {
       return {
         priority: 1,
@@ -45,7 +41,6 @@ export class RegistrationStatusBannerComponent {
       };
     }
 
-    // Prioridad 2: Renovación de suscripción vencida
     if (this.shouldShowRenewalBanner()) {
       return {
         priority: 2,
@@ -59,7 +54,6 @@ export class RegistrationStatusBannerComponent {
       };
     }
 
-    // Prioridad 3: Documentos pendientes (con urgencia si hay fecha límite cercana)
     if (this.shouldShowDocumentsBanner()) {
       const daysLeft = this.getDaysUntilDeadline();
       const deadline = this.getDeadlineDate();
@@ -80,7 +74,6 @@ export class RegistrationStatusBannerComponent {
       };
     }
 
-    // Prioridad 4: Sin categorías configuradas
     if (this.shouldShowCategoriesBanner()) {
       return {
         priority: 3,
@@ -94,7 +87,6 @@ export class RegistrationStatusBannerComponent {
       };
     }
 
-    // Prioridad 5: Perfil incompleto (foto/WhatsApp)
     if (this.shouldShowProfileIncompleteBanner()) {
       return {
         priority: 4,
@@ -111,47 +103,31 @@ export class RegistrationStatusBannerComponent {
     return null;
   }
 
-  // === Condiciones para cada banner ===
 
-  /**
-   * Banner de suscripción inicial: usuario en paso de pago y nunca tuvo suscripción
-   */
   private shouldShowSubscriptionBanner(): boolean {
     return this.registrationStatus?.currentStep === 'payment' &&
            !this.infoExtra?.hadSubscription;
   }
 
-  /**
-   * Banner de renovación: tuvo suscripción pero ya no está activa
-   */
   private shouldShowRenewalBanner(): boolean {
     return this.infoExtra?.hadSubscription === true &&
            !this.registrationStatus?.hasActiveSubscription;
   }
 
-  /**
-   * Banner de documentos: hay documentos por subir
-   */
+
   private shouldShowDocumentsBanner(): boolean {
     if (!this.documents) return false;
     return this.documents.uploaded < this.documents.total;
   }
 
-  /**
-   * Banner de categorías: no ha configurado ninguna categoría
-   */
   private shouldShowCategoriesBanner(): boolean {
     return this.registrationStatus?.categoriesConfigured === 0;
   }
 
-  /**
-   * Banner de perfil incompleto: falta avatar o WhatsApp
-   */
   private shouldShowProfileIncompleteBanner(): boolean {
     return !this.professional?.avatarUrl || !this.professional?.whatsappNumber;
   }
 
-  // === Utilidades ===
 
   getDaysUntilDeadline(): number {
     if (!this.professional?.documentsDeadline) return 0;

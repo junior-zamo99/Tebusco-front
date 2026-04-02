@@ -1,4 +1,5 @@
-<div class="min-h-screen container-custom py-4 max-w-6xl mx-auto"> <div *ngIf="isLoading" class="flex items-center justify-center min-h-[40vh]">
+<div class="min-h-screen container-custom py-4 max-w-6xl mx-auto"> @if (isLoading) {
+  <div class="flex items-center justify-center min-h-[40vh]">
     <div class="text-center">
       <div class="relative w-10 h-10 mx-auto mb-4">
         <div class="absolute inset-0 border-4 border-[var(--color-card-bg-light)] rounded-full"></div>
@@ -7,137 +8,177 @@
       <p class="text-[var(--color-primary)] font-bold text-xs tracking-widest animate-pulse">CARGANDO...</p>
     </div>
   </div>
+}
 
-  <div *ngIf="!isLoading && request" class="animate-fadeIn">
-
+@if (!isLoading && request) {
+  <div class="animate-fadeIn">
     <nav class="flex items-center justify-between mb-4">
       <button (click)="goBack()" class="group flex items-center gap-2 text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">
         <div class="w-7 h-7 rounded-full bg-[var(--color-card-bg)] border border-[var(--color-border)] flex items-center justify-center group-hover:border-[var(--color-primary)] transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
         </div>
         <span class="font-medium text-xs">Volver a mis solicitudes</span>
       </button>
     </nav>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-
       <div class="lg:col-span-2 space-y-6">
         <div class="card p-0 overflow-hidden relative group border-[var(--color-border)]">
           <div class="h-1 w-full bg-gradient-warm"></div>
-
           <div class="p-5 md:p-6 relative"> <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                 <div class="flex items-center gap-2">
-                     <span [class]="'badge uppercase tracking-wider text-[10px] px-2 py-0.5 shadow-sm ' + getStatusColor(request.status)">
-                         {{ getStatusLabel(request.status) }}
-                     </span>
-
-                     <span class="flex items-center gap-1.5 text-[10px] font-medium text-[var(--color-text-muted)] bg-[var(--color-card-bg-light)] px-2 py-0.5 rounded-full border border-[var(--color-border)]">
-                        {{ request.createdAt | date:'d MMM yyyy' }}
-                     </span>
-                 </div>
-             </div>
-
-             <h1 class="text-2xl md:text-3xl font-black text-[var(--color-text)] mb-4 leading-tight tracking-tight">
-                 {{ request.title }}
-             </h1>
-
-             <div *ngIf="request.status === 'PENDING'" class="flex flex-wrap gap-3 mb-6 pb-6 border-b border-[var(--color-border)]">
-                <button (click)="updateStatus('COMPLETED')"
-                        [disabled]="isActionLoading"
-                        class="btn btn-secondary btn-sm shadow-md h-9 text-xs">
-                    Marcar Completada
+            <div class="flex items-center gap-2">
+              <span [class]="'badge uppercase tracking-wider text-[10px] px-2 py-0.5 shadow-sm ' + getStatusColor(request.status)">
+                {{ getStatusLabel(request.status) }}
+              </span>
+              <span class="flex items-center gap-1.5 text-[10px] font-medium text-[var(--color-text-muted)] bg-[var(--color-card-bg-light)] px-2 py-0.5 rounded-full border border-[var(--color-border)]">
+                {{ request.createdAt | date:'d MMM yyyy' }}
+              </span>
+            </div>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-black text-[var(--color-text)] mb-4 leading-tight tracking-tight">
+            {{ request.title }}
+          </h1>
+          @if (request.status === 'PENDING') {
+            <div class="flex flex-wrap gap-3 mb-6 pb-6 border-b border-[var(--color-border)]">
+              <button (click)="updateStatus('COMPLETED')"
+                [disabled]="isActionLoading"
+                class="btn btn-secondary btn-sm shadow-md h-9 text-xs">
+                Marcar Completada
+              </button>
+              <button (click)="updateStatus('CANCELLED')"
+                [disabled]="isActionLoading"
+                class="btn btn-neutral btn-sm border border-[var(--color-border)] text-xs h-9">
+                Cancelar Solicitud
+              </button>
+              @if (request.totalOffers > 0) {
+                <button (click)="viewCandidates()"
+                  class="btn btn-sm h-9 text-xs bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg shadow-md shadow-orange-900/30 flex items-center gap-1.5 px-4 transition-all">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+                  Ver candidatos ({{ request.totalOffers }})
                 </button>
-
-                <button (click)="updateStatus('CANCELLED')"
-                        [disabled]="isActionLoading"
-                        class="btn btn-neutral btn-sm border border-[var(--color-border)] text-xs h-9">
-                    Cancelar Solicitud
-                </button>
-             </div>
-
-             <div class="mb-6">
-                 <h3 class="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-2 flex items-center gap-2">
-                     <span class="w-1 h-1 rounded-full bg-[var(--color-primary)]"></span>
-                     Descripción del trabajo
-                 </h3>
-                 <div class="bg-[var(--color-card-bg-light)] p-4 rounded-xl border border-[var(--color-border)] text-[var(--color-text-light)] leading-relaxed text-sm">
-                     {{ request.description }}
-                 </div>
-             </div>
-
-             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-                 <div class="bg-[var(--color-card-bg-light)] border border-[var(--color-border)] rounded-xl p-3 flex flex-col justify-center gap-1">
-                     <span class="text-[9px] text-[var(--color-text-muted)] font-bold uppercase tracking-wider">Urgencia</span>
-                     <span class="text-xs font-bold capitalize text-[var(--color-text)]">
-                         {{ getUrgencyLabelDisplay(request.urgency) }}
-                     </span>
-                 </div>
-
-                 <div class="bg-[var(--color-card-bg-light)] border border-[var(--color-border)] rounded-xl p-3 flex flex-col justify-center gap-1">
-                     <span class="text-[9px] text-[var(--color-text-muted)] font-bold uppercase tracking-wider">Para el</span>
-                     <span class="text-xs font-bold text-[var(--color-text)]">
-                        {{ request.dateNeeded ? (request.dateNeeded | date:'dd/MM/yyyy') : 'Lo antes posible' }}
-                     </span>
-                 </div>
-
-                 <div class="bg-[var(--color-card-bg-light)] border border-[var(--color-border)] rounded-xl p-3 flex flex-col justify-center gap-1">
-                     <span class="text-[9px] text-[var(--color-text-muted)] font-bold uppercase tracking-wider">Horario</span>
-                     <span class="text-xs font-bold text-[var(--color-text)]">
-                        {{ request.hourPreferred || 'Flexible' }}
-                     </span>
-                 </div>
-             </div>
-
-             <div class="border-t border-[var(--color-border)] pt-4">
-                <h3 class="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Categorías</h3>
-                <div class="flex flex-col gap-1">
-                    <div *ngFor="let category of request.categories"
-                         class="flex items-center gap-2 p-1 rounded-lg"
-                         [ngStyle]="{ 'margin-left.px': (category.level - 1) * 16 }">
-                        <span class="text-xs font-medium text-[var(--color-text-light)]">
-                            {{ category.name }}
-                        </span>
-                    </div>
+              }
+            </div>
+          }
+          <div class="mb-6">
+            <h3 class="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-2 flex items-center gap-2">
+              <span class="w-1 h-1 rounded-full bg-[var(--color-primary)]"></span>
+              Descripción del trabajo
+            </h3>
+            <div class="bg-[var(--color-card-bg-light)] p-4 rounded-xl border border-[var(--color-border)] text-[var(--color-text-light)] leading-relaxed text-sm">
+              {{ request.description }}
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+            <div class="bg-[var(--color-card-bg-light)] border border-[var(--color-border)] rounded-xl p-3 flex flex-col justify-center gap-1">
+              <span class="text-[9px] text-[var(--color-text-muted)] font-bold uppercase tracking-wider">Urgencia</span>
+              <span class="text-xs font-bold capitalize text-[var(--color-text)]">
+                {{ getUrgencyLabelDisplay(request.urgency) }}
+              </span>
+            </div>
+            <div class="bg-[var(--color-card-bg-light)] border border-[var(--color-border)] rounded-xl p-3 flex flex-col justify-center gap-1">
+              <span class="text-[9px] text-[var(--color-text-muted)] font-bold uppercase tracking-wider">Para el</span>
+              <span class="text-xs font-bold text-[var(--color-text)]">
+                {{ request.dateNeeded ? (request.dateNeeded | date:'dd/MM/yyyy') : 'Lo antes posible' }}
+              </span>
+            </div>
+            <div class="bg-[var(--color-card-bg-light)] border border-[var(--color-border)] rounded-xl p-3 flex flex-col justify-center gap-1">
+              <span class="text-[9px] text-[var(--color-text-muted)] font-bold uppercase tracking-wider">Horario</span>
+              <span class="text-xs font-bold text-[var(--color-text)]">
+                {{ request.hourPreferred || 'Flexible' }}
+              </span>
+            </div>
+          </div>
+          <div class="border-t border-[var(--color-border)] pt-4">
+            <h3 class="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Categorías</h3>
+            <div class="flex flex-col gap-1">
+              @for (category of request.categories; track category) {
+                <div
+                  class="flex items-center gap-2 p-1 rounded-lg"
+                  [ngStyle]="{ 'margin-left.px': (category.level - 1) * 16 }">
+                  <span class="text-xs font-medium text-[var(--color-text-light)]">
+                    {{ category.name }}
+                  </span>
                 </div>
-             </div>
+              }
+            </div>
           </div>
         </div>
-
-        <div class="card p-0 overflow-hidden border-[var(--color-border)]">
-            <div class="px-4 py-2 border-b border-[var(--color-border)] bg-[var(--color-card-bg-light)]">
-                <h3 class="text-xs font-bold text-[var(--color-text)]">Ubicación</h3>
-            </div>
-            <div *ngIf="mapLocation" class="h-[250px] w-full relative z-0"> <app-map-location-viewer [location]="mapLocation" height="100%" [zoom]="15" [showFullAddress]="true"></app-map-location-viewer>
-            </div>
-        </div>
       </div>
-
-      <div class="lg:col-span-1 space-y-6 lg:sticky lg:top-8">
-        <div class="card p-6 text-center relative overflow-hidden bg-[var(--color-primary)] shadow-md border-none">
-            <p class="text-white/80 text-[9px] font-bold uppercase tracking-widest mb-1">Presupuesto Estimado</p>
-            <div class="text-3xl font-black text-white tracking-tight">
-                <span class="text-lg font-bold text-white/70" *ngIf="request.budget">Bs.</span>
-                {{ request.budget ? (request.budget | number:'1.2-2') : 'A convenir' }}
-            </div>
+      <div class="card p-0 overflow-hidden border-[var(--color-border)]">
+        <div class="px-4 py-2 border-b border-[var(--color-border)] bg-[var(--color-card-bg-light)]">
+          <h3 class="text-xs font-bold text-[var(--color-text)]">Ubicación</h3>
         </div>
-
-        <div class="card border-[var(--color-border)] p-5">
-            <h3 class="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] pb-2 text-center">
-                Información del Solicitante
-            </h3>
-            <div class="flex flex-col items-center text-center">
-                <div class="w-16 h-16 rounded-full p-1 border border-[var(--color-border)] mb-3"> <img *ngIf="request.applicant?.userPhotoUrl" [src]="request.applicant.userPhotoUrl" class="w-full h-full object-cover rounded-full bg-[var(--color-card-bg-light)]">
-                </div>
-                <h4 class="text-base font-bold text-[var(--color-text)] mb-0.5">
-                    {{ request.applicant?.userName }} {{ request.applicant?.userLastName }}
-                </h4>
-                <p class="text-[10px] text-[var(--color-text-muted)] font-medium mb-4">{{ request.applicant?.userEmail }}</p>
-                <button class="btn btn-outline-secondary btn-xs w-full">Ver Perfil</button>
-            </div>
+        @if (mapLocation) {
+          <div class="h-[250px] w-full relative z-0"> <app-map-location-viewer [location]="mapLocation" height="100%" [zoom]="15" [showFullAddress]="true"></app-map-location-viewer>
         </div>
-      </div>
+      }
     </div>
   </div>
+  <div class="lg:col-span-1 space-y-6 lg:sticky lg:top-8">
+    <div class="card p-6 text-center relative overflow-hidden bg-[var(--color-primary)] shadow-md border-none">
+      <p class="text-white/80 text-[9px] font-bold uppercase tracking-widest mb-1">Presupuesto Estimado</p>
+      <div class="text-3xl font-black text-white tracking-tight">
+        @if (request.budget) {
+          <span class="text-lg font-bold text-white/70">Bs.</span>
+        }
+        {{ request.budget ? (request.budget | number:'1.2-2') : 'A convenir' }}
+      </div>
+    </div>
+
+    @if (request.totalOffers != null && request.totalOffers > 0) {
+      <div class="card border-[var(--color-border)] p-4 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+        </div>
+        <div>
+          <p class="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider">Ofertas recibidas</p>
+          <p class="text-lg font-black text-[var(--color-text)]">{{ request.totalOffers }}</p>
+        </div>
+      </div>
+    }
+
+    <div class="card border-[var(--color-border)] p-5">
+      <h3 class="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] pb-2 text-center">
+        Información del Solicitante
+      </h3>
+      <div class="flex flex-col items-center text-center">
+        <div class="w-16 h-16 rounded-full p-1 border border-[var(--color-border)] mb-3">
+          @if (request.applicant?.userPhotoUrl) {
+            <img [src]="request.applicant.userPhotoUrl" class="w-full h-full object-cover rounded-full bg-[var(--color-card-bg-light)]">
+          }
+        </div>
+        <h4 class="text-base font-bold text-[var(--color-text)] mb-0.5">
+          {{ request.applicant?.userName }} {{ request.applicant?.userLastName }}
+        </h4>
+        <p class="text-[10px] text-[var(--color-text-muted)] font-medium">{{ request.applicant?.userEmail }}</p>
+      </div>
+    </div>
+
+    @if (request.professional) {
+      <div class="card border-[var(--color-border)] p-5">
+        <h3 class="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] pb-2 text-center">
+          Profesional Asignado
+        </h3>
+        <div class="flex flex-col items-center text-center">
+          <div class="w-16 h-16 rounded-full p-1 border border-[var(--color-border)] mb-3">
+            @if (request.professional?.userPhotoUrl) {
+              <img [src]="request.professional.userPhotoUrl" class="w-full h-full object-cover rounded-full bg-[var(--color-card-bg-light)]">
+            }
+          </div>
+          <h4 class="text-base font-bold text-[var(--color-text)] mb-0.5">
+            {{ request.professional?.userName }} {{ request.professional?.userLastName }}
+          </h4>
+          <p class="text-[10px] text-[var(--color-text-muted)] font-medium">{{ request.professional?.userEmail }}</p>
+          @if (request.professional?.userPhone) {
+            <p class="text-[10px] text-[var(--color-text-muted)] font-medium mt-0.5">{{ request.professional.userPhone }}</p>
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+</div>
+</div>
+}
 </div>

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { StorageService, StorageUserAddress } from '../../services/storage.service';
 import { Subscription } from 'rxjs';
@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-home-hero-applicant',
   standalone: true,
-  imports: [CommonModule, RouterLink,FormsModule],
+  imports: [RouterLink, FormsModule],
   templateUrl: './home-hero-applicant.html',
 })
 export class HomeHeroApplicant implements OnInit, OnDestroy {

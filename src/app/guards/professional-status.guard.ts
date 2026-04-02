@@ -11,59 +11,46 @@ export const professionalStatusGuard = (route: ActivatedRouteSnapshot) => {
     map(response => {
       const data = response.data;
       const currentPath = route.routeConfig?.path || '';
+      const step = data.currentStep;
 
-      console.log('🔍 Professional Status:', data.status);
-      console.log('📍 Current Path:', currentPath);
-
-      // Si no es profesional, redirigir a upgrade
+      // No es profesional → upgrade
       if (!data.isProfessional) {
         if (currentPath !== 'professional/upgrade') {
-          console.log('❌ No es profesional - redirigiendo a /professional/upgrade');
           router.navigate(['/professional/upgrade']);
           return false;
         }
         return true;
       }
 
-      // Si ya está activo, permitir acceso solo a dashboard o complete
-      if (data.status === 'active') {
-        if (currentPath === 'professional/complete' || currentPath === 'professional/dashboard') {
-          console.log('✅ Profesional activo - acceso permitido a', currentPath);
+      // Categorías configuradas (con o sin suscripción) → solo puede ir al dashboard
+      if (step === 'complete' || step === 'payment' || data.status === 'active') {
+        if (currentPath === 'professional/dashboard' || currentPath === 'professional/complete') {
           return true;
         }
-        console.log('✅ Profesional activo - redirigiendo a dashboard');
         router.navigate(['/professional/dashboard']);
         return false;
       }
 
-      // Validar acceso según el estado actual
-      const allowedPaths: { [key: string]: string[] } = {
-        'pending': ['professional/upgrade', 'professional/documents'],
-        'documents_uploaded': ['professional/documents', 'professional/plans'],
-        'payment_completed': ['professional/categories']
+      // Paths permitidos según el paso actual
+      const allowedPaths: Record<string, string[]> = {
+        'categories': ['professional/categories'],
       };
 
-      const allowed = allowedPaths[data.status] || [];
+      const redirectMap: Record<string, string> = {
+        'categories': '/professional/categories',
+      };
+
+      const allowed = allowedPaths[step] || [];
 
       if (allowed.includes(currentPath)) {
-        console.log(`✅ Estado ${data.status} - acceso permitido a ${currentPath}`);
         return true;
       }
 
-      // Redirigir al paso correcto según el estado
-      const redirectMap: { [key: string]: string } = {
-        'pending': '/professional/documents',
-        'documents_uploaded': '/professional/plans',
-        'payment_completed': '/professional/categories'
-      };
-
-      const redirectTo = redirectMap[data.status] || '/professional/upgrade';
-      console.log(`❌ Estado ${data.status} - redirigiendo a ${redirectTo}`);
+      const redirectTo = redirectMap[step] || '/professional/upgrade';
       router.navigate([redirectTo]);
       return false;
     }),
-    catchError(error => {
-      console.log('❌ Error al verificar status profesional:', error);
+    catchError(() => {
       router.navigate(['/professional/upgrade']);
       return of(false);
     })

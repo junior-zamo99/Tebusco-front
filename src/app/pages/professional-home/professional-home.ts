@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { ProfessionalHero } from '../../components/professional-hero/professional-hero';
 import { ActiveProfiles } from '../../components/active-profiles/active-profiles';
+import { HomeRequestProfessional } from '../../components/home-request-professional/home-request-professional';
 import { PendingOffers } from '../../components/pending-offers/pending-offers';
 import { RecentReview } from '../../components/recent-review/recent-review';
 import { ProfessionalCta } from '../../components/professional-cta/professional-cta';
@@ -14,14 +15,14 @@ import { ProfessionalCompleteData } from '../../models/professional-complete.mod
 @Component({
   selector: 'app-professional-home',
   imports: [
-    CommonModule,
     ProfessionalHero,
     ActiveProfiles,
+    HomeRequestProfessional,
     PendingOffers,
     RecentReview,
     ProfessionalCta,
     RegistrationStatusBannerComponent
-  ],
+],
   templateUrl: './professional-home.html',
   styleUrl: './professional-home.css',
 })
@@ -42,9 +43,7 @@ export class ProfessionalHome implements OnInit {
     this.loadProfessionalStatus();
   }
 
-  /**
-   * Carga el estado completo del profesional para el sistema de banners
-   */
+
   loadProfessionalStatus(): void {
     this.loadingStatus = true;
     this.professionalService.getMeComplete().subscribe({
@@ -61,10 +60,10 @@ export class ProfessionalHome implements OnInit {
     });
   }
 
-  // === Eventos del Banner de Estado ===
+
 
   onGoToPayment(): void {
-    this.router.navigate(['/professional/profile/subscription']);
+    this.router.navigate(['/professional/plans']);
   }
 
   onGoToDocuments(): void {

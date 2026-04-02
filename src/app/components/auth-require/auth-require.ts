@@ -1,16 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { NavigationHistoryService } from '../../services/navigation-history.service';
+
 @Component({
   selector: 'app-auth-require',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './auth-require.html',
   styleUrls: ['./auth-require.css'],
 })
 export class AuthRequire implements OnInit, OnDestroy {
   private redirectTimeout: any;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private navHistory: NavigationHistoryService) {}
 
   ngOnInit(): void {
     // Redirección automática después de 3 segundos (sin mostrar el contador)
@@ -43,7 +44,7 @@ export class AuthRequire implements OnInit, OnDestroy {
     }
 
     // Volver a la página anterior
-    window.history.back();
+    this.navHistory.goBack('/');
   }
 }
 

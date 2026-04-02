@@ -4,38 +4,42 @@
 
     <div class="mb-6 text-center animate-fade-in-down">
       <h1 class="text-3xl md:text-4xl font-black text-text leading-tight tracking-tight mb-2">
-        <ng-container *ngIf="currentStep === 1">
+        @if (currentStep === 1) {
           ¿Qué servicio <span class="text-primary">necesitas hoy?</span>
-        </ng-container>
-        <ng-container *ngIf="currentStep === 2">
+        }
+        @if (currentStep === 2) {
           Completa los <span class="text-primary">detalles</span>
-        </ng-container>
+        }
       </h1>
 
       <div class="flex justify-center gap-1.5 mt-2 opacity-70">
         <div class="h-1 rounded-full transition-all duration-500"
-             [ngClass]="currentStep === 1 ? 'w-12 bg-primary' : 'w-3 bg-border'"></div>
+        [ngClass]="currentStep === 1 ? 'w-12 bg-primary' : 'w-3 bg-border'"></div>
         <div class="h-1 rounded-full transition-all duration-500"
-             [ngClass]="currentStep === 2 ? 'w-12 bg-primary' : 'w-3 bg-border'"></div>
+        [ngClass]="currentStep === 2 ? 'w-12 bg-primary' : 'w-3 bg-border'"></div>
       </div>
     </div>
 
     <div class="bg-surface rounded-xl border border-border/50 overflow-hidden relative min-h-[75vh] shadow-2xl animate-fade-in-up flex flex-col">
 
-      <div *ngIf="currentStep === 1" class="flex-1 h-full">
-        <app-category-selector-request
-          (selectionConfirmed)="onCategoriesConfirmed($event)">
-        </app-category-selector-request>
-      </div>
+      @if (currentStep === 1) {
+        <div class="flex-1 h-full">
+          <app-category-selector-request
+            (selectionConfirmed)="onCategoriesConfirmed($event)">
+          </app-category-selector-request>
+        </div>
+      }
 
-      <div *ngIf="currentStep === 2" class="animate-fade-in h-full">
-        <app-request-form
-          [selectedCategories]="selectedCategories"
-          [isSubmitting]="isSubmitting"
-          (back)="onBackToCategories()"
-          (formSubmit)="onCreateRequest($event)">
-        </app-request-form>
-      </div>
+      @if (currentStep === 2) {
+        <div class="animate-fade-in h-full">
+          <app-request-form
+            [selectedCategories]="selectedCategories"
+            [isSubmitting]="isSubmitting"
+            (back)="onBackToCategories()"
+            (formSubmit)="onCreateRequest($event)">
+          </app-request-form>
+        </div>
+      }
 
     </div>
 

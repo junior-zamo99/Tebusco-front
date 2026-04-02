@@ -1,5 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { StorageService } from '../../services/storage.service';
@@ -7,7 +7,7 @@ import { StorageService } from '../../services/storage.service';
 @Component({
   selector: 'app-auth-callback',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './auth-callback.component.html',
   styleUrls: ['./auth-callback.component.css']
 })

@@ -1,80 +1,96 @@
-<div class="min-h-screen bg-[#0B0E14] font-sans text-slate-300 flex text-sm">
+<div class="min-h-screen font-sans flex text-sm" style="background-color: var(--color-background); color: var(--color-text);">
 
-  <div *ngIf="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0B0E14]/90 backdrop-blur-sm">
-    <div class="flex flex-col items-center gap-3">
-      <div class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-indigo-400 font-medium animate-pulse text-xs">Cargando...</p>
+  @if (loading) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style="background-color: color-mix(in srgb, var(--color-background) 90%, transparent);">
+      <div class="flex flex-col items-center gap-3">
+        <div class="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style="border-color: var(--color-primary); border-top-color: transparent;"></div>
+        <p class="font-medium animate-pulse text-xs" style="color: var(--color-primary);">Cargando...</p>
+      </div>
     </div>
-  </div>
+  }
 
-  <aside class="w-56 bg-[#11161F] border-r border-slate-800 hidden lg:flex flex-col fixed h-full z-10">
+  <aside class="w-56 hidden lg:flex flex-col fixed top-0 left-0 h-screen z-10 overflow-y-auto"
+         style="background-color: var(--color-card-bg); border-right: 1px solid var(--color-border);">
     <div class="p-5">
-      <h2 class="text-lg font-bold text-white mb-0.5">Mi Cuenta</h2>
-      <p class="text-[10px] text-slate-500">Gestión de perfil</p>
+      <h2 class="text-lg font-bold mb-0.5" style="color: var(--color-text);">Mi Cuenta</h2>
+      <p class="text-[10px]" style="color: var(--color-text-muted);">Gestión de perfil</p>
     </div>
 
     <nav class="flex-1 px-3 space-y-1">
-      <button *ngFor="let tab of tabs"
-              (click)="setActiveTab(tab.id)"
-              class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 group"
-              [ngClass]="activeTab === tab.id
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20'
-                : 'text-slate-400 hover:bg-[#1f2937] hover:text-white'">
-        <i [class]="tab.icon" [ngClass]="activeTab === tab.id ? 'text-white' : 'text-slate-500 group-hover:text-white'"></i>
-        {{ tab.label }}
-      </button>
+      @for (tab of tabs; track tab) {
+        <button
+          (click)="setActiveTab(tab.id)"
+          class="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 group"
+          [ngClass]="activeTab === tab.id
+            ? 'text-white'
+            : 'hover:text-white'"
+          [style.background]="activeTab === tab.id ? 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)' : 'transparent'"
+          [style.box-shadow]="activeTab === tab.id ? 'var(--shadow-primary)' : 'none'"
+          [style.color]="activeTab === tab.id ? 'white' : 'var(--color-text-light)'"
+          style="--hover-bg: var(--color-card-bg-light);"
+          onmouseover="if(!this.classList.contains('text-white')) this.style.backgroundColor='var(--color-card-bg-light)'"
+          onmouseout="if(!this.classList.contains('text-white')) this.style.backgroundColor='transparent'">
+          <i [class]="tab.icon" [style.color]="activeTab === tab.id ? 'white' : 'var(--color-text-muted)'"></i>
+          {{ tab.label }}
+        </button>
+      }
     </nav>
 
-    <div class="p-3 border-t border-slate-800" *ngIf="professionalData">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-full bg-slate-700 overflow-hidden flex-shrink-0">
-             <img [src]="getPhotoUrl()" class="w-full h-full object-cover">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <p class="text-xs font-bold text-white truncate">{{ professionalData.user.name }}</p>
-          <p class="text-[10px] text-slate-500 truncate">Profesional</p>
+    @if (professionalData) {
+      <div class="p-3" style="border-top: 1px solid var(--color-border);">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0" style="background-color: var(--color-card-bg-light);">
+            <img [src]="getPhotoUrl()" class="w-full h-full object-cover">
+          </div>
+          <div class="overflow-hidden min-w-0">
+            <p class="text-xs font-bold truncate" style="color: var(--color-text);">{{ professionalData.user.name }}</p>
+            <p class="text-[10px] truncate" style="color: var(--color-text-muted);">Profesional</p>
+          </div>
         </div>
       </div>
-    </div>
+    }
   </aside>
 
-  <main class="flex-1 lg:ml-56 p-4 lg:p-6">
+  <main class="flex-1 lg:ml-56 p-4 lg:p-6 min-h-screen">
     <div class="lg:hidden mb-4 flex justify-between items-center">
-       <h1 class="text-lg font-bold text-white">Mi Perfil</h1>
+      <h1 class="text-lg font-bold" style="color: var(--color-text);">Mi Perfil</h1>
     </div>
 
-    <div *ngIf="professionalData && !loading" class="max-w-4xl mx-auto">
-
-      <div class="mb-5 border-b border-slate-800/50 pb-2">
-        <h2 class="text-xl font-bold text-white">{{ getActiveTabLabel() }}</h2>
-        <p class="text-xs text-slate-400">Administra la información de esta sección.</p>
+    @if (professionalData && !loading) {
+      <div class="max-w-4xl mx-auto">
+        <div class="mb-5 pb-2" style="border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);">
+          <h2 class="text-xl font-bold" style="color: var(--color-text);">{{ getActiveTabLabel() }}</h2>
+          <p class="text-xs" style="color: var(--color-text-muted);">Administra la información de esta sección.</p>
+        </div>
+        @switch (activeTab) {
+          @case ('profile') {
+            <app-profile-overview
+              [data]="professionalData"
+              (editClicked)="editProfile()">
+            </app-profile-overview>
+          }
+          @case ('categories') {
+            <app-profile-categories
+              [data]="professionalData"
+              (categoryClicked)="goToCategoryDetail($event)">
+            </app-profile-categories>
+          }
+          @case ('stats') {
+            <app-profile-view-componet></app-profile-view-componet>
+          }
+          @case ('subscription') {
+            <app-profile-subscription
+              [data]="professionalData">
+            </app-profile-subscription>
+          }
+          @case ('documents') {
+            <div class="p-6 rounded-xl text-center" style="background-color: var(--color-card-bg); border: 1px solid var(--color-border);">
+              <h3 class="text-sm font-bold" style="color: var(--color-text);">Gestión de Documentos</h3>
+              <p class="text-xs mt-1" style="color: var(--color-text-muted);">Aquí iría el componente de documentos.</p>
+            </div>
+          }
+        }
       </div>
-
-      <ng-container [ngSwitch]="activeTab">
-
-        <app-profile-overview *ngSwitchCase="'profile'"
-                              [data]="professionalData"
-                              (editClicked)="editProfile()">
-        </app-profile-overview>
-
-        <app-profile-categories *ngSwitchCase="'categories'"
-                                [data]="professionalData"
-                                (categoryClicked)="goToCategoryDetail($event)">
-        </app-profile-categories>
-
-        <app-profile-view-componet *ngSwitchCase="'stats'"></app-profile-view-componet>
-
-        <app-profile-subscription *ngSwitchCase="'subscription'"
-                                  [data]="professionalData">
-        </app-profile-subscription>
-
-        <div *ngSwitchCase="'documents'" class="p-6 bg-[#161b26] rounded-xl border border-slate-800 text-center">
-            <h3 class="text-white text-sm font-bold">Gestión de Documentos</h3>
-            <p class="text-xs text-slate-500 mt-1">Aquí iría el componente de documentos.</p>
-         </div>
-
-      </ng-container>
-
-    </div>
+    }
   </main>
 </div>

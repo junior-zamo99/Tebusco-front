@@ -37,6 +37,8 @@ export interface Subscription {
   planCode: string;
   planName: string;
   isPremium: boolean;
+  endDate?: string | null;
+  daysRemaining?: number;
 }
 
 export interface PublicDocument {
@@ -51,6 +53,16 @@ export interface PublicDocuments {
   certificates: PublicDocument[];
 }
 
+export interface PortfolioPhoto {
+  id: number;
+  imageUrl: string;
+  imageMediumUrl: string;
+  imageThumbnailUrl: string;
+  caption: string | null;
+  order: number;
+  createdAt: string;
+}
+
 export interface ProfileCategory {
   id: number;
   categoryId: number;
@@ -63,6 +75,9 @@ export interface ProfileCategory {
   priceMin: number | null;
   isVerified: boolean;
   specialties: Specialty[];
+  portfolioPhotos?: PortfolioPhoto[];
+  certificates?: PublicDocument[];
+  cv?: PublicDocument | null;
   categoryRating?: number;
   categoryReviewsCount?: number;
 }

@@ -20,15 +20,17 @@
 
 
 
-  <section *ngIf="canBecomeProfessional()" class="my-8">
-    <div class="bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-500 rounded-2xl overflow-hidden shadow-xl">
+  @if (canBecomeProfessional()) {
+    <section class="my-8">
+      <div class="bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-500 rounded-2xl overflow-hidden shadow-xl">
         <div class="p-8 text-center md:text-left">
-            <h2 class="text-2xl font-bold text-navy-blue">¿Eres profesional?</h2>
-            <button (click)="handleProfessionalRegistration()" class="mt-4 bg-navy-blue text-white px-6 py-2 rounded-xl font-bold">
-               Registrarme
-            </button>
+          <h2 class="text-2xl font-bold text-navy-blue">¿Eres profesional?</h2>
+          <button (click)="handleProfessionalRegistration()" class="mt-4 bg-navy-blue text-white px-6 py-2 rounded-xl font-bold">
+            Registrarme
+          </button>
         </div>
-    </div>
-  </section>
+      </div>
+    </section>
+  }
 
 </div>

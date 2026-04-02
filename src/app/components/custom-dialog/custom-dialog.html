@@ -1,45 +1,50 @@
 <div class="dialog-overlay" (click)="onOverlayClick($event)">
   <div class="dialog-container animate-fadeIn">
     <!-- Header con icono (solo si no hay imagen) -->
-    <div class="dialog-header" *ngIf="!hasImage()">
-      <div class="dialog-icon" [ngClass]="getIconClass()">
-        {{ getIcon() }}
+    @if (!hasImage()) {
+      <div class="dialog-header">
+        <div class="dialog-icon" [ngClass]="getIconClass()">
+          {{ getIcon() }}
+        </div>
       </div>
-    </div>
+    }
 
     <!-- Imagen personalizada (si existe) -->
-    <div class="dialog-image-container" *ngIf="hasImage()">
-      <img
-        [src]="config. imageUrl"
-        [alt]="config.imageAlt"
-        [ngStyle]="getImageStyles()"
-        class="dialog-image"
-      />
-    </div>
+    @if (hasImage()) {
+      <div class="dialog-image-container">
+        <img
+          [src]="config. imageUrl"
+          [alt]="config.imageAlt"
+          [ngStyle]="getImageStyles()"
+          class="dialog-image"
+          />
+        </div>
+      }
 
 
-    <div class="dialog-content">
-      <h2 class="dialog-title">{{ config.title }}</h2>
-      <p class="dialog-message">{{ config.message }}</p>
-    </div>
+      <div class="dialog-content">
+        <h2 class="dialog-title">{{ config.title }}</h2>
+        <p class="dialog-message">{{ config.message }}</p>
+      </div>
 
-    <!-- Botones de acción -->
-    <div class="dialog-actions">
-      <button
-        *ngIf="config.showCancel"
-        class="btn btn-secondary"
-        (click)="onCancel()"
-        type="button"
-      >
-        {{ config.cancelText }}
-      </button>
-      <button
-        class="btn btn-primary"
-        (click)="onConfirm()"
-        type="button"
-      >
-        {{ config.confirmText }}
-      </button>
+      <!-- Botones de acción -->
+      <div class="dialog-actions">
+        @if (config.showCancel) {
+          <button
+            class="btn btn-secondary"
+            (click)="onCancel()"
+            type="button"
+            >
+            {{ config.cancelText }}
+          </button>
+        }
+        <button
+          class="btn btn-primary"
+          (click)="onConfirm()"
+          type="button"
+          >
+          {{ config.confirmText }}
+        </button>
+      </div>
     </div>
   </div>
-</div>

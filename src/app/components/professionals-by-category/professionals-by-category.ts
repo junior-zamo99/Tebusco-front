@@ -3,13 +3,16 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProfessionalPublicService } from '../../services/professional-public.service';
 import { CategoryService } from '../../services/category.service';
+import { AuthService } from '../../services/auth.service';
+import { NavigationHistoryService } from '../../services/navigation-history.service';
 import { ProfessionalListItem } from '../../interface/professional-public.interface';
 import { CategoryNode } from '../../models/category.model';
+import { AuthRequire } from '../auth-require/auth-require';
 
 @Component({
   selector: 'app-professionals-by-category',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, AuthRequire],
   templateUrl: './professionals-by-category.html',
   styleUrl: './professionals-by-category.css',
 })
@@ -30,11 +33,15 @@ export class ProfessionalsByCategory implements OnInit {
     totalPages: 0
   };
 
+  showAuthRequired = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private professionalService: ProfessionalPublicService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private authService: AuthService,
+    private navHistory: NavigationHistoryService
   ) {}
 
   ngOnInit(): void {
@@ -135,6 +142,11 @@ export class ProfessionalsByCategory implements OnInit {
   }
 
   goToProfessional(professional: ProfessionalListItem): void {
+    if (!this.authService.isAuthenticated()) {
+      this.showAuthRequired = true;
+      return;
+    }
+
     const categoryIds = this.selectedSpecialtyIds.length > 0
       ? this.selectedSpecialtyIds
       : [this.categoryId];
@@ -159,6 +171,6 @@ export class ProfessionalsByCategory implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/categories']);
+    this.navHistory.goBack('/categories');
   }
 }

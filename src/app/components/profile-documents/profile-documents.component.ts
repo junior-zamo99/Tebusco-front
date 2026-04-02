@@ -94,32 +94,6 @@ export class ProfileDocumentsComponent implements OnInit, OnDestroy {
       uploading: false,
       uploadProgress: 0
     },
-    {
-      documentType: 'curriculum',
-      label: 'Currículum Vitae',
-      description: 'CV actualizado (Opcional)',
-      icon: 'fa-file-alt',
-      status: 'pending',
-      fileId: null,
-      fileName: null,
-      fileUrl: null,
-      rejectionReason: null,
-      uploading: false,
-      uploadProgress: 0
-    },
-    {
-      documentType: 'certificate',
-      label: 'Certificados',
-      description: 'Títulos o diplomas (Opcional)',
-      icon: 'fa-certificate',
-      status: 'pending',
-      fileId: null,
-      fileName: null,
-      fileUrl: null,
-      rejectionReason: null,
-      uploading: false,
-      uploadProgress: 0
-    }
   ];
 
   constructor(
@@ -243,16 +217,9 @@ export class ProfileDocumentsComponent implements OnInit, OnDestroy {
   private uploadFile(file: File, document: DocumentInfo) {
     this.errorMessage = '';
     this.successMessage = '';
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-
-    if (['ci_front', 'ci_back', 'selfie', 'selfie_with_ci'].includes(document.documentType)) {
-       if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
-         this.errorMessage = `Solo se permiten imágenes JPG, PNG o WEBP para ${document.label}`;
-         return;
-       }
-    }
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      this.errorMessage = `Tipo de archivo no permitido para ${document.label}`;
+      this.errorMessage = `Solo se permiten imágenes JPG, PNG o WEBP para ${document.label}`;
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
@@ -358,13 +325,11 @@ export class ProfileDocumentsComponent implements OnInit, OnDestroy {
     );
   }
 
-  getAcceptedFormats(documentType: string): string {
-    if (documentType === 'curriculum' || documentType === 'certificate') return 'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  getAcceptedFormats(_documentType: string): string {
     return 'image/jpeg,image/jpg,image/png,image/webp';
   }
 
-  getAcceptedFormatsLabel(documentType: string): string {
-    if (documentType === 'curriculum' || documentType === 'certificate') return 'PDF, DOC';
+  getAcceptedFormatsLabel(_documentType: string): string {
     return 'JPG, PNG, WEBP';
   }
 

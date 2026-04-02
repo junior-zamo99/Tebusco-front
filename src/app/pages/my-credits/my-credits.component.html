@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-background py-8">
   <div class="container-custom max-w-6xl">
-    
+
     <!-- BREADCRUMB -->
     <nav class="breadcrumb mb-6 text-sm text-text-light">
       <button (click)="goBack()" class="hover:text-primary transition-colors">Inicio</button>
@@ -9,258 +9,255 @@
     </nav>
 
     <!-- LOADING STATE -->
-    <div *ngIf="isLoading" class="space-y-8 animate-fadeIn">
-      <!-- Hero Skeleton -->
-      <div class="skeleton-loader h-48 rounded-xl"></div>
-      
-      <!-- Cards Skeleton -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="skeleton-loader h-32 rounded-xl"></div>
-        <div class="skeleton-loader h-32 rounded-xl"></div>
-        <div class="skeleton-loader h-32 rounded-xl"></div>
-      </div>
-      
-      <!-- Actions Skeleton -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="skeleton-loader h-40 rounded-xl"></div>
-        <div class="skeleton-loader h-40 rounded-xl"></div>
-      </div>
-    </div>
-
-    <!-- ERROR STATE -->
-    <div *ngIf="!isLoading && hasError" class="error-state text-center py-20 animate-fadeIn">
-      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-danger/20 mb-6">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
-      <h1 class="text-3xl font-bold text-text mb-4">No pudimos cargar tus créditos</h1>
-      <p class="text-text-light text-lg mb-8 max-w-md mx-auto">{{ errorMessage }}</p>
-      <button (click)="refresh()" class="btn btn-primary py-3 px-6 flex items-center gap-2 mx-auto">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-        Reintentar
-      </button>
-    </div>
-
-    <!-- EMPTY STATE -->
-    <div *ngIf="!isLoading && !hasError && isEmpty()" class="empty-state text-center py-20 animate-fadeIn">
-      <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-primary/20 mb-6">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-        </svg>
-      </div>
-      <h1 class="text-4xl font-bold text-text mb-4">¡Comienza a acumular créditos!</h1>
-      <p class="text-text-light text-lg mb-8 max-w-2xl mx-auto">
-        Invita a tus amigos, participa en promociones y gana créditos para usar en suscripciones, extras y anuncios.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <button class="btn btn-primary py-3 px-6">
-          Ver cómo ganar créditos
-        </button>
-        <button (click)="goBack()" class="btn btn-secondary py-3 px-6">
-          Volver al inicio
-        </button>
-      </div>
-    </div>
-
-    <!-- LOADED STATE -->
-    <div *ngIf="!isLoading && !hasError && userCredit && !isEmpty()" class="space-y-8">
-      
-      <!-- HERO SECTION - Balance Principal -->
-      <div class="hero-card bg-gradient-to-r from-primary/20 to-accent/20 rounded-xl p-8 border border-border shadow-lg animate-slideUp">
-        <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
-          
-          <!-- Balance Info -->
-          <div class="flex items-center gap-6">
-            <div class="flex-shrink-0 w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <p class="text-text-light text-sm font-medium uppercase tracking-wide mb-1">Balance Disponible</p>
-              <h1 class="text-5xl font-bold text-text">
-                {{ formatCurrency(userCredit.availableCredits) }}
-                <span class="text-2xl font-normal text-text-light ml-2">{{ userCredit.currency }}</span>
-              </h1>
-              <p *ngIf="isNewUser()" class="text-success text-sm font-medium mt-2 flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                ¡Bienvenido! Tus créditos están listos para usar
-              </p>
-            </div>
-          </div>
-
-          <!-- Action Button -->
-          <button (click)="refresh()" class="btn btn-secondary py-2 px-4 flex items-center gap-2 flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            Actualizar
-          </button>
+    @if (isLoading) {
+      <div class="space-y-8 animate-fadeIn">
+        <!-- Hero Skeleton -->
+        <div class="skeleton-loader h-48 rounded-xl"></div>
+        <!-- Cards Skeleton -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="skeleton-loader h-32 rounded-xl"></div>
+          <div class="skeleton-loader h-32 rounded-xl"></div>
+          <div class="skeleton-loader h-32 rounded-xl"></div>
+        </div>
+        <!-- Actions Skeleton -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="skeleton-loader h-40 rounded-xl"></div>
+          <div class="skeleton-loader h-40 rounded-xl"></div>
         </div>
       </div>
+    }
 
-      <!-- EXPIRATION ALERT (Condicional) -->
-      <div *ngIf="shouldShowExpirationAlert()" [ngClass]="getAlertClasses()" class="animate-fadeIn">
-        <div class="flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" 
-               [class.text-danger]="getAlertSeverity() === 'danger'"
-               [class.text-warning]="getAlertSeverity() === 'warning'"
-               [class.text-blue-500]="getAlertSeverity() === 'info'"
-               fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <!-- ERROR STATE -->
+    @if (!isLoading && hasError) {
+      <div class="error-state text-center py-20 animate-fadeIn">
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-danger/20 mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <div class="flex-1">
-          <p class="font-semibold text-text mb-1">{{ getAlertMessage() }}</p>
-          <p class="text-sm text-text-light">
-            Fecha de expiración: <span class="font-medium">{{ formatExpirationDate() }}</span>
-          </p>
-        </div>
-        <button class="btn btn-sm py-2 px-4 flex-shrink-0"
-                [class.btn-danger]="getAlertSeverity() === 'danger'"
-                [class.btn-warning]="getAlertSeverity() === 'warning'"
-                [class.btn-primary]="getAlertSeverity() === 'info'">
-          Usar ahora
+        <h1 class="text-3xl font-bold text-text mb-4">No pudimos cargar tus créditos</h1>
+        <p class="text-text-light text-lg mb-8 max-w-md mx-auto">{{ errorMessage }}</p>
+        <button (click)="refresh()" class="btn btn-primary py-3 px-6 flex items-center gap-2 mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Reintentar
         </button>
       </div>
+    }
 
-      <!-- STATS CARDS GRID -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <!-- Card 1: Total Ganado -->
-        <div class="stat-card bg-card-bg border-2 border-success/30 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fadeIn" style="animation-delay: 0.1s;">
-          <div class="flex items-start justify-between mb-4">
-            <div class="p-3 rounded-lg bg-success/20">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <!-- EMPTY STATE -->
+    @if (!isLoading && !hasError && isEmpty()) {
+      <div class="empty-state text-center py-20 animate-fadeIn">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-primary/20 mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+          </svg>
+        </div>
+        <h1 class="text-4xl font-bold text-text mb-4">¡Comienza a acumular créditos!</h1>
+        <p class="text-text-light text-lg mb-8 max-w-2xl mx-auto">
+          Invita a tus amigos, participa en promociones y gana créditos para usar en suscripciones, extras y anuncios.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <button class="btn btn-primary py-3 px-6">
+            Ver cómo ganar créditos
+          </button>
+          <button (click)="goBack()" class="btn btn-secondary py-3 px-6">
+            Volver al inicio
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- LOADED STATE -->
+    @if (!isLoading && !hasError && userCredit && !isEmpty()) {
+      <div class="space-y-8">
+        <!-- HERO SECTION - Balance Principal -->
+        <div class="hero-card bg-gradient-to-r from-primary/20 to-accent/20 rounded-xl p-8 border border-border shadow-lg animate-slideUp">
+          <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+            <!-- Balance Info -->
+            <div class="flex items-center gap-6">
+              <div class="flex-shrink-0 w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-text-light text-sm font-medium uppercase tracking-wide mb-1">Balance Disponible</p>
+                <h1 class="text-5xl font-bold text-text">
+                  {{ formatCurrency(userCredit.availableCredits) }}
+                  <span class="text-2xl font-normal text-text-light ml-2">{{ userCredit.currency }}</span>
+                </h1>
+                @if (isNewUser()) {
+                  <p class="text-success text-sm font-medium mt-2 flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    ¡Bienvenido! Tus créditos están listos para usar
+                  </p>
+                }
+              </div>
+            </div>
+            <!-- Action Button -->
+            <button (click)="refresh()" class="btn btn-secondary py-2 px-4 flex items-center gap-2 flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Actualizar
+            </button>
+          </div>
+        </div>
+        <!-- EXPIRATION ALERT (Condicional) -->
+        @if (shouldShowExpirationAlert()) {
+          <div [ngClass]="getAlertClasses()" class="animate-fadeIn">
+            <div class="flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                [class.text-danger]="getAlertSeverity() === 'danger'"
+                [class.text-warning]="getAlertSeverity() === 'warning'"
+                [class.text-blue-500]="getAlertSeverity() === 'info'"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="flex-1">
+              <p class="font-semibold text-text mb-1">{{ getAlertMessage() }}</p>
+              <p class="text-sm text-text-light">
+                Fecha de expiración: <span class="font-medium">{{ formatExpirationDate() }}</span>
+              </p>
+            </div>
+            <button class="btn btn-sm py-2 px-4 flex-shrink-0"
+              [class.btn-danger]="getAlertSeverity() === 'danger'"
+              [class.btn-warning]="getAlertSeverity() === 'warning'"
+              [class.btn-primary]="getAlertSeverity() === 'info'">
+              Usar ahora
+            </button>
+          </div>
+        }
+        <!-- STATS CARDS GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Card 1: Total Ganado -->
+          <div class="stat-card bg-card-bg border-2 border-success/30 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fadeIn" style="animation-delay: 0.1s;">
+            <div class="flex items-start justify-between mb-4">
+              <div class="p-3 rounded-lg bg-success/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
+            </div>
+            <p class="text-text-light text-sm font-medium uppercase tracking-wide mb-2">Total Ganado</p>
+            <p class="text-3xl font-bold text-success mb-2">{{ formatCurrency(userCredit.totalCredits) }}</p>
+            <p class="text-xs text-text-light">Créditos acumulados históricos</p>
+          </div>
+          <!-- Card 2: Total Usado -->
+          <div class="stat-card bg-card-bg border-2 border-primary/30 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fadeIn" style="animation-delay: 0.2s;">
+            <div class="flex items-start justify-between mb-4">
+              <div class="p-3 rounded-lg bg-primary/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                </svg>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-text-light">{{ getUsagePercentage() }}% usado</p>
+              </div>
+            </div>
+            <p class="text-text-light text-sm font-medium uppercase tracking-wide mb-2">Total Usado</p>
+            <p class="text-3xl font-bold text-primary mb-2">{{ formatCurrency(userCredit.usedCredits) }}</p>
+            <p class="text-xs text-text-light">En suscripciones, extras y anuncios</p>
+          </div>
+          <!-- Card 3: Balance Disponible -->
+          <div class="stat-card bg-card-bg border-2 border-accent/30 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fadeIn" style="animation-delay: 0.3s;">
+            <div class="flex items-start justify-between mb-4">
+              <div class="p-3 rounded-lg bg-accent/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <p class="text-text-light text-sm font-medium uppercase tracking-wide mb-2">Disponible</p>
+            <p class="text-3xl font-bold text-accent mb-2">{{ formatCurrency(userCredit.availableCredits) }}</p>
+            <p class="text-xs text-text-light">Listo para usar en tus compras</p>
+          </div>
+        </div>
+        <!-- QUICK ACTIONS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Action: Ver Historial -->
+          <button (click)="navigateToHistory()"
+            class="action-card bg-card-bg border border-border rounded-xl p-6 hover:border-primary hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-left group animate-fadeIn"
+            style="animation-delay: 0.4s;">
+            <div class="flex items-start gap-4">
+              <div class="p-3 rounded-lg bg-primary/20 group-hover:bg-primary/30 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-xl font-bold text-text mb-2 group-hover:text-primary transition-colors">Ver Historial</h3>
+                <p class="text-text-light text-sm">Revisa todas tus transacciones de créditos con filtros y detalles</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-text-light group-hover:text-primary group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+          <!-- Action: Ver Estadísticas -->
+          <button (click)="navigateToStats()"
+            class="action-card bg-card-bg border border-border rounded-xl p-6 hover:border-accent hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-left group animate-fadeIn"
+            style="animation-delay: 0.5s;">
+            <div class="flex items-start gap-4">
+              <div class="p-3 rounded-lg bg-accent/20 group-hover:bg-accent/30 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-xl font-bold text-text mb-2 group-hover:text-accent transition-colors">Ver Estadísticas</h3>
+                <p class="text-text-light text-sm">Analiza tus créditos con gráficos y estadísticas detalladas</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-text-light group-hover:text-accent group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+        </div>
+        <!-- INFORMATIONAL SECTION -->
+        <div class="info-section bg-card-bg-light border border-border rounded-xl p-6 animate-fadeIn" style="animation-delay: 0.6s;">
+          <h3 class="text-lg font-bold text-text mb-4 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            ¿Cómo ganar más créditos?
+          </h3>
+          <ul class="space-y-3 text-text-light text-sm">
+            <li class="flex items-start gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
-            </div>
-          </div>
-          <p class="text-text-light text-sm font-medium uppercase tracking-wide mb-2">Total Ganado</p>
-          <p class="text-3xl font-bold text-success mb-2">{{ formatCurrency(userCredit.totalCredits) }}</p>
-          <p class="text-xs text-text-light">Créditos acumulados históricos</p>
-        </div>
-
-        <!-- Card 2: Total Usado -->
-        <div class="stat-card bg-card-bg border-2 border-primary/30 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fadeIn" style="animation-delay: 0.2s;">
-          <div class="flex items-start justify-between mb-4">
-            <div class="p-3 rounded-lg bg-primary/20">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+              <span><strong>Invita amigos:</strong> Gana créditos por cada persona que se registre usando tu código de referido</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
-            </div>
-            <div class="text-right">
-              <p class="text-xs text-text-light">{{ getUsagePercentage() }}% usado</p>
-            </div>
-          </div>
-          <p class="text-text-light text-sm font-medium uppercase tracking-wide mb-2">Total Usado</p>
-          <p class="text-3xl font-bold text-primary mb-2">{{ formatCurrency(userCredit.usedCredits) }}</p>
-          <p class="text-xs text-text-light">En suscripciones, extras y anuncios</p>
-        </div>
-
-        <!-- Card 3: Balance Disponible -->
-        <div class="stat-card bg-card-bg border-2 border-accent/30 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fadeIn" style="animation-delay: 0.3s;">
-          <div class="flex items-start justify-between mb-4">
-            <div class="p-3 rounded-lg bg-accent/20">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <span><strong>Promociones especiales:</strong> Participa en eventos y promociones temporales</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
-            </div>
+              <span><strong>Reembolsos:</strong> Los créditos de compras canceladas se devuelven automáticamente</span>
+            </li>
+          </ul>
+          <div class="mt-4 pt-4 border-t border-border">
+            <a href="#" class="text-primary hover:text-primary-dark text-sm font-medium flex items-center gap-1">
+              Ver términos y condiciones
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
           </div>
-          <p class="text-text-light text-sm font-medium uppercase tracking-wide mb-2">Disponible</p>
-          <p class="text-3xl font-bold text-accent mb-2">{{ formatCurrency(userCredit.availableCredits) }}</p>
-          <p class="text-xs text-text-light">Listo para usar en tus compras</p>
         </div>
       </div>
-
-      <!-- QUICK ACTIONS -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <!-- Action: Ver Historial -->
-        <button (click)="navigateToHistory()" 
-                class="action-card bg-card-bg border border-border rounded-xl p-6 hover:border-primary hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-left group animate-fadeIn"
-                style="animation-delay: 0.4s;">
-          <div class="flex items-start gap-4">
-            <div class="p-3 rounded-lg bg-primary/20 group-hover:bg-primary/30 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <div class="flex-1">
-              <h3 class="text-xl font-bold text-text mb-2 group-hover:text-primary transition-colors">Ver Historial</h3>
-              <p class="text-text-light text-sm">Revisa todas tus transacciones de créditos con filtros y detalles</p>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-text-light group-hover:text-primary group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-        </button>
-
-        <!-- Action: Ver Estadísticas -->
-        <button (click)="navigateToStats()" 
-                class="action-card bg-card-bg border border-border rounded-xl p-6 hover:border-accent hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-left group animate-fadeIn"
-                style="animation-delay: 0.5s;">
-          <div class="flex items-start gap-4">
-            <div class="p-3 rounded-lg bg-accent/20 group-hover:bg-accent/30 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            <div class="flex-1">
-              <h3 class="text-xl font-bold text-text mb-2 group-hover:text-accent transition-colors">Ver Estadísticas</h3>
-              <p class="text-text-light text-sm">Analiza tus créditos con gráficos y estadísticas detalladas</p>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-text-light group-hover:text-accent group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-        </button>
-      </div>
-
-      <!-- INFORMATIONAL SECTION -->
-      <div class="info-section bg-card-bg-light border border-border rounded-xl p-6 animate-fadeIn" style="animation-delay: 0.6s;">
-        <h3 class="text-lg font-bold text-text mb-4 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          ¿Cómo ganar más créditos?
-        </h3>
-        <ul class="space-y-3 text-text-light text-sm">
-          <li class="flex items-start gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            <span><strong>Invita amigos:</strong> Gana créditos por cada persona que se registre usando tu código de referido</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            <span><strong>Promociones especiales:</strong> Participa en eventos y promociones temporales</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            <span><strong>Reembolsos:</strong> Los créditos de compras canceladas se devuelven automáticamente</span>
-          </li>
-        </ul>
-        <div class="mt-4 pt-4 border-t border-border">
-          <a href="#" class="text-primary hover:text-primary-dark text-sm font-medium flex items-center gap-1">
-            Ver términos y condiciones
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </div>
-
-    </div>
+    }
 
   </div>
 </div>

@@ -62,14 +62,12 @@ export class EditProfileProfesionalComponent implements OnInit {
       lastName: [data.user.lastName, [Validators.required]],
       phone: [data.user.phone, [Validators.required]],
       whatsappNumber: [data.professional.whatsappNumber],
-      businessEmail: [data.professional.businessEmail, [Validators.email]],
       websiteUrl: [data.professional.websiteUrl, [Validators.pattern(/^https?:\/\/.+/)]],
       facebookProfile: [data.professional.facebookProfile],
       instagramProfile: [data.professional.instagramProfile],
       linkedinProfile: [data.professional.linkedinProfile, [Validators.pattern(/^https?:\/\/.+/)]],
       youtubeChannel: [data.professional.youtubeChannel, [Validators.pattern(/^https?:\/\/.+/)]],
       bio: [data.professional.bio, [Validators.maxLength(500)]],
-      totalExperience: [data.professional.totalExperience, [Validators.min(0), Validators.max(100)]],
       visible: [data.professional.visible]
     });
   }
@@ -122,20 +120,18 @@ export class EditProfileProfesionalComponent implements OnInit {
       return;
     }
 
+
     if (!file.type.startsWith('image/')) {
       alert('Solo se permiten imágenes');
       return;
     }
 
-    // Mostrar preview local inmediatamente
     const reader = new FileReader();
     reader.onload = (e: any) => {
       this.avatarPreview = e.target.result;
     };
     reader.readAsDataURL(file);
-
     this.uploadingAvatar = true;
-
     this.professionalService.uploadAvatar(file).subscribe({
       next: (response) => {
         if (response.success) {
@@ -166,7 +162,6 @@ export class EditProfileProfesionalComponent implements OnInit {
   }
 
   getAvatarThumbnailUrl(): string {
-    // Si hay preview local, mostrarlo primero
     if (this.avatarPreview) return this.avatarPreview;
     if (!this.professionalData?.professional?.avatarThumbnailUrl) return 'assets/default-avatar.png';
     if (this.professionalData.professional.avatarThumbnailUrl.startsWith('http')) return this.professionalData.professional.avatarThumbnailUrl;

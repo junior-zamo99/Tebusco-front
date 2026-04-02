@@ -1,12 +1,12 @@
 import { Component, AfterViewInit, OnDestroy, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import lottie, { AnimationItem } from 'lottie-web';
 import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-loading-screen',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './loading-screen.html',
   styleUrl: './loading-screen.css',
 })

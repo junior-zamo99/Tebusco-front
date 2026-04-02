@@ -1,7 +1,8 @@
 
 export enum RequestStatusEnum {
   PENDING = 'PENDING',
-  IN_PROGRESS = 'IN_PROGRESS',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
   EXPIRED = 'EXPIRED'
@@ -174,8 +175,6 @@ export interface RequestStats {
   requestsByUrgency: {
     urgency: string;
     count: number;
-
-
-}
+  }[];
 }
 

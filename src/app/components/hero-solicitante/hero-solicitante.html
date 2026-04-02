@@ -7,51 +7,57 @@
     <div class="absolute bottom-0 right-0 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2"></div>
 
     <div class="absolute inset-0 opacity-[0.03]"
-         style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 60px 60px;">
+      style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 60px 60px;">
     </div>
   </div>
 
   <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm transition-opacity duration-500 z-30"
-       [ngClass]="isSearchMode ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"
-       (click)="closeSearch()">
+    [ngClass]="isSearchMode ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"
+    (click)="closeSearch()">
   </div>
 
-  <button *ngIf="isSearchMode" (click)="closeSearch()"
-          class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 animate-fade-in cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-  </button>
+  @if (isSearchMode) {
+    <button (click)="closeSearch()"
+      class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 animate-fade-in cursor-pointer">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  }
 
   <div class="absolute top-6 left-6 md:left-10 z-50 flex flex-col md:flex-row md:items-center gap-4 transition-all duration-500 transform origin-top"
-     [ngClass]="isSearchMode ? 'opacity-0 -translate-y-4 pointer-events-none scale-95' : 'opacity-100 translate-y-0 scale-100'">
+    [ngClass]="isSearchMode ? 'opacity-0 -translate-y-4 pointer-events-none scale-95' : 'opacity-100 translate-y-0 scale-100'">
 
     <div class="flex items-center gap-4">
-        <button routerLink="/login" class="text-white/70 hover:text-white text-sm md:text-base font-medium transition-colors">
-          Iniciar Sesión
-        </button>
-        <button routerLink="/register" class="px-5 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-yellow-500/50 hover:text-yellow-400 rounded-full text-sm md:text-base font-medium backdrop-blur-md transition-all duration-300">
-          Registrarse
-        </button>
+      <button routerLink="/login" class="text-white/70 hover:text-white text-sm md:text-base font-medium transition-colors">
+        Iniciar Sesión
+      </button>
+      <button routerLink="/register" class="px-5 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-yellow-500/50 hover:text-yellow-400 rounded-full text-sm md:text-base font-medium backdrop-blur-md transition-all duration-300">
+        Registrarse
+      </button>
     </div>
 
     <div class="hidden md:block w-px h-6 bg-white/10"></div>
 
     <div class="flex items-center gap-2">
-        <div class="relative group">
-            <select [(ngModel)]="selectedCountryId" (change)="onCountryChange()"
-                    class="appearance-none pl-4 pr-8 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/30 rounded-full text-xs md:text-sm font-medium backdrop-blur-md transition-all outline-none cursor-pointer focus:ring-2 focus:ring-yellow-500/50">
-                <option [ngValue]="null" class="bg-slate-900 text-slate-400">País</option>
-                <option *ngFor="let c of countries" [ngValue]="c.id" class="bg-slate-900 text-white">{{ c.name }}</option>
-            </select>
-        </div>
-        <div class="relative group">
-            <select [(ngModel)]="selectedCityId" [disabled]="!selectedCountryId"
-                    class="appearance-none pl-4 pr-8 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/30 rounded-full text-xs md:text-sm font-medium backdrop-blur-md transition-all outline-none cursor-pointer focus:ring-2 focus:ring-yellow-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
-                <option [ngValue]="null" class="bg-slate-900 text-slate-400">Ciudad</option>
-                <option *ngFor="let c of cities" [ngValue]="c.id" class="bg-slate-900 text-white">{{ c.name }}</option>
-            </select>
-        </div>
+      <div class="relative group">
+        <select [(ngModel)]="selectedCountryId" (change)="onCountryChange()"
+          class="appearance-none pl-4 pr-8 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/30 rounded-full text-xs md:text-sm font-medium backdrop-blur-md transition-all outline-none cursor-pointer focus:ring-2 focus:ring-yellow-500/50">
+          <option [ngValue]="null" class="bg-slate-900 text-slate-400">País</option>
+          @for (c of countries; track c) {
+            <option [ngValue]="c.id" class="bg-slate-900 text-white">{{ c.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="relative group">
+        <select [(ngModel)]="selectedCityId" [disabled]="!selectedCountryId"
+          class="appearance-none pl-4 pr-8 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/30 rounded-full text-xs md:text-sm font-medium backdrop-blur-md transition-all outline-none cursor-pointer focus:ring-2 focus:ring-yellow-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
+          <option [ngValue]="null" class="bg-slate-900 text-slate-400">Ciudad</option>
+          @for (c of cities; track c) {
+            <option [ngValue]="c.id" class="bg-slate-900 text-white">{{ c.name }}</option>
+          }
+        </select>
+      </div>
     </div>
   </div>
 
@@ -65,99 +71,103 @@
              : 'w-full lg:w-1/2 items-start text-left justify-center translate-y-0'">
 
         <div class="transition-all duration-500 relative z-50">
-            <h1 class="font-black text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-2 transition-all duration-500"
-                [ngClass]="isSearchMode ? 'scale-90' : 'scale-100'">
-              <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                Te Busco
-              </span>
-            </h1>
+          <h1 class="font-black text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-2 transition-all duration-500"
+            [ngClass]="isSearchMode ? 'scale-90' : 'scale-100'">
+            <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+              Te Busco
+            </span>
+          </h1>
 
-            <div class="overflow-hidden transition-all duration-500"
-                 [ngClass]="isSearchMode ? 'max-h-0 opacity-0' : 'max-h-20 opacity-100 mt-4'">
-                <p class="text-white/60 text-lg">La forma más rápida de encontrar expertos.</p>
-            </div>
+          <div class="overflow-hidden transition-all duration-500"
+            [ngClass]="isSearchMode ? 'max-h-0 opacity-0' : 'max-h-20 opacity-100 mt-4'">
+            <p class="text-white/60 text-lg">La forma más rápida de encontrar expertos.</p>
+          </div>
 
-            <p *ngIf="isSearchMode" class="text-white/80 text-base animate-fade-in mt-1 font-medium">
+          @if (isSearchMode) {
+            <p class="text-white/80 text-base animate-fade-in mt-1 font-medium">
               ¿Qué servicio necesitas solucionar hoy?
             </p>
+          }
         </div>
 
         <div class="relative z-50 w-full transition-all duration-700 ease-out mt-6"
-             [ngClass]="isSearchMode ? 'max-w-xl' : 'max-w-xl'">
+          [ngClass]="isSearchMode ? 'max-w-xl' : 'max-w-xl'">
 
-            <div class="relative group">
-                <input
-                  type="text"
-                  [(ngModel)]="searchTerm"
-                  (focus)="activateSearch()"
-                  placeholder="Ej: Plomero, Electricista..."
-                  class="w-full bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder:text-white/40 transition-all duration-500 outline-none"
+          <div class="relative group">
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (focus)="activateSearch()"
+              placeholder="Ej: Plomero, Electricista..."
+              class="w-full bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder:text-white/40 transition-all duration-500 outline-none"
                   [ngClass]="isSearchMode
                     ? 'h-14 pl-14 pr-6 text-sm shadow-[0_0_40px_rgba(234,179,8,0.15)] border-yellow-500/50 bg-slate-900 ring-2 ring-yellow-500/10'
                     : 'h-14 pl-12 pr-6 text-base hover:bg-white/15 hover:border-white/20 shadow-xl'"
-                >
+              >
 
-                <div class="absolute left-5 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none transition-colors duration-300"
-                     [ngClass]="{'text-yellow-400': isSearchMode}">
-                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                   </svg>
-                </div>
+              <div class="absolute left-5 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none transition-colors duration-300"
+                [ngClass]="{'text-yellow-400': isSearchMode}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
             </div>
 
             <div class="absolute top-full left-0 w-full mt-2 z-50 text-left">
-               <app-hero-search
-                 [searchTerm]="searchTerm"
-                 [selectedCityId]="selectedCityId"
-                 [isOpen]="isSearchMode && searchTerm.length >= 2"
-                 (close)="closeSearch()">
-               </app-hero-search>
+              <app-hero-search
+                [searchTerm]="searchTerm"
+                [selectedCityId]="selectedCityId"
+                [isOpen]="isSearchMode && searchTerm.length >= 2"
+                (close)="closeSearch()">
+              </app-hero-search>
             </div>
+          </div>
+
+          <div class="transition-all duration-500 ease-out"
+            [ngClass]="isSearchMode ? 'opacity-0 translate-y-10 pointer-events-none absolute' : 'opacity-100 translate-y-0 relative'">
+
+            <div class="flex flex-wrap gap-3 mt-8 mb-10">
+              @for (cat of ['Hogar', 'Tecnología', 'Mecánica']; track cat) {
+                <button
+                  class="px-5 py-2 bg-white/5 border border-white/10 rounded-full text-white/80 text-sm font-medium hover:bg-white/10 hover:border-yellow-500/30 hover:text-yellow-400 transition-all cursor-pointer">
+                  {{cat}}
+                </button>
+              }
+            </div>
+
+            <div class="grid grid-cols-3 gap-8 pt-8 border-t border-white/10 max-w-sm">
+              <div class="text-center group cursor-default">
+                <p class="text-3xl font-bold text-white group-hover:text-yellow-400 transition-colors">+500</p>
+                <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Expertos</p>
+              </div>
+              <div class="text-center group cursor-default">
+                <p class="text-3xl font-bold text-white group-hover:text-yellow-400 transition-colors">100%</p>
+                <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Verificado</p>
+              </div>
+              <div class="text-center group cursor-default">
+                <p class="text-3xl font-bold text-white group-hover:text-yellow-400 transition-colors">24/7</p>
+                <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Soporte</p>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <div class="transition-all duration-500 ease-out"
-             [ngClass]="isSearchMode ? 'opacity-0 translate-y-10 pointer-events-none absolute' : 'opacity-100 translate-y-0 relative'">
-
-             <div class="flex flex-wrap gap-3 mt-8 mb-10">
-                 <button *ngFor="let cat of ['Hogar', 'Tecnología', 'Mecánica']"
-                         class="px-5 py-2 bg-white/5 border border-white/10 rounded-full text-white/80 text-sm font-medium hover:bg-white/10 hover:border-yellow-500/30 hover:text-yellow-400 transition-all cursor-pointer">
-                   {{cat}}
-                 </button>
-             </div>
-
-             <div class="grid grid-cols-3 gap-8 pt-8 border-t border-white/10 max-w-sm">
-                <div class="text-center group cursor-default">
-                  <p class="text-3xl font-bold text-white group-hover:text-yellow-400 transition-colors">+500</p>
-                  <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Expertos</p>
-                </div>
-                <div class="text-center group cursor-default">
-                  <p class="text-3xl font-bold text-white group-hover:text-yellow-400 transition-colors">100%</p>
-                  <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Verificado</p>
-                </div>
-                <div class="text-center group cursor-default">
-                  <p class="text-3xl font-bold text-white group-hover:text-yellow-400 transition-colors">24/7</p>
-                  <p class="text-xs text-white/50 uppercase tracking-widest mt-1">Soporte</p>
-                </div>
-             </div>
-        </div>
-
-      </div>
-
-      <div class="hidden lg:flex items-center justify-center relative h-full transition-all duration-700 ease-[cubic-bezier(0.25,0.8,0.25,1)]"
+        <div class="hidden lg:flex items-center justify-center relative h-full transition-all duration-700 ease-[cubic-bezier(0.25,0.8,0.25,1)]"
            [ngClass]="isSearchMode
              ? 'w-0 opacity-0 translate-x-20 overflow-hidden'
              : 'w-full lg:w-1/2 opacity-100 translate-x-0'">
 
-           <div class="relative z-10 w-full max-w-md xl:max-w-lg">
-              <img src="assets/tebuscohero.png"
-                   alt="App Te Busco Preview"
-                   class="w-full h-auto object-contain drop-shadow-2xl max-h-[75vh] hover:scale-105 transition-transform duration-500">
+          <div class="relative z-10 w-full max-w-md xl:max-w-lg">
+            <img src="assets/tebuscohero.png"
+              alt="App Te Busco Preview"
+              class="w-full h-auto object-contain drop-shadow-2xl max-h-[75vh] hover:scale-105 transition-transform duration-500">
 
               <div class="absolute inset-0 bg-yellow-500/20 blur-[100px] -z-10 rounded-full transform translate-y-10"></div>
-           </div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-    </div>
-  </div>
-
-</section>
+    </section>

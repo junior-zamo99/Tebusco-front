@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HeroSearch } from '../hero-search/hero-search';
@@ -7,7 +7,7 @@ import { HeroSearch } from '../hero-search/hero-search';
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, HeroSearch],
+  imports: [RouterLink, FormsModule, HeroSearch],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
 })

@@ -1,137 +1,144 @@
 <div class="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-6 px-4">
 
   <!-- Loading -->
-  <div *ngIf="isLoading" class="flex justify-center items-center h-[50vh]">
-    <div class="flex flex-col items-center">
-      <div class="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin mb-3"></div>
-      <p class="text-xs text-text-light font-medium animate-pulse">Cargando países...</p>
+  @if (isLoading) {
+    <div class="flex justify-center items-center h-[50vh]">
+      <div class="flex flex-col items-center">
+        <div class="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin mb-3"></div>
+        <p class="text-xs text-text-light font-medium animate-pulse">Cargando países...</p>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Error -->
-  <div *ngIf="!isLoading && error" class="max-w-md mx-auto mt-10">
-    <div class="bg-surface border border-danger/20 rounded-xl p-6 text-center shadow-sm">
-      <div class="w-10 h-10 bg-danger/10 rounded-full flex items-center justify-center mx-auto mb-3">
-        <svg class="w-5 h-5 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
-      <h3 class="text-base font-bold text-text mb-1">Error</h3>
-      <p class="text-xs text-text-light mb-4">{{ error }}</p>
-      <button (click)="cancel()" class="px-4 py-2 bg-surface border border-border rounded text-xs hover:bg-background transition-colors">
-        Volver
-      </button>
-    </div>
-  </div>
-
-  <!-- Contenido principal -->
-  <div *ngIf="!isLoading && !error" class="max-w-lg mx-auto animate-fade-in-up">
-
-    <!-- Header -->
-    <div class="mb-6">
-      <button (click)="cancel()" class="mb-4 flex items-center text-xs text-text-light hover:text-primary transition-colors group">
-        <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Cancelar
-      </button>
-
-      <div class="bg-surface rounded-xl border border-border/50 shadow-sm p-5 text-center">
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  @if (!isLoading && error) {
+    <div class="max-w-md mx-auto mt-10">
+      <div class="bg-surface border border-danger/20 rounded-xl p-6 text-center shadow-sm">
+        <div class="w-10 h-10 bg-danger/10 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-5 h-5 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h1 class="text-xl font-bold text-text mb-2">Cobertura Nacional</h1>
-        <p class="text-sm text-text-light">Selecciona tu país para aparecer en todas sus ciudades</p>
+        <h3 class="text-base font-bold text-text mb-1">Error</h3>
+        <p class="text-xs text-text-light mb-4">{{ error }}</p>
+        <button (click)="cancel()" class="px-4 py-2 bg-surface border border-border rounded text-xs hover:bg-background transition-colors">
+          Volver
+        </button>
       </div>
     </div>
+  }
 
-    <!-- Lista de países -->
-    <div class="space-y-3">
-      <div
-        *ngFor="let country of countries"
-        (click)="selectCountry(country.id)"
-        class="relative bg-surface rounded-xl border p-4 cursor-pointer transition-all duration-200 group"
+  <!-- Contenido principal -->
+  @if (!isLoading && !error) {
+    <div class="max-w-lg mx-auto animate-fade-in-up">
+      <!-- Header -->
+      <div class="mb-6">
+        <button (click)="cancel()" class="mb-4 flex items-center text-xs text-text-light hover:text-primary transition-colors group">
+          <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Cancelar
+        </button>
+        <div class="bg-surface rounded-xl border border-border/50 shadow-sm p-5 text-center">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h1 class="text-xl font-bold text-text mb-2">Cobertura Nacional</h1>
+          <p class="text-sm text-text-light">Selecciona tu país para aparecer en todas sus ciudades</p>
+        </div>
+      </div>
+      <!-- Lista de países -->
+      <div class="space-y-3">
+        @for (country of countries; track country) {
+          <div
+            (click)="selectCountry(country.id)"
+            class="relative bg-surface rounded-xl border p-4 cursor-pointer transition-all duration-200 group"
         [ngClass]="{
           'border-primary bg-primary/5 shadow-md ring-2 ring-primary/20': isCountrySelected(country.id),
           'border-border hover:border-primary/30 hover:shadow-sm': !isCountrySelected(country.id)
         }"
-      >
-        <div class="flex items-center gap-4">
-          <!-- Bandera -->
-          <div
-            class="w-14 h-14 rounded-xl flex items-center justify-center text-3xl shrink-0 transition-transform"
+            >
+            <div class="flex items-center gap-4">
+              <!-- Bandera -->
+              <div
+                class="w-14 h-14 rounded-xl flex items-center justify-center text-3xl shrink-0 transition-transform"
             [ngClass]="{
               'bg-primary/10 scale-105': isCountrySelected(country.id),
               'bg-background group-hover:scale-105': !isCountrySelected(country.id)
             }"
-          >
-            {{ getCountryFlag(country.code) }}
-          </div>
-
-          <!-- Info del país -->
-          <div class="flex-1 min-w-0">
-            <h3 class="font-bold text-text text-lg">{{ country.name }}</h3>
-            <p class="text-sm text-text-light">
-              <span class="font-medium text-primary">{{ country.citiesCount }}</span> ciudades incluidas
-            </p>
-          </div>
-
-          <!-- Radio button visual -->
-          <div
-            class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shrink-0"
+                >
+                {{ getCountryFlag(country.code) }}
+              </div>
+              <!-- Info del país -->
+              <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-text text-lg">{{ country.name }}</h3>
+                <p class="text-sm text-text-light">
+                  <span class="font-medium text-primary">{{ country.citiesCount }}</span> ciudades incluidas
+                </p>
+              </div>
+              <!-- Radio button visual -->
+              <div
+                class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shrink-0"
             [ngClass]="{
               'border-primary bg-primary': isCountrySelected(country.id),
               'border-border group-hover:border-primary/50': !isCountrySelected(country.id)
             }"
+                >
+                @if (isCountrySelected(country.id)) {
+                  <div
+                    class="w-2.5 h-2.5 rounded-full bg-white"
+                  ></div>
+                }
+              </div>
+            </div>
+            <!-- Lista de ciudades preview -->
+            @if (isCountrySelected(country.id)) {
+              <div
+                class="mt-4 pt-4 border-t border-primary/20 animate-fade-in"
+                >
+                <p class="text-xs text-text-light mb-2 font-medium">Aparecerás en:</p>
+                <div class="flex flex-wrap gap-1.5">
+                  @for (city of country.cities; track city; let i = $index) {
+                    <span
+                      class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full"
+                      >
+                      {{ city.name }}
+                    </span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+      <!-- Confirmación -->
+      <div class="mt-6 sticky bottom-4">
+        <button
+          (click)="confirmSelection()"
+          [disabled]="isProcessing || !canConfirm"
+          class="w-full py-4 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl text-base font-bold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            <div
-              *ngIf="isCountrySelected(country.id)"
-              class="w-2.5 h-2.5 rounded-full bg-white"
-            ></div>
-          </div>
-        </div>
-
-        <!-- Lista de ciudades preview -->
-        <div
-          *ngIf="isCountrySelected(country.id)"
-          class="mt-4 pt-4 border-t border-primary/20 animate-fade-in"
-        >
-          <p class="text-xs text-text-light mb-2 font-medium">Aparecerás en:</p>
-          <div class="flex flex-wrap gap-1.5">
-            <span
-              *ngFor="let city of country.cities; let i = index"
-              class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full"
-            >
-              {{ city.name }}
-            </span>
-          </div>
-        </div>
+          @if (isProcessing) {
+            <span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          }
+          @if (!isProcessing) {
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Activar Cobertura Nacional</span>
+          }
+          @if (isProcessing) {
+            <span>Activando...</span>
+          }
+        </button>
+        @if (!canConfirm) {
+          <p class="text-center text-xs text-text-light mt-3">
+            Selecciona un país para continuar
+          </p>
+        }
       </div>
     </div>
-
-    <!-- Confirmación -->
-    <div class="mt-6 sticky bottom-4">
-      <button
-        (click)="confirmSelection()"
-        [disabled]="isProcessing || !canConfirm"
-        class="w-full py-4 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl text-base font-bold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-      >
-        <span *ngIf="isProcessing" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-        <ng-container *ngIf="!isProcessing">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
-          <span>Activar Cobertura Nacional</span>
-        </ng-container>
-        <span *ngIf="isProcessing">Activando...</span>
-      </button>
-
-      <p *ngIf="!canConfirm" class="text-center text-xs text-text-light mt-3">
-        Selecciona un país para continuar
-      </p>
-    </div>
-
-  </div>
+  }
 </div>

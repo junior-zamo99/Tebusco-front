@@ -21,4 +21,4 @@ export const authGuard = () => {
       return of(false);
     })
   );
-};3
+};

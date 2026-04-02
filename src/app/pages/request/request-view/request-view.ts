@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LocationData, MapLocationViewer } from '../../../components/map-location-viewer/map-location-viewer';
 import { RequestService } from '../../../services/request.service';
 import { RequestStatusEnum } from '../../../models/request.models';
@@ -28,6 +28,7 @@ export class RequestView implements OnInit {
   private route = inject(ActivatedRoute);
   private requestService = inject(RequestService);
   private location = inject(Location);
+  private router = inject(Router);
   private dialogService = inject(DialogService);
 
   ngOnInit(): void {
@@ -63,8 +64,8 @@ export class RequestView implements OnInit {
             address: requestData.address ?? '',
             fullAddress: requestData.address ?? '',
             label: requestData.title,
-            city: 'Santa Cruz',
-            country: 'Bolivia'
+            city: requestData.city?.name ?? '',
+            country: requestData.city?.countryName ?? ''
           };
         }
 
@@ -130,6 +131,12 @@ export class RequestView implements OnInit {
     this.location.back();
   }
 
+  viewCandidates(): void {
+    if (this.request) {
+      this.router.navigate(['/applicant/request', this.request.id, 'candidates']);
+    }
+  }
+
 
 
   getUrgencyLabelDisplay(status: string): string {
@@ -139,20 +146,24 @@ export class RequestView implements OnInit {
 
   getStatusColor(status: string): string {
     switch (status?.toLowerCase()) {
-      case 'pending': return 'bg-yellow-50 text-yellow-600 border-yellow-200';
-      case 'in_progress': return 'bg-blue-50 text-blue-600 border-blue-200';
+      case 'pending':   return 'bg-yellow-50 text-yellow-600 border-yellow-200';
+      case 'accepted':  return 'bg-blue-50 text-blue-600 border-blue-200';
       case 'completed': return 'bg-green-50 text-green-600 border-green-200';
       case 'cancelled': return 'bg-red-50 text-red-600 border-red-200';
-      default: return 'bg-gray-100 text-gray-600 border-gray-200';
+      case 'expired':   return 'bg-gray-100 text-gray-500 border-gray-200';
+      case 'rejected':  return 'bg-red-50 text-red-500 border-red-200';
+      default:          return 'bg-gray-100 text-gray-600 border-gray-200';
     }
   }
 
   getStatusLabel(status: string): string {
     const labels: {[key: string]: string} = {
-      'pending': 'Pendiente',
-      'in_progress': 'En Progreso',
+      'pending':   'Pendiente',
+      'accepted':  'Aceptada',
       'completed': 'Completada',
-      'cancelled': 'Cancelada'
+      'cancelled': 'Cancelada',
+      'expired':   'Vencida',
+      'rejected':  'Rechazada',
     };
     return labels[status?.toLowerCase()] || status;
   }

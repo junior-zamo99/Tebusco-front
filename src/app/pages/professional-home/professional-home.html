@@ -1,25 +1,30 @@
 <div class="container-custom">
 
   <!-- Hero Dinámico para profesional (cambia según estado) -->
-  <app-professional-hero
-    *ngIf="!loadingStatus"
-    [registrationStatus]="professionalData?.registrationStatus ?? null"
-    [professional]="professionalData?.professional ?? null"
-    [infoExtra]="professionalData?.infoExtra ?? null"
-    [documents]="professionalData?.documents ?? null"
-    (goToPayment)="onGoToPayment()"
-    (goToDocuments)="onGoToDocuments()"
-    (goToCategories)="onGoToCategories()"
-    (goToProfile)="onGoToProfile()">
-  </app-professional-hero>
+  @if (!loadingStatus) {
+    <app-professional-hero
+      [registrationStatus]="professionalData?.registrationStatus ?? null"
+      [professional]="professionalData?.professional ?? null"
+      [infoExtra]="professionalData?.infoExtra ?? null"
+      [documents]="professionalData?.documents ?? null"
+      (goToPayment)="onGoToPayment()"
+      (goToDocuments)="onGoToDocuments()"
+      (goToCategories)="onGoToCategories()"
+      (goToProfile)="onGoToProfile()">
+    </app-professional-hero>
+  }
 
   <!-- Loading state para el hero -->
-  <div *ngIf="loadingStatus" class="my-4 animate-pulse">
-    <div class="h-44 bg-gradient-to-br from-purple-600/50 to-purple-800/50 rounded-xl"></div>
-  </div>
+  @if (loadingStatus) {
+    <div class="my-4 animate-pulse">
+      <div class="h-44 bg-gradient-to-br from-purple-600/50 to-purple-800/50 rounded-xl"></div>
+    </div>
+  }
 
 
   <app-active-profiles></app-active-profiles>
+
+  <app-home-request-professional></app-home-request-professional>
 
   <app-pending-offers></app-pending-offers>
 

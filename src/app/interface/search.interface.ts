@@ -34,16 +34,18 @@ export interface ProviderSearchResult {
   name: string;
   lastName?: string;
   fullName: string;
-  avatarUrl: string | null;
-  avatarMediumUrl: string | null;
-  avatarThumbnailUrl: string | null;
   photoUrl: string | null;
+  photoThumbnailUrl: string | null;
+  photoMediumUrl: string | null;
   email: string;
   phone: string | null;
   categories: {
     id: number;
     name: string;
     slug: string;
+    isVerified?: boolean;
+    priceMin?: string | null;
+    specialties?: { id: number; name: string; slug: string }[];
   }[];
   location: {
     city: string;
@@ -53,6 +55,8 @@ export interface ProviderSearchResult {
   isVerified: boolean;
   status: string;
   hasActiveSubscription: boolean;
+  coversWholeCountry?: boolean;
+  extraCities?: { id: number; name: string }[];
   nit?: string;
   companyName?: string;
   rating?: number;

@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterModule, RouterLinkActive } from '@angular/router';
 import { ProfessionalService } from '../../services/professional.service';
+import { NavigationHistoryService } from '../../services/navigation-history.service';
 import { ProfessionalCompleteData } from '../../models/professional-complete.model';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-profile-professional-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLinkActive],
+  imports: [RouterModule, RouterLinkActive],
   templateUrl: './profile-professional-layout.html',
   styleUrl: './profile-professional-layout.css',
 })
@@ -26,7 +27,8 @@ export class ProfileProfessionalLayout implements OnInit {
 
   constructor(
     private professionalService: ProfessionalService,
-    private router: Router
+    private router: Router,
+    private navHistory: NavigationHistoryService
   ) {}
 
   ngOnInit() {
@@ -58,6 +60,6 @@ export class ProfileProfessionalLayout implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/professional/dashboard']);
+    this.navHistory.goBack('/professional/dashboard');
   }
 }

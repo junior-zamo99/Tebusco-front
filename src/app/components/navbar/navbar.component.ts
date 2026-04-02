@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener, computed, effect, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -14,7 +14,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, SearchResult, CreditBalanceWidgetComponent],
+  imports: [RouterLink, FormsModule, SearchResult, CreditBalanceWidgetComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
@@ -181,7 +181,7 @@ export class NavbarComponent implements OnInit {
   }
 
   onOffers(): void {
-    this.router.navigate(['/offers']);
+    this.router.navigate(['/professional/offers']);
     this.isUserMenuOpen = false;
   }
 
@@ -224,7 +224,7 @@ export class NavbarComponent implements OnInit {
 
   onProfile(): void {
     if (this.currentView === 'pl') {
-      this.router.navigate(['/profile-professional-personal']);
+      this.router.navigate(['/professional/profile/info']);
     } else {
       this.router.navigate(['/profile']);
       this.isUserMenuOpen = false;
@@ -253,7 +253,12 @@ export class NavbarComponent implements OnInit {
   }
 
   onRequests(): void {
-    this.router.navigate(['/requests']);
+    this.router.navigate(['/applicant/requests']);
+    this.isUserMenuOpen = false;
+  }
+
+  onProfessionalRequests(): void {
+    this.router.navigate(['/professional/requests']);
     this.isUserMenuOpen = false;
   }
 

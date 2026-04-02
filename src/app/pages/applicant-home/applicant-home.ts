@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, computed } from '@angular/core'; // 1. Importar AfterViewInit
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterLink } from '@angular/router';
 import { HeroComponent } from '../../components/hero/hero.component';
 import { CategoriesCarouselComponent } from '../../components/categories-carousel/categories-carousel';
@@ -16,14 +16,13 @@ import { AddressDialogService } from '../../services/address-dialog.service';
   selector: 'app-applicant-home',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     HeroComponent,
     CategoriesCarouselComponent,
     HomeHeroApplicant,
     AdsCarousel,
     HomeRequestApplicant
-  ],
+],
   templateUrl: './applicant-home.html',
   styleUrls: ['./applicant-home.css'],
 })

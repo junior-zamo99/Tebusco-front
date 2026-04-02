@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { CategoryService } from '../../services/category.service';
 import { CategoryNode } from '../../models/category.model';
 
@@ -12,7 +14,7 @@ import { CategoryNode } from '../../models/category.model';
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css']
 })
-export class CategoriesComponent implements OnInit {
+export class CategoriesComponent implements OnInit, OnDestroy {
   categories: CategoryNode[] = [];
   filteredCategories: CategoryNode[] = [];
   searchTerm: string = '';
@@ -22,6 +24,13 @@ export class CategoriesComponent implements OnInit {
 
   isLoading: boolean = true;
   isLoadingChildren: boolean = false;
+
+  searchResults: CategoryNode[] = [];
+  isSearching: boolean = false;
+  showSearchDropdown: boolean = false;
+
+  private searchSubject = new Subject<string>();
+  private searchSub!: Subscription;
 
   private categoryIcons: { [key: string]: string } = {
     'tecnologia': '💻',
@@ -58,6 +67,35 @@ export class CategoriesComponent implements OnInit {
         }
       }
     });
+
+    this.searchSub = this.searchSubject.pipe(
+      debounceTime(350),
+      distinctUntilChanged(),
+      switchMap(term => {
+        if (!term.trim()) {
+          this.isSearching = false;
+          this.searchResults = [];
+          this.showSearchDropdown = false;
+          return [];
+        }
+        this.isSearching = true;
+        return this.categoryService.searchCategory(term);
+      })
+    ).subscribe({
+      next: (results) => {
+        this.searchResults = results;
+        this.isSearching = false;
+        this.showSearchDropdown = true;
+      },
+      error: () => {
+        this.isSearching = false;
+        this.searchResults = [];
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.searchSub?.unsubscribe();
   }
 
   loadLevel1Categories(): void {
@@ -100,6 +138,8 @@ export class CategoriesComponent implements OnInit {
   }
 
   private loadAndSelectCategory(categoryId: number): void {
+
+    console.log('entre con el ID:', categoryId);
     if (this.selectedCategory?.id === categoryId) return;
 
     this.isLoadingChildren = true;
@@ -130,25 +170,31 @@ export class CategoriesComponent implements OnInit {
   }
 
   filterCategories(): void {
-    const listToFilter = this.selectedCategory
-      ? this.filteredCategories
-      : this.categories;
-
     if (!this.searchTerm.trim()) {
-      if (this.selectedCategory) {
-        this.loadAndSelectCategory(this.selectedCategory.id);
-      } else {
-        this.filteredCategories = this.categories;
-      }
-      return;
+      this.searchResults = [];
+      this.showSearchDropdown = false;
+      this.isSearching = false;
+    } else {
+      this.isSearching = true;
     }
+    this.searchSubject.next(this.searchTerm);
+  }
 
-    const searchLower = this.searchTerm.toLowerCase();
+  selectSearchResult(category: CategoryNode): void {
+    this.searchTerm = '';
+    this.searchResults = [];
+    this.showSearchDropdown = false;
+    if (category.level === 2 || !category.childrenCount || category.childrenCount === 0) {
+      this.router.navigate(['/professionals/category', category.id]);
+    } else {
+      this.router.navigate(['/categories'], { queryParams: { id: category.id } });
+    }
+  }
 
-    this.filteredCategories = listToFilter.filter(cat =>
-      cat.name.toLowerCase().includes(searchLower) ||
-      (cat.description && cat.description.toLowerCase().includes(searchLower))
-    );
+  closeSearchDropdown(): void {
+    setTimeout(() => {
+      this.showSearchDropdown = false;
+    }, 200);
   }
 
   resetView(navigate: boolean = true): void {

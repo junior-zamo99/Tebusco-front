@@ -3,7 +3,7 @@
 
     <div class="text-center space-y-1">
       <h1 class="text-2xl font-bold text-text">
-          Configurar Nueva Categoría
+        Configurar Nueva Categoría
       </h1>
       <p class="text-text-light text-sm max-w-xl mx-auto">
         Selecciona tu área de trabajo y configura tu perfil profesional
@@ -34,275 +34,370 @@
       </div>
     </div>
 
-    <div *ngIf="errorMessage"
-         class="bg-danger/10 border-2 border-danger/30 rounded-lg p-3 flex items-center gap-3">
-      <svg class="w-5 h-5 text-danger" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-      </svg>
-      <p class="text-danger font-medium text-xs">{{ errorMessage }}</p>
-    </div>
-
-    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
-      <div class="text-center">
-        <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-primary mx-auto mb-2"></div>
-        <p class="text-text-light text-xs">Cargando...</p>
+    @if (errorMessage) {
+      <div
+        class="bg-danger/10 border-2 border-danger/30 rounded-lg p-3 flex items-center gap-3">
+        <svg class="w-5 h-5 text-danger" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        <p class="text-danger font-medium text-xs">{{ errorMessage }}</p>
       </div>
-    </div>
+    }
 
-    <div *ngIf="!isLoading && step === 'category'" class="space-y-4">
-      <div class="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border-2 border-primary/30 rounded-xl p-4">
-        <h2 class="text-lg font-bold text-text mb-1"> Paso 1: Selecciona la categoría principal</h2>
-        <p class="text-text-light text-xs">Elige la categoría general donde ofreces tus servicios</p>
-      </div>
-
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+    @if (isLoading) {
+      <div class="flex justify-center items-center py-12">
+        <div class="text-center">
+          <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-primary mx-auto mb-2"></div>
+          <p class="text-text-light text-xs">Cargando...</p>
         </div>
-        <input
-          type="text"
-          [(ngModel)]="searchTerm"
-          (input)="filterCategories()"
-          placeholder="Buscar categoría..."
-          class="w-full pl-10 pr-4 py-3 text-sm border-2 border-border bg-surface text-text rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
-        />
       </div>
+    }
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div
-          *ngFor="let category of filteredCategories"
-          (click)="selectMainCategory(category)"
-          class="bg-surface rounded-xl shadow-lg border-2 border-border hover:border-primary hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer p-4">
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-2xl">
-              {{ getCategoryIcon(category) }}
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="font-bold text-text text-sm mb-1 truncate">{{ category.name }}</h3>
-              <p class="text-xs text-text-light line-clamp-2" *ngIf="category.description">{{ category.description }}</p>
-              <div class="mt-2 flex items-center gap-1 text-xs text-primary font-semibold">
-                <span>{{ category.children?.length || 0 }} áreas</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </div>
+    @if (!isLoading && step === 'category') {
+      <div class="space-y-4">
+        <div class="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border-2 border-primary/30 rounded-xl p-4">
+          <h2 class="text-lg font-bold text-text mb-1"> Paso 1: Selecciona la categoría principal</h2>
+          <p class="text-text-light text-xs">Elige la categoría general donde ofreces tus servicios</p>
+        </div>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="!isLoading && step === 'area'" class="space-y-4">
-      <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-amber-500/10 border-2 border-amber-500/30 rounded-xl p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-text mb-1">🔧 Paso 2: Selecciona tu área</h2>
-            <p class="text-text-light text-xs">Categoría: <span class="font-semibold text-text">{{ selectedMainCategory?.name }}</span></p>
-          </div>
-          <button (click)="goBack()" class="px-3 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg text-xs font-semibold transition-all border-2 border-primary/30">
-            ← Volver
-          </button>
-        </div>
-      </div>
-
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-        <input
-          type="text"
-          [(ngModel)]="searchTerm"
-          (input)="filterCategories()"
-          placeholder="Buscar área..."
-          class="w-full pl-10 pr-4 py-3 text-sm border-2 border-border bg-surface text-text rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
-        />
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div
-          *ngFor="let area of filteredAreas"
-          (click)="selectArea(area)"
-          class="bg-surface rounded-xl shadow-lg border-2 border-border hover:border-amber-500 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer p-4">
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-xl">
-              🔧
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="font-bold text-text text-sm mb-1 truncate">{{ area.name }}</h3>
-              <p class="text-xs text-text-light mb-1 line-clamp-1" *ngIf="area.description">{{ area.description }}</p>
-              <div class="flex items-center gap-1 text-xs text-amber-500 font-semibold">
-                <span>{{ area.children?.length || 0 }} especialidades</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="!isLoading && step === 'config'" class="space-y-4">
-      <div class="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 border-2 border-emerald-500/30 rounded-xl p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-text mb-1">⚡ Paso 3: Configura tu perfil</h2>
-            <p class="text-text-light text-xs">
-              <span class="font-semibold text-text">{{ selectedArea?.name }}</span>
-            </p>
-          </div>
-          <button (click)="goBack()" class="px-3 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg text-xs font-semibold transition-all border-2 border-primary/30">
-            ← Volver
-          </button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div class="space-y-4">
-          <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
-            <label class="block text-xs font-bold text-text mb-1.5">
-              Descripción del servicio <span class="text-danger">*</span>
-            </label>
-            <textarea
-              [(ngModel)]="description"
-              rows="4"
-              maxlength="500"
-              placeholder="Describe tus servicios, experiencia y qué te hace único..."
-              class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all resize-none placeholder-text-light text-sm">
-            </textarea>
-            <div class="text-right text-[10px] mt-1" [class.text-danger]="description.length > 450" [class.text-text-light]="description.length <= 450">
-              {{ description.length }}/500
-            </div>
-          </div>
-
-          <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
-            <label class="block text-xs font-bold text-text mb-1.5">
-              Slogan (opcional)
-            </label>
-            <input
-              type="text"
-              [(ngModel)]="slogan"
-              maxlength="100"
-              placeholder="Ej: Soluciones rápidas y confiables"
-              class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light text-sm"
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="filterCategories()"
+            placeholder="Buscar categoría..."
+            class="w-full pl-10 pr-4 py-3 text-sm border-2 border-border bg-surface text-text rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
             />
           </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
-              <label class="block text-xs font-bold text-text mb-1.5">
-                Años experiencia
-              </label>
-              <input
-                type="number"
-                [(ngModel)]="experience"
-                min="0"
-                max="50"
-                class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all text-sm"
-              />
-            </div>
-
-            <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
-              <label class="block text-xs font-bold text-text mb-1.5">
-                Precio mínimo ($)
-              </label>
-              <input
-                type="number"
-                [(ngModel)]="priceMin"
-                min="0"
-                step="0.01"
-                class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all text-sm"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="space-y-4">
-          <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border h-full flex flex-col">
-            <h3 class="text-sm font-bold text-text mb-3">
-              Especialidades <span class="text-danger">*</span>
-            </h3>
-
-            <div class="relative mb-3">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="w-4 h-4 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <input
-                type="text"
-                [(ngModel)]="searchTerm"
-                (input)="filterCategories()"
-                placeholder="Buscar especialidad..."
-                class="w-full pl-9 pr-3 py-2 text-xs border-2 border-border bg-background text-text rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
-              />
-            </div>
-
-            <div *ngIf="selectedSpecialties.length > 0" class="mb-3 p-3 bg-success/5 border-2 border-success/30 rounded-lg">
-              <p class="text-[10px] font-semibold text-success mb-1.5">✓ Seleccionadas ({{ selectedSpecialties.length }})</p>
-              <div class="flex flex-wrap gap-1.5">
-                <span *ngFor="let specialty of selectedSpecialties"
-                      class="inline-flex items-center gap-1 bg-success/10 border border-success/30 text-success px-2 py-0.5 rounded-lg text-[10px] font-medium">
-                  {{ specialty.name }}
-                  <button (click)="removeSpecialty(specialty.id)" class="hover:text-danger transition-colors">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                  </button>
-                </span>
-              </div>
-            </div>
-
-            <div class="flex-1 overflow-y-auto max-h-[300px] space-y-1.5 pr-1">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (category of filteredCategories; track category) {
               <div
-                *ngFor="let specialty of filteredSpecialties"
-                (click)="toggleSpecialty(specialty)"
-                class="flex items-center gap-2 p-2 rounded-lg border-2 cursor-pointer transition-all"
-                [class.border-primary]="isSpecialtySelected(specialty.id)"
-                [class.bg-primary/5]="isSpecialtySelected(specialty.id)"
-                [class.border-border]="!isSpecialtySelected(specialty.id)"
-                [class.hover:border-primary/50]="!isSpecialtySelected(specialty.id)">
-                <div class="flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center"
-                     [class.border-primary]="isSpecialtySelected(specialty.id)"
-                     [class.bg-primary]="isSpecialtySelected(specialty.id)"
-                     [class.border-border]="!isSpecialtySelected(specialty.id)">
-                  <svg *ngIf="isSpecialtySelected(specialty.id)" class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                  </svg>
+                (click)="selectMainCategory(category)"
+                class="bg-surface rounded-xl shadow-lg border-2 border-border hover:border-primary hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer p-4">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-2xl">
+                    {{ getCategoryIcon(category) }}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-text text-sm mb-1 truncate">{{ category.name }}</h3>
+                    @if (category.description) {
+                      <p class="text-xs text-text-light line-clamp-2">{{ category.description }}</p>
+                    }
+                    <div class="mt-2 flex items-center gap-1 text-xs text-primary font-semibold">
+                      <span>{{ category.children?.length || 0 }} áreas</span>
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
-                <span class="text-xs font-medium" [class.text-primary]="isSpecialtySelected(specialty.id)" [class.text-text]="!isSpecialtySelected(specialty.id)">
-                  {{ specialty.name }}
-                </span>
               </div>
-            </div>
+            }
           </div>
         </div>
-      </div>
+      }
 
-      <div class="flex items-center justify-end gap-3 pt-4 border-t-2 border-border">
-        <button
-          (click)="onCancel()"
-          [disabled]="isSaving"
-          class="px-4 py-2 border-2 border-border rounded-xl text-text-light hover:text-text hover:border-text-light transition-all font-semibold text-xs disabled:opacity-50">
-          Cancelar
-        </button>
+      @if (!isLoading && step === 'area') {
+        <div class="space-y-4">
+          <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-amber-500/10 border-2 border-amber-500/30 rounded-xl p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-lg font-bold text-text mb-1">🔧 Paso 2: Selecciona tu área</h2>
+                <p class="text-text-light text-xs">Categoría: <span class="font-semibold text-text">{{ selectedMainCategory?.name }}</span></p>
+              </div>
+              <button (click)="goBack()" class="px-3 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg text-xs font-semibold transition-all border-2 border-primary/30">
+                ← Volver
+              </button>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (input)="filterCategories()"
+              placeholder="Buscar área..."
+              class="w-full pl-10 pr-4 py-3 text-sm border-2 border-border bg-surface text-text rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
+              />
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              @for (area of filteredAreas; track area) {
+                <div
+                  (click)="selectArea(area)"
+                  class="bg-surface rounded-xl shadow-lg border-2 border-border hover:border-amber-500 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer p-4">
+                  <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center text-xl">
+                      🔧
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-bold text-text text-sm mb-1 truncate">{{ area.name }}</h3>
+                      @if (area.description) {
+                        <p class="text-xs text-text-light mb-1 line-clamp-1">{{ area.description }}</p>
+                      }
+                      <div class="flex items-center gap-1 text-xs text-amber-500 font-semibold">
+                        <span>{{ area.children?.length || 0 }} especialidades</span>
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
 
-        <button
-          (click)="onSave()"
-          [disabled]="isSaving"
-          class="px-6 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-bold text-xs disabled:opacity-50 flex items-center gap-2 transition-all hover:shadow-xl hover:shadow-primary/30">
-          <span *ngIf="!isSaving">Guardar</span>
-          <span *ngIf="isSaving" class="flex items-center gap-1.5">
-            <div class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
-            Guardando...
-          </span>
-        </button>
-      </div>
-    </div>
+        @if (!isLoading && step === 'config') {
+          <div class="space-y-4">
+            <div class="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 border-2 border-emerald-500/30 rounded-xl p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-lg font-bold text-text mb-1">⚡ Paso 3: Configura tu perfil</h2>
+                  <p class="text-text-light text-xs">
+                    <span class="font-semibold text-text">{{ selectedArea?.name }}</span>
+                  </p>
+                </div>
+                <button (click)="goBack()" class="px-3 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg text-xs font-semibold transition-all border-2 border-primary/30">
+                  ← Volver
+                </button>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div class="space-y-4">
+                <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+                  <label class="block text-xs font-bold text-text mb-1.5">
+                    Descripción del servicio <span class="text-danger">*</span>
+                  </label>
+                  <textarea
+                    [(ngModel)]="description"
+                    rows="4"
+                    maxlength="500"
+                    placeholder="Describe tus servicios, experiencia y qué te hace único..."
+                    class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all resize-none placeholder-text-light text-sm">
+                  </textarea>
+                  <div class="text-right text-[10px] mt-1" [class.text-danger]="description.length > 450" [class.text-text-light]="description.length <= 450">
+                    {{ description.length }}/500
+                  </div>
+                </div>
+                <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+                  <label class="block text-xs font-bold text-text mb-1.5">
+                    Slogan (opcional)
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="slogan"
+                    maxlength="100"
+                    placeholder="Ej: Soluciones rápidas y confiables"
+                    class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light text-sm"
+                    />
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+                      <label class="block text-xs font-bold text-text mb-1.5">
+                        Años experiencia
+                      </label>
+                      <input
+                        type="number"
+                        [(ngModel)]="experience"
+                        min="0"
+                        max="50"
+                        class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+                        />
+                      </div>
+                      <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+                        <label class="block text-xs font-bold text-text mb-1.5">
+                          Precio mínimo ($)
+                        </label>
+                        <input
+                          type="number"
+                          [(ngModel)]="priceMin"
+                          min="0"
+                          step="0.01"
+                          class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+                          />
+                        </div>
+                      </div>
 
-  </div>
-</div>
+                    <!-- Fotos de portfolio -->
+                    <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+                      <div class="flex items-center justify-between mb-3">
+                        <label class="text-xs font-bold text-text">Fotos del trabajo <span class="text-text-light font-normal">(opcional, máx. 5)</span></label>
+                        <span class="text-xs text-text-light">{{ pendingPhotoFiles.length }}/5</span>
+                      </div>
+                      @if (photoPreviewUrls.length > 0) {
+                        <div class="grid grid-cols-4 gap-2 mb-3">
+                          @for (previewUrl of photoPreviewUrls; track $index) {
+                            <div class="relative h-16 rounded-lg overflow-hidden bg-background group">
+                              <img [src]="previewUrl" class="w-full h-full object-cover">
+                              <button (click)="removePhoto($index)" class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <svg class="w-4 h-4 text-danger" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      }
+                      @if (pendingPhotoFiles.length < 5) {
+                        <label class="flex items-center justify-center gap-2 py-3 border-2 border-dashed border-border hover:border-primary rounded-xl cursor-pointer transition-colors">
+                          <svg class="w-4 h-4 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                          <span class="text-xs text-text-light">Agregar foto</span>
+                          <input type="file" accept="image/*" class="hidden" (change)="onPhotoFileSelected($event)">
+                        </label>
+                      }
+                    </div>
+
+                    <!-- CV -->
+                    <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+                      <label class="block text-xs font-bold text-text mb-1.5">
+                        CV / Hoja de vida <span class="text-text-light font-normal">(opcional, PDF recomendado)</span>
+                      </label>
+                      @if (pendingCvFile) {
+                        <div class="flex items-center gap-2 bg-background rounded-lg px-3 py-2 border border-border">
+                          <svg class="w-3.5 h-3.5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                          </svg>
+                          <span class="text-xs text-text flex-1 truncate">{{ cvFileName }}</span>
+                          <button (click)="removeCv()" class="text-text-light hover:text-danger transition-colors">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                          </button>
+                        </div>
+                      } @else {
+                        <label class="flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-border hover:border-primary rounded-xl cursor-pointer transition-colors">
+                          <svg class="w-4 h-4 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                          </svg>
+                          <span class="text-xs text-text-light">Adjuntar CV</span>
+                          <input type="file" accept=".pdf,.doc,.docx" class="hidden" (change)="onCvFileSelected($event)">
+                        </label>
+                      }
+                    </div>
+
+                    <!-- Certificados -->
+                    <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border">
+                      <label class="block text-xs font-bold text-text mb-3">Certificados <span class="text-text-light font-normal">(opcional)</span></label>
+                      @if (pendingCerts.length > 0) {
+                        <div class="space-y-1.5 mb-3">
+                          @for (cert of pendingCerts; track $index) {
+                            <div class="flex items-center gap-2 bg-background rounded-lg px-3 py-2 border border-border">
+                              <svg class="w-3.5 h-3.5 text-text-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                              <span class="text-xs text-text flex-1 truncate">{{ cert.title }}</span>
+                              <span class="text-[10px] text-text-muted flex-shrink-0 truncate max-w-[80px]">{{ cert.file.name }}</span>
+                              <button (click)="removeCertificate($index)" class="text-text-light hover:text-danger transition-colors">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      }
+                      <input type="text" [(ngModel)]="pendingCertTitle" placeholder="Nombre del certificado..."
+                        class="w-full px-3 py-2 border-2 border-border bg-background text-text rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light text-xs mb-2">
+                      <label class="flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-border hover:border-primary rounded-xl cursor-pointer transition-colors" [class.opacity-50]="!pendingCertTitle.trim()">
+                        <svg class="w-4 h-4 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span class="text-xs text-text-light">Adjuntar certificado</span>
+                        <input type="file" accept=".pdf,.jpg,.jpeg,.png" class="hidden" [disabled]="!pendingCertTitle.trim()" (change)="onCertFileSelected($event)">
+                      </label>
+                    </div>
+
+                    </div>
+                    <div class="space-y-4">
+                      <div class="bg-surface rounded-xl shadow-lg p-4 border-2 border-border h-full flex flex-col">
+                        <h3 class="text-sm font-bold text-text mb-3">
+                          Especialidades <span class="text-danger">*</span>
+                        </h3>
+                        <div class="relative mb-3">
+                          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                          </div>
+                          <input
+                            type="text"
+                            [(ngModel)]="searchTerm"
+                            (input)="filterCategories()"
+                            placeholder="Buscar especialidad..."
+                            class="w-full pl-9 pr-3 py-2 text-xs border-2 border-border bg-background text-text rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder-text-light"
+                            />
+                          </div>
+                          @if (selectedSpecialties.length > 0) {
+                            <div class="mb-3 p-3 bg-success/5 border-2 border-success/30 rounded-lg">
+                              <p class="text-[10px] font-semibold text-success mb-1.5">✓ Seleccionadas ({{ selectedSpecialties.length }})</p>
+                              <div class="flex flex-wrap gap-1.5">
+                                @for (specialty of selectedSpecialties; track specialty) {
+                                  <span
+                                    class="inline-flex items-center gap-1 bg-success/10 border border-success/30 text-success px-2 py-0.5 rounded-lg text-[10px] font-medium">
+                                    {{ specialty.name }}
+                                    <button (click)="removeSpecialty(specialty.id)" class="hover:text-danger transition-colors">
+                                      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                      </svg>
+                                    </button>
+                                  </span>
+                                }
+                              </div>
+                            </div>
+                          }
+                          <div class="flex-1 overflow-y-auto max-h-[300px] space-y-1.5 pr-1">
+                            @for (specialty of filteredSpecialties; track specialty) {
+                              <div
+                                (click)="toggleSpecialty(specialty)"
+                                class="flex items-center gap-2 p-2 rounded-lg border-2 cursor-pointer transition-all"
+                                [class.border-primary]="isSpecialtySelected(specialty.id)"
+                                [class.bg-primary/5]="isSpecialtySelected(specialty.id)"
+                                [class.border-border]="!isSpecialtySelected(specialty.id)"
+                                [class.hover:border-primary/50]="!isSpecialtySelected(specialty.id)">
+                                <div class="flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center"
+                                  [class.border-primary]="isSpecialtySelected(specialty.id)"
+                                  [class.bg-primary]="isSpecialtySelected(specialty.id)"
+                                  [class.border-border]="!isSpecialtySelected(specialty.id)">
+                                  @if (isSpecialtySelected(specialty.id)) {
+                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                  }
+                                </div>
+                                <span class="text-xs font-medium" [class.text-primary]="isSpecialtySelected(specialty.id)" [class.text-text]="!isSpecialtySelected(specialty.id)">
+                                  {{ specialty.name }}
+                                </span>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-3 pt-4 border-t-2 border-border">
+                      <button
+                        (click)="onCancel()"
+                        [disabled]="isSaving"
+                        class="px-4 py-2 border-2 border-border rounded-xl text-text-light hover:text-text hover:border-text-light transition-all font-semibold text-xs disabled:opacity-50">
+                        Cancelar
+                      </button>
+                      <button
+                        (click)="onSave()"
+                        [disabled]="isSaving"
+                        class="px-6 py-2 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-bold text-xs disabled:opacity-50 flex items-center gap-2 transition-all hover:shadow-xl hover:shadow-primary/30">
+                        @if (!isSaving) {
+                          <span>Guardar</span>
+                        }
+                        @if (isSaving) {
+                          <span class="flex items-center gap-1.5">
+                            <div class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                            Guardando...
+                          </span>
+                        }
+                      </button>
+                    </div>
+                  </div>
+                }
+
+              </div>
+            </div>

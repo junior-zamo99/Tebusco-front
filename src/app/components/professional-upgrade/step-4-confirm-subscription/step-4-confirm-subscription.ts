@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { SubscriptionService } from '../../../services/subscription.service';
 import { Plan } from '../../../models/plan.model';
 import { Subscription } from '../../../models/subscription.model';
@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-step-4-confirm-subscription',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [FormsModule],
   templateUrl: './step-4-confirm-subscription.html',
   styleUrl: './step-4-confirm-subscription.css'
 })

@@ -1,212 +1,415 @@
-<div class="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-4 px-4">
-  <div class="max-w-5xl mx-auto space-y-4">
+<div class="min-h-screen bg-background text-text font-sans selection:bg-primary selection:text-white">
 
-    <div class="text-center space-y-2">
-      <div class="inline-block mb-1">
-         <img src="/assets/img/logo/logo.png" alt="Logo TEBUSCO" class="mx-auto max-w-[100px] max-h-16 object-contain">
-      </div>
-      <h1 class="text-2xl font-bold text-text">
-          Selecciona tus Áreas de Trabajo
-      </h1>
-      <p class="text-text-light text-sm max-w-2xl mx-auto">
-        Elige las áreas profesionales donde ofrecerás tus servicios.
-      </p>
-    </div>
-
-    <div class="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/30 rounded-xl p-3 shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-          <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div class="flex-1">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-             <p class="text-text font-semibold text-sm">
-                 Límite: <span class="text-primary">{{ categoryLimit }}</span> área(s).
-                 <span class="text-text-light font-normal text-xs ml-1">Especialidades ilimitadas.</span>
-             </p>
-             <div *ngIf="selectedLevel2Count > 0" class="flex items-center gap-2 min-w-[120px]">
-                <div class="flex-1 bg-background rounded-full h-2 overflow-hidden border border-primary/10">
-                  <div class="h-full bg-primary transition-all duration-500" [style.width.%]="(selectedLevel2Count / categoryLimit) * 100"></div>
-                </div>
-                <span class="text-xs font-bold text-primary">{{ selectedLevel2Count }}/{{ categoryLimit }}</span>
-             </div>
-          </div>
-        </div>
+  <!-- Top bar -->
+  <div class="border-b border-border px-4 py-4 bg-card-bg">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <img src="/assets/img/logo/logo.png" alt="Logo TEBUSCO" class="max-h-10 object-contain">
+      <div class="text-right">
+        <p class="text-xs text-text-muted">Paso 2 de 3</p>
+        <p class="text-sm font-semibold text-text">
+          {{ viewStep === 'select' ? 'Seleccionar áreas de trabajo' : 'Configurar áreas de trabajo' }}
+        </p>
       </div>
     </div>
+  </div>
 
-    <div *ngIf="errorMessage" class="bg-danger/10 border border-danger/30 rounded-lg p-2 flex items-center gap-2 animate-fade-in">
-      <svg class="w-5 h-5 text-danger" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>
-      <p class="text-danger text-xs font-medium">{{ errorMessage }}</p>
-    </div>
+  <div class="max-w-6xl mx-auto px-4 py-6">
 
-    <div *ngIf="isLoading" class="flex justify-center items-center py-10">
-      <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
-    </div>
-
-    <div *ngIf="!isLoading" class="space-y-4">
-
-      <div class="flex flex-col md:flex-row gap-3">
-        <div class="flex-1 bg-surface rounded-lg shadow-sm p-2 border border-border overflow-x-auto flex items-center gap-2">
-          <button *ngIf="currentPath.length > 0" (click)="goBack()" class="flex-shrink-0 px-2 py-1 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded text-xs font-semibold transition-all">
-             ← Volver
-          </button>
-
-          <div class="flex items-center gap-1 text-xs whitespace-nowrap">
-             <span class="px-2 py-1 bg-background rounded border border-border font-medium">Inicio</span>
-             <span *ngFor="let item of currentPath" class="flex items-center gap-1 text-text-light">
-               <span>/</span>
-               <span class="px-2 py-1 rounded border border-primary text-primary bg-primary/5 font-medium flex items-center gap-1">
-                 <span [ngClass]="getLevelBadgeColor(item.level)" class="px-1 rounded text-[9px] font-bold border">{{ getLevelLabel(item.level) }}</span>
-                 {{ item.name }}
-               </span>
-             </span>
-          </div>
-        </div>
-
-        <div class="bg-surface rounded-lg shadow-sm p-2 border border-border flex items-center justify-between gap-3 min-w-[200px]">
-           <span [ngClass]="getLevelBadgeColor(currentLevelType)" class="px-2 py-1 rounded text-xs font-bold border shadow-sm">
-             Nivel {{ currentLevelType }}
-           </span>
-           <span class="text-xs text-text-light">{{ filteredCategories.length }} ítems</span>
-        </div>
-      </div>
-
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg class="w-4 h-4 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-        </div>
-        <input type="text" [(ngModel)]="searchTerm" (input)="filterCategories()"
-          placeholder="Buscar categorías..."
-          class="w-full pl-9 pr-8 py-2 text-sm border border-border bg-surface text-text rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm">
-        <button *ngIf="searchTerm" (click)="searchTerm = ''; filterCategories()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-text-light hover:text-danger">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>
+    <!-- Error -->
+    @if (errorMessage) {
+      <div class="bg-danger/10 border border-danger/30 rounded-xl p-4 flex items-center gap-3 mb-4">
+        <svg class="w-4 h-4 text-danger flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+        <p class="text-danger text-sm flex-1">{{ errorMessage }}</p>
+        <button (click)="errorMessage = ''" class="text-danger hover:text-text transition-colors">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
         </button>
       </div>
+    }
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div *ngFor="let category of filteredCategories"
-             (click)="selectCategory(category)"
-             class="relative bg-surface rounded-xl shadow-sm border transition-all hover:shadow-md cursor-pointer overflow-hidden group p-3"
-             [class.border-success]="category.level === 2 && isLevel2Selected(category.id)"
-             [class.bg-success/5]="category.level === 2 && isLevel2Selected(category.id)"
-             [class.ring-1]="category.level === 2 && isLevel2Selected(category.id)"
-             [class.ring-success/30]="category.level === 2 && isLevel2Selected(category.id)"
-             [class.border-primary]="category.level === 3 && isLevel3Selected(category.id)"
-             [class.bg-primary/5]="category.level === 3 && isLevel3Selected(category.id)"
-             [class.border-border]="!isLevel2Selected(category.id) && !isLevel3Selected(category.id)"
-             [class.opacity-60]="category.level === 2 && !isLevel2Selected(category.id) && !canAddMoreLevel2"
-             [class.cursor-not-allowed]="category.level === 2 && !isLevel2Selected(category.id) && !canAddMoreLevel2">
+    <!-- ══════════════════════════════════════════════════════════
+         PASO 1: Seleccionar áreas
+    ══════════════════════════════════════════════════════════ -->
+    @if (viewStep === 'select') {
 
-          <div *ngIf="(category.level === 2 && isLevel2Selected(category.id)) || (category.level === 3 && isLevel3Selected(category.id))"
-               class="absolute top-2 right-2 z-10">
-            <div [ngClass]="category.level === 2 ? 'bg-success' : 'bg-primary'" class="w-5 h-5 rounded-full flex items-center justify-center shadow-sm text-white">
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+    <div class="mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-text">¿En qué áreas trabajas?</h1>
+      <p class="text-text-muted text-sm mt-1">Selecciona todas las áreas donde ofreces tus servicios.</p>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-5 items-start">
+
+      <!-- ── Panel izquierdo: Navegación ── -->
+      <div class="flex-1 min-w-0 space-y-4">
+
+        @if (isLoading) {
+          <div class="flex justify-center items-center py-24">
+            <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+          </div>
+        }
+
+        @if (!isLoading) {
+
+          <!-- Breadcrumb -->
+          <div class="flex items-center gap-2 text-sm overflow-x-auto py-1 min-h-[28px]">
+            @if (currentPath.length > 0) {
+              <button (click)="goBack()" class="flex-shrink-0 flex items-center gap-1.5 text-text-light hover:text-text transition-colors font-medium">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Volver
+              </button>
+              <span class="text-text-muted">·</span>
+            }
+            <div class="flex items-center gap-1.5 whitespace-nowrap">
+              <span class="text-text-muted text-xs">Inicio</span>
+              @for (item of currentPath; track item) {
+                <svg class="w-3 h-3 text-text-muted flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-text font-semibold text-xs">{{ item.name }}</span>
+              }
+            </div>
+            <span class="ml-auto flex-shrink-0 text-xs text-text-muted">{{ filteredCategories.length }} resultados</span>
+          </div>
+
+          <!-- Hint contextual -->
+          @if (currentPath.length > 0) {
+            <div class="bg-card-bg border border-border rounded-xl p-3.5 flex items-start gap-3">
+              <div class="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-3 h-3 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-text-light text-xs leading-relaxed">
+                  @if (currentPath.length === 1) {
+                    Estás viendo las <strong class="text-text">áreas</strong> dentro de <strong class="text-text">{{ currentPath[0].name }}</strong>. Selecciona las que apliquen.
+                  } @else {
+                    Estás viendo las <strong class="text-text">especialidades</strong> de <strong class="text-text">{{ currentPath[currentPath.length - 1].name }}</strong>. Cuando termines, usa <strong class="text-text">Volver</strong> para agregar más áreas.
+                  }
+                </p>
+                @if (currentPath.length >= 2) {
+                  <button (click)="goToRoot()" class="mt-2 text-xs text-primary hover:underline font-medium">
+                    Ir al inicio y agregar otra área
+                  </button>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Search -->
+          <div class="relative">
+            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input type="text" [(ngModel)]="searchTerm" (input)="filterCategories()" placeholder="Buscar..."
+              class="w-full pl-10 pr-9 py-2.5 bg-card-bg border border-border text-text text-sm rounded-xl focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-text-muted">
+            @if (searchTerm) {
+              <button (click)="searchTerm = ''; filterCategories()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            }
+          </div>
+
+          <!-- Grid -->
+          @if (filteredCategories.length > 0) {
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              @for (category of filteredCategories; track category) {
+                <div (click)="selectCategory(category)"
+                  class="relative rounded-xl border p-4 cursor-pointer transition-all duration-200 group"
+                  [ngClass]="{
+                    'bg-primary/10 border-primary/50': (category.level === 2 && isLevel2Selected(category.id)) || (category.level === 3 && isLevel3Selected(category.id)),
+                    'bg-card-bg border-border hover:border-neutral hover:bg-card-bg-light': !(category.level === 2 && isLevel2Selected(category.id)) && !(category.level === 3 && isLevel3Selected(category.id))
+                  }">
+                  @if ((category.level === 2 && isLevel2Selected(category.id)) || (category.level === 3 && isLevel3Selected(category.id))) {
+                    <div class="absolute top-3.5 right-3.5 w-2 h-2 rounded-full bg-primary"></div>
+                  }
+                  <div class="space-y-1.5 pr-4">
+                    <h3 class="font-semibold text-sm leading-snug transition-colors"
+                      [ngClass]="(category.level === 2 && isLevel2Selected(category.id)) || (category.level === 3 && isLevel3Selected(category.id)) ? 'text-text' : 'text-text-light group-hover:text-text'">
+                      {{ category.name }}
+                    </h3>
+                    @if (category.description) {
+                      <p class="text-xs text-text-muted leading-relaxed line-clamp-2">{{ category.description }}</p>
+                    }
+                    <div class="flex items-center justify-between pt-0.5">
+                      @if (category.level === 2 && isLevel2Selected(category.id)) {
+                        <span class="text-xs text-primary/80 font-medium">
+                          {{ getLevel3CountForLevel2(category.id) > 0 ? getLevel3CountForLevel2(category.id) + ' especialidad(es)' : 'Sin especialidades' }}
+                        </span>
+                        <span class="text-xs text-text-muted">Editar</span>
+                      } @else if (hasChildren(category)) {
+                        <span class="text-xs text-text-muted">
+                          {{ category.children!.length }} {{ category.level === 1 ? 'áreas' : 'especialidades' }}
+                        </span>
+                        <svg class="w-3.5 h-3.5 text-text-muted group-hover:text-text-light transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="rounded-xl border border-border bg-card-bg p-10 text-center">
+              <p class="text-text-muted text-sm mb-3">No se encontraron resultados</p>
+              <button (click)="searchTerm = ''; filterCategories()" class="text-xs text-primary hover:underline font-medium">
+                Limpiar búsqueda
+              </button>
+            </div>
+          }
+
+        }
+      </div>
+
+      <!-- ── Panel derecho: resumen ── -->
+      <div class="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-6 space-y-3">
+        <div class="rounded-2xl border border-border bg-card-bg overflow-hidden">
+
+          <div class="px-5 py-4 border-b border-border flex items-center justify-between">
+            <h2 class="font-semibold text-sm text-text">Áreas seleccionadas</h2>
+            <span class="bg-primary/20 text-primary text-xs font-bold px-2.5 py-0.5 rounded-full">{{ selectedLevel2Count }}/2</span>
+          </div>
+          <div class="px-5 pt-3 pb-0">
+            <div class="flex items-start gap-2 bg-accent/5 border border-accent/20 rounded-lg px-3 py-2.5">
+              <svg class="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+              <p class="text-[11px] text-accent/90 leading-relaxed">
+                Inicialmente podés configurar <strong class="text-accent">hasta 2 áreas</strong>. Desde tu dashboard podrás agregar más.
+              </p>
             </div>
           </div>
 
-          <div *ngIf="category.level === 2 && !isLevel2Selected(category.id) && !canAddMoreLevel2"
-               class="absolute inset-0 bg-background/80 flex items-center justify-center z-10 backdrop-blur-[1px]">
-             <span class="text-[10px] font-bold text-danger border border-danger/30 bg-danger/5 px-2 py-1 rounded">Límite alcanzado</span>
-          </div>
-
-          <div class="flex items-start gap-3 relative z-0">
-             <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center text-lg border border-primary/10 group-hover:scale-105 transition-transform">
-               {{ getCategoryIcon(category) }}
-             </div>
-
-             <div class="flex-1 min-w-0">
-               <div class="flex items-center gap-1 mb-0.5">
-                 <h3 class="font-bold text-text text-sm group-hover:text-primary transition-colors truncate">
-                   {{ category.name }}
-                 </h3>
-               </div>
-
-               <p class="text-xs text-text-light leading-tight line-clamp-2" *ngIf="category.description">
-                 {{ category.description }}
-               </p>
-
-               <div *ngIf="category.level === 2 && isLevel2Selected(category.id)" class="mt-2 pt-2 border-t border-success/20 flex items-center justify-between text-xs">
-                 <span class="text-success font-bold flex items-center gap-1">
-                   {{ getLevel3CountForLevel2(category.id) }} esp.
-                 </span>
-                 <span class="text-primary hover:underline cursor-pointer font-medium">
-                   {{ getLevel3CountForLevel2(category.id) > 0 ? 'Editar' : 'Agregar' }}
-                 </span>
-               </div>
-
-               <div *ngIf="hasChildren(category) && (category.level === 1 || (category.level === 2 && !isLevel2Selected(category.id)))" class="mt-2 text-[10px] text-text-light flex items-center gap-1">
-                 <span class="w-1.5 h-1.5 rounded-full bg-primary/50"></span>
-                 {{ category.children!.length }} {{ category.level === 1 ? 'áreas' : 'especialidades' }}
-               </div>
-             </div>
-          </div>
-        </div>
-      </div>
-
-      <div *ngIf="filteredCategories.length === 0" class="bg-surface rounded-lg shadow-sm p-8 text-center border border-border">
-        <p class="text-text font-bold text-sm mb-1">No se encontraron resultados</p>
-        <button (click)="searchTerm = ''; filterCategories()" class="text-xs text-primary hover:underline font-semibold">
-          Limpiar búsqueda
-        </button>
-      </div>
-    </div>
-
-    <div *ngIf="selectedLevel2Count > 0" class="bg-success/5 border border-success/20 rounded-xl p-3 shadow-sm">
-      <h3 class="font-bold text-text text-sm mb-3 flex items-center gap-2">
-         <span class="w-2 h-2 rounded-full bg-success"></span>
-         Resumen de Selección ({{ selectedLevel2Count }})
-      </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        <div *ngFor="let selected of getSelectedLevel2Array()" class="bg-surface border border-success/20 rounded-lg p-2 flex flex-col gap-2">
-           <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2 overflow-hidden">
-                <span class="text-lg">{{ getCategoryIcon(selected.category) }}</span>
-                <span class="font-bold text-xs text-text truncate">{{ selected.category.name }}</span>
-              </div>
-              <button (click)="removeLevel2Category(selected.category.id, $event)" class="text-danger hover:bg-danger/10 p-1 rounded transition-colors" title="Eliminar">
-                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+          <div class="px-5 py-4 space-y-2 min-h-[100px]">
+            @if (selectedLevel2Count === 0) {
+              <p class="text-text-muted text-xs text-center py-4">Selecciona tus áreas de trabajo a la izquierda.</p>
+            } @else {
+              @for (selected of getSelectedLevel2Array(); track selected) {
+                <div class="flex items-center gap-2.5 rounded-lg bg-background border border-border px-3 py-2">
+                  <div class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs text-text font-medium truncate">{{ selected.category.name }}</p>
+                    <p class="text-[10px] text-text-muted">{{ selected.selectedLevel3Ids.length }} especialidad(es)</p>
+                  </div>
+                  <button (click)="removeLevel2Category(selected.category.id, $event)" class="text-text-muted hover:text-danger transition-colors p-0.5">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                  </button>
+                </div>
+              }
+              <button (click)="goToRoot()" class="w-full py-2 border border-dashed border-border hover:border-primary/50 hover:bg-primary/5 rounded-xl text-xs text-text-muted hover:text-primary transition-all font-medium mt-1">
+                + Agregar otra área
               </button>
-           </div>
+            }
+          </div>
 
-           <div class="flex flex-wrap gap-1">
-             <span *ngIf="selected.selectedLevel3Ids.length === 0" class="text-[10px] text-text-light italic">Sin especialidades</span>
-             <span *ngFor="let level3Id of selected.selectedLevel3Ids" class="bg-primary/5 border border-primary/10 text-primary px-1.5 py-0.5 rounded text-[10px]">
-               {{ getCategoryNameById(level3Id, selected.category.children) }}
-             </span>
-           </div>
+          <div class="px-5 py-4 border-t border-border space-y-2.5">
+            <button (click)="goToConfigStep()" [disabled]="selectedLevel2Count === 0"
+              class="w-full py-3 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+              {{ selectedLevel2Count === 0 ? 'Selecciona al menos un área' : 'Configurar ' + selectedLevel2Count + (selectedLevel2Count === 1 ? ' área' : ' áreas') + ' →' }}
+            </button>
+            <div class="flex gap-2">
+              <button (click)="onBack()" class="flex-1 py-2.5 border border-border hover:border-neutral text-text-muted hover:text-text rounded-xl font-medium text-xs transition-all">
+                Volver
+              </button>
+              <button (click)="onSkip()" class="flex-1 py-2.5 border border-border hover:border-neutral text-text-muted hover:text-text rounded-xl font-medium text-xs transition-all">
+                Saltar
+              </button>
+            </div>
+          </div>
+
         </div>
+      </div>
+
+    </div>
+    } <!-- fin viewStep === 'select' -->
+
+    <!-- ══════════════════════════════════════════════════════════
+         PASO 2: Configurar cada área seleccionada
+    ══════════════════════════════════════════════════════════ -->
+    @if (viewStep === 'configure') {
+
+    <div class="mb-6 flex items-center gap-4">
+      <button (click)="goBackToSelect()" class="w-9 h-9 rounded-xl bg-card-bg border border-border flex items-center justify-center text-text-muted hover:text-text hover:border-neutral transition-all flex-shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-text">Configura tus áreas</h1>
+        <p class="text-text-muted text-sm mt-0.5">Completa la información de cada área que ofrecés. Todo es opcional.</p>
       </div>
     </div>
 
-    <div class="bg-primary/5 border border-primary/20 rounded-lg p-3 flex items-start gap-3">
-       <div class="flex-shrink-0 w-5 h-5 bg-primary/20 text-primary rounded flex items-center justify-center text-xs font-bold">i</div>
-       <div class="text-xs text-text-light space-y-1">
-         <p>1. Navega por las categorías principales.</p>
-         <p>2. Selecciona hasta <strong>{{ categoryLimit }}</strong> áreas.</p>
-         <p>3. Marca tus especialidades.</p>
-       </div>
-    </div>
+    <div class="space-y-6">
+      @for (selected of getSelectedLevel2Array(); track selected) {
 
-    <div class="flex items-center justify-between gap-3 pt-2 border-t border-border">
-      <button (click)="onSkip()" [disabled]="isSaving" class="text-xs font-semibold text-text-light hover:text-text px-3 py-2 border border-transparent hover:border-border rounded transition-all">
-        Configurar luego
-      </button>
+        <div class="rounded-2xl border border-border bg-card-bg overflow-hidden">
 
-      <div class="flex gap-2">
-        <button (click)="onBack()" [disabled]="isSaving" class="px-4 py-2 border border-border rounded-lg text-xs font-bold text-text hover:bg-surface-hover transition-all">
+          <!-- Cabecera del área -->
+          <div class="px-6 py-4 border-b border-border flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <div>
+              <h2 class="font-bold text-text text-base">{{ selected.category.name }}</h2>
+              <p class="text-xs text-text-muted">{{ selected.selectedLevel3Ids.length }} especialidad(es) seleccionada(s)</p>
+            </div>
+          </div>
+
+          <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- Columna izquierda -->
+            <div class="space-y-5">
+
+              <!-- Descripción -->
+              <div>
+                <label class="block text-xs font-bold text-text-light uppercase tracking-wide mb-2">
+                  Descripción <span class="text-text-muted font-normal normal-case">(opcional)</span>
+                </label>
+                <textarea [(ngModel)]="selected.description" rows="4" maxlength="500"
+                  placeholder="Describe tu experiencia y qué ofrecés en esta área..."
+                  class="w-full bg-background border border-border text-text text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/20 resize-none placeholder:text-text-muted transition-all"></textarea>
+                <p class="text-right text-[10px] text-text-muted mt-1">{{ selected.description.length }}/500</p>
+              </div>
+
+              <!-- Slogan -->
+              <div>
+                <label class="block text-xs font-bold text-text-light uppercase tracking-wide mb-2">
+                  Slogan <span class="text-text-muted font-normal normal-case">(opcional)</span>
+                </label>
+                <input type="text" [(ngModel)]="selected.slogan" maxlength="100"
+                  placeholder="Ej: Soluciones rápidas y confiables"
+                  class="w-full bg-background border border-border text-text text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/20 placeholder:text-text-muted transition-all">
+              </div>
+
+              <!-- Experiencia y Precio -->
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-text-light uppercase tracking-wide mb-2">Años de exp.</label>
+                  <input type="number" [(ngModel)]="selected.experience" min="0" max="50" placeholder="0"
+                    class="w-full bg-background border border-border text-text text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-primary/60 placeholder:text-text-muted transition-all">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-text-light uppercase tracking-wide mb-2">Precio mín. (Bs)</label>
+                  <input type="number" [(ngModel)]="selected.priceMin" min="0" placeholder="0"
+                    class="w-full bg-background border border-border text-text text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-primary/60 placeholder:text-text-muted transition-all">
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Columna derecha -->
+            <div class="space-y-5">
+
+              <!-- Fotos de portfolio -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-xs font-bold text-text-light uppercase tracking-wide">
+                    Fotos del trabajo <span class="text-text-muted font-normal normal-case">(opcional, máx. 5)</span>
+                  </label>
+                  <span class="text-xs text-text-muted">{{ selected.pendingPhotoFiles.length }}/5</span>
+                </div>
+                @if (selected.photoPreviewUrls.length > 0) {
+                  <div class="grid grid-cols-3 gap-2 mb-3">
+                    @for (previewUrl of selected.photoPreviewUrls; track $index) {
+                      <div class="relative h-20 rounded-lg overflow-hidden bg-neutral group">
+                        <img [src]="previewUrl" class="w-full h-full object-cover">
+                        <button (click)="removePhoto(selected.category.id, $index)"
+                          class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <svg class="w-5 h-5 text-danger" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (selected.pendingPhotoFiles.length < 5) {
+                  <label class="flex items-center justify-center gap-2 py-4 border border-dashed border-border hover:border-primary/50 hover:bg-primary/5 rounded-xl cursor-pointer transition-all group">
+                    <svg class="w-4 h-4 text-text-muted group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span class="text-sm text-text-muted group-hover:text-primary transition-colors">Agregar foto</span>
+                    <input type="file" accept="image/*" class="hidden" (change)="onPhotoFileSelected(selected.category.id, $event)">
+                  </label>
+                }
+              </div>
+
+              <!-- CV -->
+              <div>
+                <label class="block text-xs font-bold text-text-light uppercase tracking-wide mb-2">
+                  CV / Hoja de vida <span class="text-text-muted font-normal normal-case">(opcional)</span>
+                </label>
+                @if (selected.pendingCvFile) {
+                  <div class="flex items-center gap-2 bg-background rounded-lg px-3 py-2 border border-border mb-2">
+                    <svg class="w-3.5 h-3.5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <span class="text-xs text-text-light flex-1 truncate">{{ selected.cvFileName }}</span>
+                    <button (click)="removeCv(selected.category.id)" class="text-text-muted hover:text-danger transition-colors">
+                      <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                      </svg>
+                    </button>
+                  </div>
+                } @else {
+                  <label class="flex items-center justify-center gap-2 py-3 border border-dashed border-border hover:border-primary/50 hover:bg-primary/5 rounded-xl cursor-pointer transition-all group">
+                    <svg class="w-4 h-4 text-text-muted group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="text-sm text-text-muted group-hover:text-primary transition-colors">Adjuntar CV</span>
+                    <input type="file" accept=".pdf,.doc,.docx" class="hidden" (change)="onCvFileSelected(selected.category.id, $event)">
+                  </label>
+                }
+              </div>
+
+              <!-- Certificados -->
+              <div>
+                <label class="block text-xs font-bold text-text-light uppercase tracking-wide mb-2">
+                  Certificados <span class="text-text-muted font-normal normal-case">(opcional)</span>
+                </label>
+                @if (selected.pendingCerts.length > 0) {
+                  <div class="space-y-1.5 mb-3">
+                    @for (cert of selected.pendingCerts; track $index) {
+                      <div class="flex items-center gap-2 bg-background rounded-lg px-3 py-2 border border-border">
+                        <svg class="w-3.5 h-3.5 text-text-muted flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span class="text-xs text-text-light flex-1 truncate">{{ cert.title }}</span>
+                        <span class="text-[10px] text-text-muted flex-shrink-0 truncate max-w-[80px]">{{ cert.file.name }}</span>
+                        <button (click)="removeCertificate(selected.category.id, $index)" class="text-text-muted hover:text-danger transition-colors">
+                          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                }
+                <input type="text" [(ngModel)]="selected.pendingCertTitle" placeholder="Nombre del certificado..."
+                  class="w-full bg-background border border-border text-text text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-primary/60 placeholder:text-text-muted transition-all mb-2">
+                <label class="flex items-center justify-center gap-2 py-3 border border-dashed border-border hover:border-primary/50 hover:bg-primary/5 rounded-xl cursor-pointer transition-all group" [class.opacity-40]="!selected.pendingCertTitle.trim()">
+                  <svg class="w-4 h-4 text-text-muted group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  <span class="text-sm text-text-muted group-hover:text-primary transition-colors">Adjuntar certificado</span>
+                  <input type="file" accept=".pdf,.jpg,.jpeg,.png" class="hidden" [disabled]="!selected.pendingCertTitle.trim()" (change)="onCertFileSelected(selected.category.id, $event)">
+                </label>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      }
+
+      <!-- Botones finales -->
+      <div class="flex flex-col sm:flex-row gap-3 pb-8">
+        <button (click)="onSave()" [disabled]="isSaving"
+          class="flex-1 py-3.5 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-primary">
+          @if (isSaving) {
+            <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+          }
+          Continuar
+        </button>
+        <button (click)="goBackToSelect()" [disabled]="isSaving"
+          class="sm:w-40 py-3.5 border border-border hover:border-neutral text-text-muted hover:text-text rounded-xl font-medium text-sm transition-all disabled:opacity-40">
           Volver
         </button>
-
-        <button (click)="onSave()" [disabled]="selectedLevel2Count === 0 || isSaving"
-          class="px-5 py-2 bg-primary text-white rounded-lg font-bold text-xs flex items-center gap-2 shadow-sm hover:bg-primary-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-          <span *ngIf="isSaving" class="animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full"></span>
-          {{ selectedLevel2Count === 0 ? 'Selecciona 1 área' : 'Guardar y Finalizar' }}
-        </button>
       </div>
+
     </div>
+    }
 
   </div>
 </div>

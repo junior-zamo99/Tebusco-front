@@ -127,4 +127,14 @@ export class CategoryService {
       map(response => response.data)
     );
   }
+
+  searchCategory(term: string): Observable<CategoryNode[]> {
+    return this.http.get<CategoriesResponse>(
+      `${this.apiUrl}/search/${encodeURIComponent(term)}`,
+      { withCredentials: true }
+    ).pipe(
+      map(response => response.data)
+    );
+  }
+
 }

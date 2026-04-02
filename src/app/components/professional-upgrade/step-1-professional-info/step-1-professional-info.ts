@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProfessionalService } from '../../../services/professional.service';
 import { StorageService } from '../../../services/storage.service';
@@ -8,7 +8,7 @@ import { StorageService } from '../../../services/storage.service';
 @Component({
   selector: 'app-step-1-professional-info',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './step-1-professional-info.html',
   styleUrl: './step-1-professional-info.css'
 })

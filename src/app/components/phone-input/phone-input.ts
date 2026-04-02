@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { COUNTRIES, Country } from '../../utils/country';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { PhoneNumberUtil } from 'google-libphonenumber';
 @Component({
   selector: 'app-phone-input',
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule],
   templateUrl: './phone-input.html',
   styleUrl: './phone-input.css',
 })

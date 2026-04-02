@@ -204,16 +204,11 @@ export class ProfessionalPlansComponent implements OnInit, OnDestroy {
     });
   }
 
-  onCancel() {
-    this.dialogService.confirm(
-      'Cancelar proceso',
-      '¿Estás seguro de que deseas cancelar? Perderás el progreso actual.',
-      'Sí, cancelar',
-      'No, continuar'
-    ).pipe(takeUntil(this.destroy$)).subscribe(result => {
-      if (result.confirmed) {
-        this.router.navigate(['/applicant/dashboard']);
-      }
-    });
+  onBack() {
+    this.router.navigate(['/professional/categories']);
+  }
+
+  onSkip() {
+    this.router.navigate(['/professional/dashboard']);
   }
 }

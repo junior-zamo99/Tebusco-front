@@ -112,6 +112,34 @@ export interface UsageDetail {
   available: number | string;
 }
 
+export interface ProfileCategoryPortfolioPhoto {
+  id: number;
+  imageUrl: string;
+  imageMediumUrl?: string;
+  imageThumbnailUrl?: string;
+  caption?: string;
+  order: number;
+  createdAt: string;
+}
+
+export interface ProfileCategoryCertificate {
+  id: number;
+  title: string;
+  description?: string;
+  fileUrl: string;
+  status: 'uploaded' | 'approved' | 'rejected';
+  issuedAt?: string;
+  createdAt: string;
+}
+
+export interface ProfileCategoryCV {
+  id: number;
+  fileUrl: string;
+  status: 'uploaded' | 'approved' | 'rejected';
+  rejectionReason?: string | null;
+  createdAt: string;
+}
+
 export interface ProfileCategoryDetail {
   id: number;
   categoryId: number;
@@ -127,6 +155,9 @@ export interface ProfileCategoryDetail {
   specialties: specialtiesDetail[];
   visible: boolean;
   specialtiesCount: number;
+  portfolioPhotos: ProfileCategoryPortfolioPhoto[];
+  certificates: ProfileCategoryCertificate[];
+  cv?: ProfileCategoryCV | null;
   createdAt: string;
   updatedAt: string;
 }

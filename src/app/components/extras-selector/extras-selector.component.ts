@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ExtraPackage, SelectedExtra } from '../../services/extras.service';
 
 export interface ExtraFeatureGroup {
@@ -13,7 +13,7 @@ export interface ExtraFeatureGroup {
 @Component({
   selector: 'app-extras-selector',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './extras-selector.component.html',
   styleUrls: ['./extras-selector.component.css']
 })

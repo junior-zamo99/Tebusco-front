@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { Subject, Subscription, of } from 'rxjs';
 import { debounceTime, switchMap, catchError, distinctUntilChanged } from 'rxjs/operators';
@@ -22,7 +22,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-search-result',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './search-result.html',
   styleUrl: './search-result.css',
 })
@@ -174,17 +174,27 @@ export class SearchResult implements OnInit, OnChanges, OnDestroy {
   }
 
   viewAllResults(): void {
-   if (!this.authService.isAuthenticated()) {
+    if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/auth-required']);
       this.closeResults();
       return;
     }
+
+    const applicant = this.storageService.getApplicant();
+    const queryParams: Record<string, string | number> = { term: this.searchTerm };
+
+    if (applicant?.city?.id) {
+      queryParams['city'] = applicant.city.id;
+    }
+
+    this.router.navigate(['applicant/search/result'], { queryParams });
+    this.closeResults();
   }
 
   photoURL(provider: ProviderSearchResult): string {
 
-    if (provider.avatarThumbnailUrl) {
-      const url = provider.avatarThumbnailUrl;
+    if (provider.photoThumbnailUrl) {
+      const url = provider.photoThumbnailUrl;
       return url;
     }
     return 'assets/img/user-placeholder.png';

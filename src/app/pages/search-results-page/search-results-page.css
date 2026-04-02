@@ -1,0 +1,57 @@
+/* ── Skeleton animation ──────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(129, 140, 248, 0.05) 25%,
+    rgba(129, 140, 248, 0.12) 50%,
+    rgba(129, 140, 248, 0.05) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.5rem;
+}
+
+/* ── Custom scrollbar ────────────────────────────────────────── */
+.custom-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: var(--palette-3);
+  opacity: 0.3;
+  border-radius: 2px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--palette-3);
+}
+
+/* ── Filter chip ─────────────────────────────────────────────── */
+.filter-chip {
+  transition: all 0.15s ease;
+}
+
+/* ── Provider card hover ─────────────────────────────────────── */
+.provider-card {
+  transition: background-color 0.15s ease;
+}
+
+/* ── Mobile filter slide ─────────────────────────────────────── */
+.filter-panel-mobile {
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+  overflow: hidden;
+}
+.filter-panel-mobile.closed {
+  max-height: 0;
+  opacity: 0;
+}
+.filter-panel-mobile.open {
+  max-height: 800px;
+  opacity: 1;
+}

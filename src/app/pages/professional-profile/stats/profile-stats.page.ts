@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ProfessionalService } from '../../../services/professional.service';
 import { ProfessionalCompleteData } from '../../../models/professional-complete.model';
 import { ProfileViewComponet } from '../../../components/profile-view-componet/profile-view-componet';
@@ -7,7 +7,7 @@ import { ProfileViewComponet } from '../../../components/profile-view-componet/p
 @Component({
   selector: 'app-profile-stats-page',
   standalone: true,
-  imports: [CommonModule, ProfileViewComponet],
+  imports: [ProfileViewComponet],
   template: `
     <div class="mb-5 border-b border-slate-800/50 pb-2">
       <h2 class="text-xl font-bold text-white">Visualizaciones</h2>

@@ -33,7 +33,8 @@ export class ProfessionalHero {
   ];
 
 
-  getHeroType(): HeroType {
+ getHeroType(): HeroType {
+    console.log("Documents:", this.documents);
     if (!this.registrationStatus || !this.infoExtra) {
       return 'default';
     }
@@ -46,8 +47,17 @@ export class ProfessionalHero {
       return 'renewal';
     }
 
-    if (this.documents && this.documents.uploaded < this.documents.total) {
-      return 'documents';
+    if (this.documents && this.documents.list) {
+      const mandatoryDocs = ['ci_front', 'ci_back', 'selfie', 'selfie_with_ci'];
+
+      const hasPendingMandatoryDocs = mandatoryDocs.some(docType => {
+        const doc = this.documents!.list.find(d => d.documentType === docType);
+        return !doc || doc.status === 'pending' || doc.status === 'rejected';
+      });
+
+      if (hasPendingMandatoryDocs) {
+        return 'documents';
+      }
     }
 
     if (this.registrationStatus.categoriesConfigured === 0) {
@@ -73,6 +83,11 @@ export class ProfessionalHero {
     if (!this.documents || this.documents.total === 0) return 0;
     return (this.documents.uploaded / this.documents.total) * 100;
   }
+
+
+
+
+
 
   handleAction(): void {
     const type = this.getHeroType();

@@ -205,11 +205,12 @@ export class AuthService {
       {},
       { withCredentials: true }
     ).pipe(
-      tap((response: any) => {
+      tap(() => {
         console.log('Token refrescado correctamente');
       }),
       catchError(error => {
-        this.doLogout();
+        // El interceptor (auth.interceptor.ts) ya maneja el logout cuando el refresh falla.
+        // No llamar a doLogout() aquí para evitar doble limpieza de estado.
         return throwError(() => error);
       })
     );

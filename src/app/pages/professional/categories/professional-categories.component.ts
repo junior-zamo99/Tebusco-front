@@ -2,17 +2,34 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, switchMap } from 'rxjs/operators';
 import { CategoryService } from '../../../services/category.service';
-
 import { ProfileCategoryService, CategorySelectionData } from '../../../services/profile-category.service';
-import { SubscriptionService } from '../../../services/subscription.service';
 import { CategoryNode } from '../../../models';
+
+interface PendingCert {
+  file: File;
+  title: string;
+}
 
 interface SelectedLevel2 {
   category: CategoryNode;
   selectedLevel3Ids: number[];
+  // Configuración opcional
+  description: string;
+  slogan: string;
+  experience: number | null;
+  priceMin: number | null;
+  // Fotos: archivo local + blob URL para preview
+  pendingPhotoFiles: File[];
+  photoPreviewUrls: string[];
+  // Certificados: archivo local + título
+  pendingCerts: PendingCert[];
+  pendingCertTitle: string;
+  // CV: archivo local
+  pendingCvFile: File | null;
+  cvFileName: string;
 }
 
 @Component({
@@ -25,89 +42,45 @@ interface SelectedLevel2 {
 export class ProfessionalCategoriesComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  // Categorías
   allCategories: CategoryNode[] = [];
   currentPath: CategoryNode[] = [];
   currentLevel: CategoryNode[] = [];
   filteredCategories: CategoryNode[] = [];
   searchTerm = '';
 
-  // Selecciones
   selectedLevel2Categories: Map<number, SelectedLevel2> = new Map();
   currentEditingLevel2: CategoryNode | null = null;
 
-  // Estados
+  viewStep: 'select' | 'configure' = 'select';
+
   isLoading = false;
   isSaving = false;
   errorMessage = '';
-  categoryLimit = 2; // Por defecto
 
-  // Profesional data
   professionalId: number | null = null;
-  subscriptionId: number | null = null;
 
   constructor(
     private router: Router,
     private categoryService: CategoryService,
     private profileCategoryService: ProfileCategoryService,
-    private subscriptionService: SubscriptionService
   ) {}
 
   ngOnInit() {
-    this.loadProfessionalData();
+    const storedId = localStorage.getItem('professionalId');
+    if (storedId) this.professionalId = parseInt(storedId, 10);
     this.loadCategories();
   }
 
   ngOnDestroy() {
+    this.selectedLevel2Categories.forEach(data => {
+      data.photoPreviewUrls.forEach(url => URL.revokeObjectURL(url));
+    });
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-
-  private loadProfessionalData() {
-    const storedProfessionalId = localStorage.getItem('professionalId');
-    if (storedProfessionalId) {
-      this.professionalId = parseInt(storedProfessionalId, 10);
-    }
-
-    const storedSubscriptionId = localStorage.getItem('subscriptionId');
-    if (storedSubscriptionId) {
-      this.subscriptionId = parseInt(storedSubscriptionId, 10);
-      this.loadSubscriptionLimits();
-    }
-  }
-
-
-  private loadSubscriptionLimits() {
-    if (!this.subscriptionId) return;
-
-    this.subscriptionService.getSubscriptionById(this.subscriptionId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          const subscription = response.data;
-
-          const categoryFeature = subscription.plan?.intervals?.[0]?.features?.find(
-            (f: any) => f.featureKey === 'categories'
-          );
-
-          if (categoryFeature) {
-            this.categoryLimit = categoryFeature.isUnlimited ? 999 : (categoryFeature.limitValue || 2);
-          }
-
-          console.log('📊 Límite de categorías:', this.categoryLimit);
-        },
-        error: (error) => {
-          console.error('Error al cargar límites:', error);
-          this.categoryLimit = 2;
-        }
-      });
-  }
-
-
   private loadCategories() {
     this.isLoading = true;
-
     this.categoryService.getFullHierarchy(false)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -116,22 +89,19 @@ export class ProfessionalCategoriesComponent implements OnInit, OnDestroy {
           this.allCategories = categories.filter(c => c.level === 1);
           this.currentLevel = this.allCategories;
           this.filteredCategories = this.allCategories;
-
-          console.log('📂 Categorías cargadas:', this.allCategories.length);
         },
-        error: (error) => {
+        error: () => {
           this.isLoading = false;
-          this.errorMessage = 'Error al cargar categorías';
-          console.error('Error:', error);
+          this.errorMessage = 'Error al cargar categorías. Intenta de nuevo.';
         }
       });
   }
 
+  // ── Navegación ─────────────────────────────────────────────────────────────
 
   get currentLevelType(): 1 | 2 | 3 {
     if (this.currentPath.length === 0) return 1;
-    const last = this.currentPath[this.currentPath.length - 1];
-    return (last.level + 1) as 1 | 2 | 3;
+    return (this.currentPath[this.currentPath.length - 1].level + 1) as 1 | 2 | 3;
   }
 
   navigateToChildren(category: CategoryNode) {
@@ -139,30 +109,26 @@ export class ProfessionalCategoriesComponent implements OnInit, OnDestroy {
     this.currentLevel = category.children || [];
     this.filteredCategories = this.currentLevel;
     this.searchTerm = '';
-
-    if (category.level === 2) {
-      this.currentEditingLevel2 = category;
-    }
+    if (category.level === 2) this.currentEditingLevel2 = category;
   }
 
   goBack() {
-    if (this.currentPath.length > 0) {
-      const removed = this.currentPath.pop();
+    if (this.currentPath.length === 0) return;
+    const removed = this.currentPath.pop();
+    if (removed?.level === 2) this.currentEditingLevel2 = null;
+    this.currentLevel = this.currentPath.length === 0
+      ? this.allCategories
+      : this.currentPath[this.currentPath.length - 1].children || [];
+    this.filteredCategories = this.currentLevel;
+    this.searchTerm = '';
+  }
 
-      if (removed && removed.level === 2) {
-        this.currentEditingLevel2 = null;
-      }
-
-      if (this.currentPath.length === 0) {
-        this.currentLevel = this.allCategories;
-      } else {
-        const parent = this.currentPath[this.currentPath.length - 1];
-        this.currentLevel = parent.children || [];
-      }
-
-      this.filteredCategories = this.currentLevel;
-      this.searchTerm = '';
-    }
+  goToRoot() {
+    this.currentPath = [];
+    this.currentLevel = this.allCategories;
+    this.filteredCategories = this.allCategories;
+    this.searchTerm = '';
+    this.currentEditingLevel2 = null;
   }
 
   selectCategory(category: CategoryNode) {
@@ -172,19 +138,25 @@ export class ProfessionalCategoriesComponent implements OnInit, OnDestroy {
       if (this.isLevel2Selected(category.id)) {
         this.navigateToChildren(category);
       } else {
-        if (!this.canAddMoreLevel2) {
-          alert(`Has alcanzado el límite de ${this.categoryLimit} área(s) de trabajo`);
+        if (this.selectedLevel2Categories.size >= 2) {
+          this.errorMessage = 'Inicialmente puedes configurar hasta 2 áreas. Desde tu dashboard podrás agregar más.';
           return;
         }
-
         this.selectedLevel2Categories.set(category.id, {
-          category: category,
-          selectedLevel3Ids: []
+          category,
+          selectedLevel3Ids: [],
+          description: '',
+          slogan: '',
+          experience: null,
+          priceMin: null,
+          pendingPhotoFiles: [],
+          photoPreviewUrls: [],
+          pendingCerts: [],
+          pendingCertTitle: '',
+          pendingCvFile: null,
+          cvFileName: '',
         });
-
-        if (category.children && category.children.length > 0) {
-          this.navigateToChildren(category);
-        }
+        if (category.children && category.children.length > 0) this.navigateToChildren(category);
       }
     } else if (category.level === 3) {
       this.toggleLevel3Category(category);
@@ -193,12 +165,9 @@ export class ProfessionalCategoriesComponent implements OnInit, OnDestroy {
 
   toggleLevel3Category(category: CategoryNode) {
     if (!this.currentEditingLevel2) return;
-
     const level2Data = this.selectedLevel2Categories.get(this.currentEditingLevel2.id);
     if (!level2Data) return;
-
     const index = level2Data.selectedLevel3Ids.indexOf(category.id);
-
     if (index > -1) {
       level2Data.selectedLevel3Ids.splice(index, 1);
     } else {
@@ -206,12 +175,12 @@ export class ProfessionalCategoriesComponent implements OnInit, OnDestroy {
     }
   }
 
-
   removeLevel2Category(categoryId: number, event: Event) {
     event.stopPropagation();
+    const data = this.selectedLevel2Categories.get(categoryId);
+    if (data) data.photoPreviewUrls.forEach(url => URL.revokeObjectURL(url));
     this.selectedLevel2Categories.delete(categoryId);
   }
-
 
   isLevel2Selected(categoryId: number): boolean {
     return this.selectedLevel2Categories.has(categoryId);
@@ -219,12 +188,7 @@ export class ProfessionalCategoriesComponent implements OnInit, OnDestroy {
 
   isLevel3Selected(categoryId: number): boolean {
     if (!this.currentEditingLevel2) return false;
-    const level2Data = this.selectedLevel2Categories.get(this.currentEditingLevel2.id);
-    return level2Data?.selectedLevel3Ids.includes(categoryId) || false;
-  }
-
-  get canAddMoreLevel2(): boolean {
-    return this.selectedLevel2Categories.size < this.categoryLimit;
+    return this.selectedLevel2Categories.get(this.currentEditingLevel2.id)?.selectedLevel3Ids.includes(categoryId) || false;
   }
 
   get selectedLevel2Count(): number {
@@ -232,14 +196,12 @@ export class ProfessionalCategoriesComponent implements OnInit, OnDestroy {
   }
 
   getLevel3CountForLevel2(level2Id: number): number {
-    const level2Data = this.selectedLevel2Categories.get(level2Id);
-    return level2Data?.selectedLevel3Ids.length || 0;
+    return this.selectedLevel2Categories.get(level2Id)?.selectedLevel3Ids.length || 0;
   }
 
   hasChildren(category: CategoryNode): boolean {
     return !!(category.children && category.children.length > 0);
   }
-
 
   filterCategories() {
     if (!this.searchTerm.trim()) {
@@ -253,110 +215,172 @@ export class ProfessionalCategoriesComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  getCategoryIcon(category: CategoryNode): string {
-    const iconMap: { [key: string]: string } = {
-      'tecnologia': '💻',
-      'construccion': '🏗️',
-      'servicios-del-hogar': '🏠',
-      'salud-y-bienestar': '⚕️',
-      'educacion': '📚',
-      'eventos': '🎉'
-    };
-
-    return iconMap[category.slug] || (category.level === 1 ? '📂' : category.level === 2 ? '🔧' : '⚡');
-  }
-
-  getLevelBadgeColor(level: number): string {
-    const colors = {
-      1: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-      2: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-      3: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-    };
-    return colors[level as keyof typeof colors] || '';
-  }
-
-  getLevelLabel(level: number): string {
-    const labels = { 1: 'Categoría', 2: 'Área de trabajo', 3: 'Especialidad' };
-    return labels[level as keyof typeof labels] || '';
-  }
-
   getSelectedLevel2Array(): SelectedLevel2[] {
     return Array.from(this.selectedLevel2Categories.values());
   }
 
-  getCategoryNameById(id: number, categories: CategoryNode[] | undefined): string {
-    if (!categories) return '';
-    const found = categories.find(c => c.id === id);
-    return found?.name || '';
+  // ── Pasos ──────────────────────────────────────────────────────────────────
+
+  goToConfigStep() {
+    if (this.selectedLevel2Categories.size === 0) {
+      this.errorMessage = 'Selecciona al menos un área de trabajo.';
+      return;
+    }
+    this.errorMessage = '';
+    this.viewStep = 'configure';
   }
 
+  goBackToSelect() {
+    this.viewStep = 'select';
+  }
+
+  // ── Fotos (locales hasta el save) ──────────────────────────────────────────
+
+  onPhotoFileSelected(categoryId: number, event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    const data = this.selectedLevel2Categories.get(categoryId);
+    if (!data || data.pendingPhotoFiles.length >= 5) return;
+
+    const file = input.files[0];
+    data.pendingPhotoFiles.push(file);
+    data.photoPreviewUrls.push(URL.createObjectURL(file));
+    input.value = '';
+  }
+
+  removePhoto(categoryId: number, index: number) {
+    const data = this.selectedLevel2Categories.get(categoryId);
+    if (!data) return;
+    URL.revokeObjectURL(data.photoPreviewUrls[index]);
+    data.pendingPhotoFiles.splice(index, 1);
+    data.photoPreviewUrls.splice(index, 1);
+  }
+
+  // ── Certificados (locales hasta el save) ───────────────────────────────────
+
+  onCertFileSelected(categoryId: number, event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    const data = this.selectedLevel2Categories.get(categoryId);
+    if (!data || !data.pendingCertTitle.trim()) {
+      this.errorMessage = 'Escribe el nombre del certificado antes de seleccionar el archivo.';
+      input.value = '';
+      return;
+    }
+    data.pendingCerts.push({ file: input.files[0], title: data.pendingCertTitle.trim() });
+    data.pendingCertTitle = '';
+    input.value = '';
+  }
+
+  removeCertificate(categoryId: number, index: number) {
+    const data = this.selectedLevel2Categories.get(categoryId);
+    if (!data) return;
+    data.pendingCerts.splice(index, 1);
+  }
+
+  // ── CV (local hasta el save) ────────────────────────────────────────────────
+
+  onCvFileSelected(categoryId: number, event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    const data = this.selectedLevel2Categories.get(categoryId);
+    if (!data) return;
+    data.pendingCvFile = input.files[0];
+    data.cvFileName = input.files[0].name;
+    input.value = '';
+  }
+
+  removeCv(categoryId: number) {
+    const data = this.selectedLevel2Categories.get(categoryId);
+    if (!data) return;
+    data.pendingCvFile = null;
+    data.cvFileName = '';
+  }
+
+  // ── Guardar ────────────────────────────────────────────────────────────────
 
   onSave() {
     if (this.selectedLevel2Categories.size === 0) {
       alert('Debes seleccionar al menos un área de trabajo');
       return;
     }
-
     if (!this.professionalId) {
       this.errorMessage = 'ID del profesional no disponible';
       return;
     }
 
+    // 1. Bulk save sin fotos ni certs (la API no los acepta en bulk)
     const categoriesData: CategorySelectionData[] = [];
-
     this.selectedLevel2Categories.forEach((value) => {
-      categoriesData.push({
+      const entry: CategorySelectionData = {
         categoryId: value.category.id,
         level: 2,
-        subcategories: value.selectedLevel3Ids
-      });
+        subcategories: value.selectedLevel3Ids,
+      };
+      if (value.description) entry.description = value.description;
+      if (value.slogan) entry.slogan = value.slogan;
+      if (value.experience !== null) entry.experience = value.experience!;
+      if (value.priceMin !== null) entry.priceMin = value.priceMin!;
+      categoriesData.push(entry);
     });
 
     this.isSaving = true;
     this.errorMessage = '';
 
-    console.log('💾 Guardando categorías:', categoriesData);
+    this.profileCategoryService.saveMultipleCategories(this.professionalId, categoriesData)
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((response) => {
+          // 2. Con los IDs recién creados, subir fotos y certs
+          const savedCategories: any[] = response.data?.categories || [];
+          const uploads: any[] = [];
 
-    this.profileCategoryService.saveMultipleCategories(
-      this.professionalId,
-      categoriesData
-    )
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (response) => {
-        this.isSaving = false;
-        console.log('✅ Categorías guardadas:', response);
+          this.selectedLevel2Categories.forEach((value) => {
+            // La respuesta tiene category.id, no categoryId directo
+            const savedCat = savedCategories.find(c => c.category?.id === value.category.id);
+            if (!savedCat) return;
 
-        alert('¡Categorías guardadas exitosamente! Tu perfil profesional está completo.');
+            value.pendingPhotoFiles.forEach(file => {
+              uploads.push(
+                this.profileCategoryService.addPhoto(this.professionalId!, savedCat.id, file)
+              );
+            });
 
-        localStorage.removeItem('professionalId');
-        localStorage.removeItem('subscriptionId');
-        localStorage.removeItem('selectedPlanIntervalId');
+            value.pendingCerts.forEach(cert => {
+              uploads.push(
+                this.profileCategoryService.addCertificate(this.professionalId!, savedCat.id, cert.file, cert.title)
+              );
+            });
 
-        this.router.navigate(['/professional/category-success']);
-      },
-      error: (error) => {
-        this.isSaving = false;
-        this.errorMessage = error.error?.message || 'Error al guardar categorías';
-        console.error('Error:', error);
-        alert(this.errorMessage);
-      }
-    });
+            if (value.pendingCvFile) {
+              uploads.push(
+                this.profileCategoryService.uploadCv(this.professionalId!, savedCat.id, value.pendingCvFile)
+              );
+            }
+          });
+
+          return uploads.length > 0 ? forkJoin(uploads) : of(null);
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.isSaving = false;
+          this.router.navigate(['/professional/complete']);
+        },
+        error: (error) => {
+          this.isSaving = false;
+          this.errorMessage = error.error?.message || 'Error al guardar categorías';
+        }
+      });
   }
-
 
   onSkip() {
     if (confirm('¿Deseas configurar tus categorías más tarde? Podrás hacerlo desde tu perfil.')) {
-      localStorage.removeItem('professionalId');
-      localStorage.removeItem('subscriptionId');
-      localStorage.removeItem('selectedPlanIntervalId');
-
-      this.router.navigate(['/professional/profile']);
+      this.router.navigate(['/professional/dashboard']);
     }
   }
 
   onBack() {
-    this.router.navigate(['/professional/payment']);
+    this.router.navigate(['/professional/upgrade']);
   }
 }

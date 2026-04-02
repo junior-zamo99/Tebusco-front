@@ -1,7 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, switchMap } from 'rxjs/operators';
 import { CategoryService } from '../../services/category.service';
 import { ProfessionalService } from '../../services/professional.service';
 import { ProfileCategoryService } from '../../services/profile-category.service';
@@ -13,14 +16,20 @@ interface SelectedSpecialty {
   name: string;
 }
 
+interface PendingCert {
+  file: File;
+  title: string;
+}
+
 @Component({
   selector: 'app-configure-category',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './configure-category.component.html',
   styleUrl: './configure-category.component.css'
 })
-export class ConfigureCategoryComponent implements OnInit {
+export class ConfigureCategoryComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private categoryService = inject(CategoryService);
@@ -40,6 +49,13 @@ export class ConfigureCategoryComponent implements OnInit {
   experience: number = 0;
   priceMin: number = 0;
 
+  pendingPhotoFiles: File[] = [];
+  photoPreviewUrls: string[] = [];
+  pendingCerts: PendingCert[] = [];
+  pendingCertTitle = '';
+  pendingCvFile: File | null = null;
+  cvFileName: string = '';
+
   isLoading = false;
   isSaving = false;
   errorMessage = '';
@@ -53,6 +69,12 @@ export class ConfigureCategoryComponent implements OnInit {
   ngOnInit() {
     this.loadProfessionalData();
     this.loadCategories();
+  }
+
+  ngOnDestroy() {
+    this.photoPreviewUrls.forEach(url => URL.revokeObjectURL(url));
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private loadProfessionalData() {
@@ -186,9 +208,7 @@ export class ConfigureCategoryComponent implements OnInit {
       errors.push('El precio mínimo no puede ser negativo');
     }
 
-    if (this.selectedSpecialties.length === 0) {
-      errors.push('Debes seleccionar al menos una especialidad');
-    }
+
 
     return {
       valid: errors.length === 0,
@@ -212,41 +232,94 @@ export class ConfigureCategoryComponent implements OnInit {
     this.isSaving = true;
     this.errorMessage = '';
 
-    // ✅ AQUÍ ESTÁ LA CORRECCIÓN: Agrega todos los campos al objeto
-    const categoryData = {
+    const categoryData: any = {
       categoryId: this.selectedArea.id,
       level: 2 as 2,
       subcategories: this.selectedSpecialties.map(s => s.id),
-      // Campos adicionales que tu backend YA ESPERA recibir:
       description: this.description,
-      slogan: this.slogan || undefined, // undefined para que no mande string vacíos
+      slogan: this.slogan || undefined,
       experience: this.experience,
-      priceMin: this.priceMin
+      priceMin: this.priceMin,
     };
 
-    // Llamamos solo a saveMultipleCategories
-    this.profileCategoryService.saveMultipleCategories(
-      this.professionalId,
-      [categoryData] // Enviamos el array con el objeto completo
-    ).subscribe({
-      next: (response) => {
-        this.isSaving = false;
+    this.profileCategoryService.saveMultipleCategories(this.professionalId, [categoryData])
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((response) => {
+          const savedCategories: any[] = response.data?.categories || [];
+          const savedCat = savedCategories.find(c => c.category?.id === this.selectedArea!.id);
+          if (!savedCat) return of(null);
 
-        // Ya no necesitamos llamar a updateCategory, el backend lo hizo todo junto
-        this.dialogService.success(
-          '¡Categoría configurada!',
-          'Tu nueva categoría ha sido guardada exitosamente'
-        ).subscribe(() => {
-          this.router.navigate(['/professional/dashboard']);
-        });
-      },
-      error: (error) => {
-        this.isSaving = false;
-        this.errorMessage = error.error?.message || 'Error al guardar categoría';
-        this.dialogService.error('Error', this.errorMessage);
-        console.error('Error detallado:', error);
-      }
-    });
+          const uploads: any[] = [];
+          this.pendingPhotoFiles.forEach(file =>
+            uploads.push(this.profileCategoryService.addPhoto(this.professionalId!, savedCat.id, file))
+          );
+          this.pendingCerts.forEach(cert =>
+            uploads.push(this.profileCategoryService.addCertificate(this.professionalId!, savedCat.id, cert.file, cert.title))
+          );
+          if (this.pendingCvFile) {
+            uploads.push(this.profileCategoryService.uploadCv(this.professionalId!, savedCat.id, this.pendingCvFile));
+          }
+          return uploads.length > 0 ? forkJoin(uploads) : of(null);
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.isSaving = false;
+          this.dialogService.success(
+            '¡Categoría configurada!',
+            'Tu nueva categoría ha sido guardada exitosamente'
+          ).subscribe(() => {
+            this.router.navigate(['/professional/dashboard']);
+          });
+        },
+        error: (error) => {
+          this.isSaving = false;
+          this.errorMessage = error.error?.message || 'Error al guardar categoría';
+          this.dialogService.error('Error', this.errorMessage);
+          console.error('Error detallado:', error);
+        }
+      });
+  }
+
+  onPhotoFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length || this.pendingPhotoFiles.length >= 5) return;
+    const file = input.files[0];
+    this.pendingPhotoFiles.push(file);
+    this.photoPreviewUrls.push(URL.createObjectURL(file));
+    input.value = '';
+  }
+
+  removePhoto(index: number) {
+    URL.revokeObjectURL(this.photoPreviewUrls[index]);
+    this.pendingPhotoFiles.splice(index, 1);
+    this.photoPreviewUrls.splice(index, 1);
+  }
+
+  onCertFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length || !this.pendingCertTitle.trim()) return;
+    this.pendingCerts.push({ file: input.files[0], title: this.pendingCertTitle.trim() });
+    this.pendingCertTitle = '';
+    input.value = '';
+  }
+
+  removeCertificate(index: number) {
+    this.pendingCerts.splice(index, 1);
+  }
+
+  onCvFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    this.pendingCvFile = input.files[0];
+    this.cvFileName = input.files[0].name;
+    input.value = '';
+  }
+
+  removeCv() {
+    this.pendingCvFile = null;
+    this.cvFileName = '';
   }
 
   onCancel() {

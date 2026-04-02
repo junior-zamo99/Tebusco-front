@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ProfessionalPublicService } from '../../services/professional-public.service';
 import { ProfileViewsService } from '../../services/profile-views.service';
 import { StorageService } from '../../services/storage.service';
+import { NavigationHistoryService } from '../../services/navigation-history.service';
 
-import { PublicProfessionalWithSelectedProfiles } from '../../interface/professional-public.interface';
+import { PublicProfessionalWithSelectedProfiles, PortfolioPhoto } from '../../interface/professional-public.interface';
 import { LocationData, MapLocationViewer } from '../map-location-viewer/map-location-viewer';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-professional-detail',
-  imports: [CommonModule, MapLocationViewer],
+  imports: [MapLocationViewer],
   templateUrl: './professional-detail.html',
   styleUrl: './professional-detail.css',
 })
@@ -22,6 +23,8 @@ export class ProfessionalDetailComponent implements OnInit {
   error: string | null = null;
   showContactModal = false;
   showImageModal = false;
+  showPortfolioModal = false;
+  selectedPortfolioPhoto: PortfolioPhoto | null = null;
 
   professionalId!: number;
   categoryIds: number[] = [];
@@ -33,7 +36,8 @@ export class ProfessionalDetailComponent implements OnInit {
     private router: Router,
     private professionalService: ProfessionalPublicService,
     private profileViewsService: ProfileViewsService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private navHistory: NavigationHistoryService
   ) {}
 
   ngOnInit(): void {
@@ -204,20 +208,23 @@ export class ProfessionalDetailComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/']);
+    this.navHistory.goBack('/categories');
   }
 
   get professionalInfo() {
     if (!this.professional) return null;
 
+    const p = (this.professional as any).professional;
     return {
-      whatsappNumber: (this.professional as any).professional?.whatsappNumber,
-      websiteUrl: (this.professional as any).professional?.websiteUrl,
-      facebookProfile: (this.professional as any).professional?.facebookProfile,
-      instagramProfile: (this.professional as any).professional?.instagramProfile,
-      linkedinProfile: (this.professional as any).professional?.linkedinProfile,
-      youtubeChannel: (this.professional as any).professional?.youtubeChannel,
-      businessEmail: (this.professional as any).professional?.businessEmail,
+      whatsappNumber: p?.whatsappNumber,
+      websiteUrl: p?.websiteUrl,
+      facebookProfile: p?.facebookProfile,
+      instagramProfile: p?.instagramProfile,
+      linkedinProfile: p?.linkedinProfile,
+      youtubeChannel: p?.youtubeChannel,
+      businessEmail: p?.businessEmail,
+      bio: p?.bio,
+      totalExperience: p?.totalExperience,
     };
   }
 
@@ -237,6 +244,16 @@ export class ProfessionalDetailComponent implements OnInit {
 
   closeImageModal(): void {
     this.showImageModal = false;
+  }
+
+  openPortfolioPhoto(photo: PortfolioPhoto): void {
+    this.selectedPortfolioPhoto = photo;
+    this.showPortfolioModal = true;
+  }
+
+  closePortfolioModal(): void {
+    this.showPortfolioModal = false;
+    this.selectedPortfolioPhoto = null;
   }
 
   openWhatsApp(): void {

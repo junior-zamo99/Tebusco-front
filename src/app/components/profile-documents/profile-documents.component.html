@@ -26,7 +26,7 @@
         <i class="fas fa-check-double text-indigo-400 text-xs"></i>
         <div class="w-20 h-1.5 bg-slate-700 rounded-full overflow-hidden">
           <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
-               [style.width.%]="progressPercentage"></div>
+          [style.width.%]="progressPercentage"></div>
         </div>
         <span class="text-xs font-semibold text-white">{{ uploadedCount }}/{{ documents.length }}</span>
       </div>
@@ -34,107 +34,119 @@
   </div>
 
   <!-- Alerts compactos -->
-  <div *ngIf="successMessage" class="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-2 mb-3 flex items-center gap-2 text-xs">
-    <i class="fas fa-check-circle text-emerald-400"></i>
-    <span class="text-emerald-400 flex-1">{{ successMessage }}</span>
-    <button (click)="successMessage = ''" class="text-emerald-400/60 hover:text-emerald-400"><i class="fas fa-times"></i></button>
-  </div>
+  @if (successMessage) {
+    <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-2 mb-3 flex items-center gap-2 text-xs">
+      <i class="fas fa-check-circle text-emerald-400"></i>
+      <span class="text-emerald-400 flex-1">{{ successMessage }}</span>
+      <button (click)="successMessage = ''" class="text-emerald-400/60 hover:text-emerald-400"><i class="fas fa-times"></i></button>
+    </div>
+  }
 
-  <div *ngIf="errorMessage" class="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 mb-3 flex items-center gap-2 text-xs">
-    <i class="fas fa-exclamation-circle text-red-400"></i>
-    <span class="text-red-400 flex-1">{{ errorMessage }}</span>
-    <button (click)="errorMessage = ''" class="text-red-400/60 hover:text-red-400"><i class="fas fa-times"></i></button>
-  </div>
+  @if (errorMessage) {
+    <div class="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 mb-3 flex items-center gap-2 text-xs">
+      <i class="fas fa-exclamation-circle text-red-400"></i>
+      <span class="text-red-400 flex-1">{{ errorMessage }}</span>
+      <button (click)="errorMessage = ''" class="text-red-400/60 hover:text-red-400"><i class="fas fa-times"></i></button>
+    </div>
+  }
 
   <!-- Documents Grid - 3 columnas -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-    <div *ngFor="let doc of documents"
-         class="group bg-[#161b26] rounded-xl border transition-all duration-200 overflow-hidden hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/5"
-         [class.border-indigo-500/40]="doc.status === 'uploaded' || doc.status === 'approved'"
-         [class.border-red-500/40]="doc.status === 'rejected'"
-         [class.border-slate-800]="doc.status === 'pending'">
-
-      <!-- Preview Area - Tamaño medio -->
-      <div class="relative h-36 bg-slate-900/50">
-
-        <!-- Upload Zone -->
-        <div *ngIf="canUpload(doc)"
-             class="absolute inset-0 flex flex-col items-center justify-center p-3 cursor-pointer hover:bg-indigo-500/5 transition-colors border-2 border-dashed border-slate-700 hover:border-indigo-500/50 m-2 rounded-lg"
-             (drop)="onDrop($event, doc)"
-             (dragover)="onDragOver($event)">
-          <input type="file" [id]="'file-' + doc.documentType" (change)="onFileSelected($event, doc)" [accept]="getAcceptedFormats(doc.documentType)" class="hidden">
-          <label [for]="'file-' + doc.documentType" class="cursor-pointer flex flex-col items-center text-center w-full h-full justify-center">
-            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 flex items-center justify-center mb-2 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-all">
-              <i [class]="'fas ' + doc.icon + ' text-xl text-indigo-400'"></i>
+    @for (doc of documents; track doc) {
+      <div
+        class="group bg-[#161b26] rounded-xl border transition-all duration-200 overflow-hidden hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/5"
+        [class.border-indigo-500/40]="doc.status === 'uploaded' || doc.status === 'approved'"
+        [class.border-red-500/40]="doc.status === 'rejected'"
+        [class.border-slate-800]="doc.status === 'pending'">
+        <!-- Preview Area - Tamaño medio -->
+        <div class="relative h-36 bg-slate-900/50">
+          <!-- Upload Zone -->
+          @if (canUpload(doc)) {
+            <div
+              class="absolute inset-0 flex flex-col items-center justify-center p-3 cursor-pointer hover:bg-indigo-500/5 transition-colors border-2 border-dashed border-slate-700 hover:border-indigo-500/50 m-2 rounded-lg"
+              (drop)="onDrop($event, doc)"
+              (dragover)="onDragOver($event)">
+              <input type="file" [id]="'file-' + doc.documentType" (change)="onFileSelected($event, doc)" [accept]="getAcceptedFormats(doc.documentType)" class="hidden">
+              <label [for]="'file-' + doc.documentType" class="cursor-pointer flex flex-col items-center text-center w-full h-full justify-center">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 flex items-center justify-center mb-2 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-all">
+                  <i [class]="'fas ' + doc.icon + ' text-xl text-indigo-400'"></i>
+                </div>
+                <span class="text-xs text-indigo-400 font-medium flex items-center gap-1.5">
+                  <i class="fas fa-cloud-upload-alt text-[10px]"></i>
+                  {{ doc.status === 'rejected' ? 'Resubir archivo' : 'Subir archivo' }}
+                </span>
+                <span class="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
+                  <i class="fas fa-file-image text-[8px]"></i>
+                  {{ getAcceptedFormatsLabel(doc.documentType) }}
+                </span>
+              </label>
             </div>
-            <span class="text-xs text-indigo-400 font-medium flex items-center gap-1.5">
-              <i class="fas fa-cloud-upload-alt text-[10px]"></i>
-              {{ doc.status === 'rejected' ? 'Resubir archivo' : 'Subir archivo' }}
-            </span>
-            <span class="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
-              <i class="fas fa-file-image text-[8px]"></i>
-              {{ getAcceptedFormatsLabel(doc.documentType) }}
-            </span>
-          </label>
-        </div>
-
-        <!-- Upload Progress -->
-        <div *ngIf="doc.uploading" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80">
-          <i class="fas fa-spinner fa-spin text-indigo-400 text-2xl mb-2"></i>
-          <span class="text-xs text-indigo-400 font-medium">{{ doc.uploadProgress }}%</span>
-        </div>
-
-        <!-- Image Preview -->
-        <ng-container *ngIf="(doc.status === 'uploaded' || doc.status === 'approved') && !doc.uploading">
-          <img *ngIf="isImage(doc)" [src]="getFileUrl(doc.fileUrl)" [alt]="doc.label" class="w-full h-full object-cover">
-          <div *ngIf="!isImage(doc)" class="absolute inset-0 flex flex-col items-center justify-center">
-            <i class="fas fa-file-pdf text-3xl text-indigo-400 mb-2"></i>
-            <span class="text-[10px] text-slate-400 truncate px-3 max-w-full">{{ doc.fileName }}</span>
-          </div>
-
-          <!-- Hover Actions -->
-          <div class="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-            <button *ngIf="isImage(doc)" (click)="openLightbox(doc)" class="w-9 h-9 bg-white/90 text-indigo-600 rounded-full hover:scale-110 transition-transform flex items-center justify-center" title="Ver">
-              <i class="fas fa-search-plus text-sm"></i>
-            </button>
-            <a [href]="getFileUrl(doc.fileUrl)" target="_blank" class="w-9 h-9 bg-white/90 text-indigo-600 rounded-full hover:scale-110 transition-transform flex items-center justify-center" title="Descargar">
-              <i class="fas fa-download text-sm"></i>
-            </a>
-            <button (click)="removeDocument(doc)" class="w-9 h-9 bg-white/90 text-red-500 rounded-full hover:scale-110 transition-transform flex items-center justify-center" title="Eliminar">
-              <i class="fas fa-trash text-sm"></i>
-            </button>
-          </div>
-        </ng-container>
-
-        <!-- Status Badge -->
-        <span *ngIf="doc.status !== 'pending'"
+          }
+          <!-- Upload Progress -->
+          @if (doc.uploading) {
+            <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80">
+              <i class="fas fa-spinner fa-spin text-indigo-400 text-2xl mb-2"></i>
+              <span class="text-xs text-indigo-400 font-medium">{{ doc.uploadProgress }}%</span>
+            </div>
+          }
+          <!-- Image Preview -->
+          @if ((doc.status === 'uploaded' || doc.status === 'approved') && !doc.uploading) {
+            @if (isImage(doc)) {
+              <img [src]="getFileUrl(doc.fileUrl)" [alt]="doc.label" class="w-full h-full object-cover">
+            }
+            @if (!isImage(doc)) {
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <i class="fas fa-file-pdf text-3xl text-indigo-400 mb-2"></i>
+                <span class="text-[10px] text-slate-400 truncate px-3 max-w-full">{{ doc.fileName }}</span>
+              </div>
+            }
+            <!-- Hover Actions -->
+            <div class="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              @if (isImage(doc)) {
+                <button (click)="openLightbox(doc)" class="w-9 h-9 bg-white/90 text-indigo-600 rounded-full hover:scale-110 transition-transform flex items-center justify-center" title="Ver">
+                  <i class="fas fa-search-plus text-sm"></i>
+                </button>
+              }
+              <a [href]="getFileUrl(doc.fileUrl)" target="_blank" class="w-9 h-9 bg-white/90 text-indigo-600 rounded-full hover:scale-110 transition-transform flex items-center justify-center" title="Descargar">
+                <i class="fas fa-download text-sm"></i>
+              </a>
+              <button (click)="removeDocument(doc)" class="w-9 h-9 bg-white/90 text-red-500 rounded-full hover:scale-110 transition-transform flex items-center justify-center" title="Eliminar">
+                <i class="fas fa-trash text-sm"></i>
+              </button>
+            </div>
+          }
+          <!-- Status Badge -->
+          @if (doc.status !== 'pending') {
+            <span
               class="absolute top-2 right-2 px-2.5 py-1 rounded-md text-[10px] font-bold flex items-center gap-1 shadow-lg"
               [ngClass]="{
                 'bg-emerald-500 text-white': doc.status === 'approved',
                 'bg-amber-500 text-white': doc.status === 'uploaded',
                 'bg-red-500 text-white': doc.status === 'rejected'
               }">
-          <i [class]="'fas ' + getStatusIcon(doc.status)"></i>
-          {{ getStatusLabel(doc.status) }}
-        </span>
-      </div>
-
-      <!-- Card Footer -->
-      <div class="p-3 bg-[#0d1117]">
-        <div class="flex items-center gap-2">
-          <div class="w-6 h-6 rounded-md bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
-            <i [class]="'fas ' + doc.icon + ' text-indigo-400 text-[10px]'"></i>
-          </div>
-          <span class="text-xs font-semibold text-white truncate">{{ doc.label }}</span>
+              <i [class]="'fas ' + getStatusIcon(doc.status)"></i>
+              {{ getStatusLabel(doc.status) }}
+            </span>
+          }
         </div>
-        <p class="text-[10px] text-slate-500 mt-1 ml-8">{{ doc.description }}</p>
-        <p *ngIf="doc.rejectionReason" class="text-[10px] text-red-400 mt-1 ml-8 line-clamp-1 flex items-center gap-1">
-          <i class="fas fa-exclamation-triangle text-[8px]"></i>
-          {{ doc.rejectionReason }}
-        </p>
+        <!-- Card Footer -->
+        <div class="p-3 bg-[#0d1117]">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-md bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
+              <i [class]="'fas ' + doc.icon + ' text-indigo-400 text-[10px]'"></i>
+            </div>
+            <span class="text-xs font-semibold text-white truncate">{{ doc.label }}</span>
+          </div>
+          <p class="text-[10px] text-slate-500 mt-1 ml-8">{{ doc.description }}</p>
+          @if (doc.rejectionReason) {
+            <p class="text-[10px] text-red-400 mt-1 ml-8 line-clamp-1 flex items-center gap-1">
+              <i class="fas fa-exclamation-triangle text-[8px]"></i>
+              {{ doc.rejectionReason }}
+            </p>
+          }
+        </div>
       </div>
-
-    </div>
+    }
   </div>
 
   <!-- Tips compacto con iconos -->
@@ -170,14 +182,16 @@
 </div>
 
 <!-- Lightbox Modal -->
-<div *ngIf="selectedImage"
-     class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm"
-     (click)="closeLightbox()">
-  <button (click)="closeLightbox()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
-    <i class="fas fa-times"></i>
-  </button>
-  <div class="max-w-4xl max-h-[85vh] relative" (click)="$event.stopPropagation()">
-    <p class="text-center text-white text-sm font-medium mb-3">{{ selectedImage.label }}</p>
-    <img [src]="selectedImage.url" [alt]="selectedImage.label" class="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl">
+@if (selectedImage) {
+  <div
+    class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm"
+    (click)="closeLightbox()">
+    <button (click)="closeLightbox()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="max-w-4xl max-h-[85vh] relative" (click)="$event.stopPropagation()">
+      <p class="text-center text-white text-sm font-medium mb-3">{{ selectedImage.label }}</p>
+      <img [src]="selectedImage.url" [alt]="selectedImage.label" class="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl">
+    </div>
   </div>
-</div>
+}

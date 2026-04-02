@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 // 1. Importamos los servicios necesarios
 import { ProfessionalService } from '../../../services/professional.service';
@@ -9,7 +9,7 @@ import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-professional-category-success',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './professional-category-success.component.html',
   styleUrl: './professional-category-success.component.css'
 })

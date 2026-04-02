@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AdService } from '../../services/ad.service';
 import { ActionType, Ad } from '../../models/ad.model';
 import { environment } from '../../../environments/environment';
@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-ads-carousel',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './ads-carousel.html',
 })
 export class AdsCarousel implements OnInit, OnDestroy {

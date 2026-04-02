@@ -1,260 +1,259 @@
 
-<section *ngIf="getHeroType() === 'default'"
-         class="bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
-  <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-0 left-0 w-24 h-24 bg-pink-500/10 rounded-full blur-2xl"></div>
+@if (getHeroType() === 'default') {
+  <section
+    class="bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
+    <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-24 h-24 bg-pink-500/10 rounded-full blur-2xl"></div>
+    <div class="container-custom">
+      <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
+        <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
+          <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
+            Tus servicios.
+            <span class="text-yellow-400 block md:inline">Tus clientes.</span>
+          </h1>
+          <p class="text-sm text-white/90">
+            Monitorea tus trabajos, gana más y mejora tu perfil.
+          </p>
+          <div class="flex justify-center md:justify-start gap-3 pt-2">
+            @for (stat of stats; track stat) {
+              <div class="bg-white/10 rounded-lg p-2 min-w-[80px] text-center backdrop-blur-sm border border-white/5">
+                <div class="flex justify-center mb-1">
+                  @if (stat.icon === 'briefcase') {
+                    <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                  }
+                  @if (stat.icon === 'users') {
+                    <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                  }
+                  @if (stat.icon === 'star') {
+                    <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                  }
+                </div>
+                <p class="text-sm font-bold text-yellow-400 leading-tight">{{ stat.value }}</p>
+                <p class="text-[10px] text-white/80 leading-tight">{{ stat.label }}</p>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="relative flex-shrink-0">
+          <div class="relative z-10">
+            <img src="assets/plomero2.png" alt="Profesional" class="w-auto h-32 md:h-40 object-contain drop-shadow-xl" loading="eager">
+          </div>
+          <div class="absolute inset-0 bg-yellow-400/20 rounded-full blur-2xl transform scale-75"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+}
 
-  <div class="container-custom">
-    <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
-      <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
-        <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
-          Tus servicios.
-          <span class="text-yellow-400 block md:inline">Tus clientes.</span>
-        </h1>
-        <p class="text-sm text-white/90">
-          Monitorea tus trabajos, gana más y mejora tu perfil.
-        </p>
+@if (getHeroType() === 'subscription') {
+  <section
+    class="bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
+    <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-400/20 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-24 h-24 bg-pink-500/20 rounded-full blur-2xl"></div>
+    <div class="container-custom">
+      <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
+        <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
+            <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+            <span class="text-white/90 text-xs font-bold uppercase tracking-wide">Paso 1 de 4</span>
+          </div>
+          <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
+            ¡Activa tu perfil!
+            <span class="text-yellow-400 block md:inline">Elige tu plan.</span>
+          </h1>
+          <p class="text-sm text-white/90 max-w-md">
+            Selecciona un plan de suscripción para activar tu perfil y empezar a recibir clientes.
+          </p>
+          <div class="flex justify-center md:justify-start gap-3 pt-2">
+            <button (click)="handleAction()"
+              class="px-6 py-3 bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
+              <i class="fas fa-rocket"></i>
+              Seleccionar Plan
+            </button>
+          </div>
+        </div>
+        <div class="relative flex-shrink-0">
+          <div class="relative z-10">
+            <img src="assets/plomero2.png" alt="Suscripción" class="w-auto h-32 md:h-40 object-contain drop-shadow-xl" loading="eager">
+          </div>
+          <div class="absolute inset-0 bg-yellow-400/20 rounded-full blur-2xl transform scale-75"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+}
 
-        <div class="flex justify-center md:justify-start gap-3 pt-2">
-          <div *ngFor="let stat of stats" class="bg-white/10 rounded-lg p-2 min-w-[80px] text-center backdrop-blur-sm border border-white/5">
-            <div class="flex justify-center mb-1">
-              <svg *ngIf="stat.icon === 'briefcase'" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-              <svg *ngIf="stat.icon === 'users'" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-              <svg *ngIf="stat.icon === 'star'" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+@if (getHeroType() === 'renewal') {
+  <section
+    class="bg-gradient-to-br from-red-600 via-orange-600 to-red-700 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
+    <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/30 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-24 h-24 bg-red-400/20 rounded-full blur-2xl"></div>
+    <div class="container-custom">
+      <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
+        <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
+            <span class="w-2 h-2 bg-red-300 rounded-full animate-pulse"></span>
+            <span class="text-white/90 text-xs font-bold uppercase tracking-wide">Acción Requerida</span>
+          </div>
+          <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
+            Tu suscripción
+            <span class="text-yellow-300 block md:inline">ha expirado</span>
+          </h1>
+          <p class="text-sm text-white/90 max-w-md">
+            Tu perfil está oculto para los clientes. ¡Renueva tu plan para seguir visible!
+          </p>
+          <div class="flex justify-center md:justify-start gap-3 pt-2">
+            <button (click)="handleAction()"
+              class="px-6 py-3 bg-white hover:bg-gray-100 text-red-600 font-bold rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
+              <i class="fas fa-sync-alt"></i>
+              Renovar Plan
+            </button>
+          </div>
+        </div>
+        <div class="relative flex-shrink-0">
+          <div class="relative z-10 flex items-center justify-center">
+            <div class="text-8xl opacity-90">⏰</div>
+          </div>
+          <div class="absolute inset-0 bg-orange-400/30 rounded-full blur-2xl transform scale-75"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
+@if (getHeroType() === 'documents') {
+  <section
+    class="bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
+    <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-300/30 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-24 h-24 bg-orange-300/20 rounded-full blur-2xl"></div>
+    <div class="container-custom">
+      <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
+        <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
+          <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
+            Sube tu
+            <span class="text-gray-900 block md:inline">documentación</span>
+          </h1>
+          <p class="text-sm text-white/90 max-w-md">
+            Sube tu documentación (Carnet, Selfie, CV) para verificar tu cuenta y ganarte la confianza de los clientes.
+          </p>
+          <div class="flex justify-center md:justify-start gap-3 pt-2">
+            <button (click)="handleAction()"
+              class="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
+              <i class="fas fa-upload"></i>
+              Subir Documentos
+            </button>
+          </div>
+        </div>
+        <div class="relative flex-shrink-0">
+          <div class="relative z-10">
+            <img src="assets/img/docu.png" alt="Documentación"
+              class="w-auto h-32 md:h-40 object-contain drop-shadow-xl" loading="eager">
             </div>
-            <p class="text-sm font-bold text-yellow-400 leading-tight">{{ stat.value }}</p>
-            <p class="text-[10px] text-white/80 leading-tight">{{ stat.label }}</p>
+            <div class="absolute inset-0 bg-yellow-300/30 rounded-full blur-2xl transform scale-75"></div>
           </div>
         </div>
       </div>
+    </section>
+  }
 
-      <div class="relative flex-shrink-0">
-        <div class="relative z-10">
-          <img src="assets/plomero2.png" alt="Profesional" class="w-auto h-32 md:h-40 object-contain drop-shadow-xl" loading="eager">
-        </div>
-        <div class="absolute inset-0 bg-yellow-400/20 rounded-full blur-2xl transform scale-75"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section *ngIf="getHeroType() === 'subscription'"
-         class="bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
-  <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-400/20 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-0 left-0 w-24 h-24 bg-pink-500/20 rounded-full blur-2xl"></div>
-
-  <div class="container-custom">
-    <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
-      <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
-          <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-          <span class="text-white/90 text-xs font-bold uppercase tracking-wide">Paso 1 de 4</span>
-        </div>
-
-        <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
-          ¡Activa tu perfil!
-          <span class="text-yellow-400 block md:inline">Elige tu plan.</span>
-        </h1>
-        <p class="text-sm text-white/90 max-w-md">
-          Selecciona un plan de suscripción para activar tu perfil y empezar a recibir clientes.
-        </p>
-
-        <div class="flex justify-center md:justify-start gap-3 pt-2">
-          <button (click)="handleAction()"
-                  class="px-6 py-3 bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
-            <i class="fas fa-rocket"></i>
-            Seleccionar Plan
-          </button>
-        </div>
-      </div>
-
-      <div class="relative flex-shrink-0">
-        <div class="relative z-10">
-          <img src="assets/plomero2.png" alt="Suscripción" class="w-auto h-32 md:h-40 object-contain drop-shadow-xl" loading="eager">
-        </div>
-        <div class="absolute inset-0 bg-yellow-400/20 rounded-full blur-2xl transform scale-75"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section *ngIf="getHeroType() === 'renewal'"
-         class="bg-gradient-to-br from-red-600 via-orange-600 to-red-700 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
-  <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/30 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-0 left-0 w-24 h-24 bg-red-400/20 rounded-full blur-2xl"></div>
-
-  <div class="container-custom">
-    <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
-      <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
-          <span class="w-2 h-2 bg-red-300 rounded-full animate-pulse"></span>
-          <span class="text-white/90 text-xs font-bold uppercase tracking-wide">Acción Requerida</span>
-        </div>
-
-        <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
-          Tu suscripción
-          <span class="text-yellow-300 block md:inline">ha expirado</span>
-        </h1>
-        <p class="text-sm text-white/90 max-w-md">
-          Tu perfil está oculto para los clientes. ¡Renueva tu plan para seguir visible!
-        </p>
-
-        <div class="flex justify-center md:justify-start gap-3 pt-2">
-          <button (click)="handleAction()"
-                  class="px-6 py-3 bg-white hover:bg-gray-100 text-red-600 font-bold rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
-            <i class="fas fa-sync-alt"></i>
-            Renovar Plan
-          </button>
-        </div>
-      </div>
-
-      <div class="relative flex-shrink-0">
-        <div class="relative z-10 flex items-center justify-center">
-          <div class="text-8xl opacity-90">⏰</div>
-        </div>
-        <div class="absolute inset-0 bg-orange-400/30 rounded-full blur-2xl transform scale-75"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section *ngIf="getHeroType() === 'documents'"
-         class="bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
-  <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-300/30 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-0 left-0 w-24 h-24 bg-orange-300/20 rounded-full blur-2xl"></div>
-
-  <div class="container-custom">
-    <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
-      <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
-        <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
-          Sube tu
-          <span class="text-gray-900 block md:inline">documentación</span>
-        </h1>
-        <p class="text-sm text-white/90 max-w-md">
-          Sube tu documentación (Carnet, Selfie, CV) para verificar tu cuenta y ganarte la confianza de los clientes.
-        </p>
-
-        <div class="flex justify-center md:justify-start gap-3 pt-2">
-          <button (click)="handleAction()"
-                  class="px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
-            <i class="fas fa-upload"></i>
-            Subir Documentos
-          </button>
-        </div>
-      </div>
-
-      <div class="relative flex-shrink-0">
-        <div class="relative z-10">
-          <img src="assets/img/docu.png" alt="Documentación"
-               class="w-auto h-32 md:h-40 object-contain drop-shadow-xl" loading="eager">
-        </div>
-        <div class="absolute inset-0 bg-yellow-300/30 rounded-full blur-2xl transform scale-75"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section *ngIf="getHeroType() === 'categories'"
-         class="bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-700 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
-  <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-400/30 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-400/20 rounded-full blur-2xl"></div>
-
-  <div class="container-custom">
-    <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
-      <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
-          <span class="w-2 h-2 bg-cyan-300 rounded-full animate-pulse"></span>
-          <span class="text-white/90 text-xs font-bold uppercase tracking-wide">Configura tu perfil</span>
-        </div>
-
-        <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
-          ¿Qué servicios
-          <span class="text-cyan-300 block md:inline">ofreces?</span>
-        </h1>
-        <p class="text-sm text-white/90 max-w-md">
-          No has seleccionado ningún servicio. Los clientes no podrán encontrarte en las búsquedas.
-        </p>
-
-        <div class="flex justify-center md:justify-start flex-wrap gap-2 pt-1">
-          <span class="px-3 py-1 bg-white/20 rounded-full text-xs text-white/80">Electricista</span>
-          <span class="px-3 py-1 bg-white/20 rounded-full text-xs text-white/80">Plomero</span>
-          <span class="px-3 py-1 bg-white/20 rounded-full text-xs text-white/80">Pintor</span>
-          <span class="px-3 py-1 bg-white/10 rounded-full text-xs text-white/60">+50 más</span>
-        </div>
-
-        <div class="flex justify-center md:justify-start gap-3 pt-2">
-          <button (click)="handleAction()"
-                  class="px-6 py-3 bg-white hover:bg-gray-100 text-blue-600 font-bold rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
-            <i class="fas fa-briefcase"></i>
-            Configurar Servicios
-          </button>
-        </div>
-      </div>
-
-      <div class="relative flex-shrink-0">
-        <div class="relative z-10 flex items-center justify-center">
-          <div class="text-8xl opacity-90">🛠️</div>
-        </div>
-        <div class="absolute inset-0 bg-cyan-400/30 rounded-full blur-2xl transform scale-75"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section *ngIf="getHeroType() === 'profile'"
-         class="bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
-  <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-400/30 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-0 left-0 w-24 h-24 bg-teal-400/20 rounded-full blur-2xl"></div>
-
-  <div class="container-custom">
-    <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
-      <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
-          <span class="w-2 h-2 bg-emerald-300 rounded-full"></span>
-          <span class="text-white/90 text-xs font-bold uppercase tracking-wide">Recomendado</span>
-        </div>
-
-        <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
-          Mejora tu perfil.
-          <span class="text-emerald-300 block md:inline">Gana más clientes.</span>
-        </h1>
-        <p class="text-sm text-white/90 max-w-md">
-          Los perfiles con foto y número de WhatsApp consiguen más clientes. ¡Mejora tu perfil!
-        </p>
-
-        <div class="flex flex-wrap justify-center md:justify-start gap-3 pt-1">
-          <div class="flex items-center gap-1.5 text-xs"
-               [ngClass]="professional?.avatarUrl ? 'text-emerald-200' : 'text-white/60'">
-            <i [class]="professional?.avatarUrl ? 'fas fa-check-circle' : 'far fa-circle'"></i>
-            <span>Foto de perfil</span>
+  @if (getHeroType() === 'categories') {
+    <section
+      class="bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-700 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-400/30 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-400/20 rounded-full blur-2xl"></div>
+      <div class="container-custom">
+        <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
+          <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
+              <span class="w-2 h-2 bg-cyan-300 rounded-full animate-pulse"></span>
+              <span class="text-white/90 text-xs font-bold uppercase tracking-wide">Configura tu perfil</span>
+            </div>
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
+              ¿Qué servicios
+              <span class="text-cyan-300 block md:inline">ofreces?</span>
+            </h1>
+            <p class="text-sm text-white/90 max-w-md">
+              No has seleccionado ningún servicio. Los clientes no podrán encontrarte en las búsquedas.
+            </p>
+            <div class="flex justify-center md:justify-start flex-wrap gap-2 pt-1">
+              <span class="px-3 py-1 bg-white/20 rounded-full text-xs text-white/80">Electricista</span>
+              <span class="px-3 py-1 bg-white/20 rounded-full text-xs text-white/80">Plomero</span>
+              <span class="px-3 py-1 bg-white/20 rounded-full text-xs text-white/80">Pintor</span>
+              <span class="px-3 py-1 bg-white/10 rounded-full text-xs text-white/60">+50 más</span>
+            </div>
+            <div class="flex justify-center md:justify-start gap-3 pt-2">
+              <button (click)="handleAction()"
+                class="px-6 py-3 bg-white hover:bg-gray-100 text-blue-600 font-bold rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
+                <i class="fas fa-briefcase"></i>
+                Configurar Servicios
+              </button>
+            </div>
           </div>
-          <div class="flex items-center gap-1.5 text-xs"
-               [ngClass]="professional?.whatsappNumber ? 'text-emerald-200' : 'text-white/60'">
-            <i [class]="professional?.whatsappNumber ? 'fas fa-check-circle' : 'far fa-circle'"></i>
-            <span>WhatsApp</span>
-          </div>
-          <div class="flex items-center gap-1.5 text-xs"
-               [ngClass]="professional?.bio ? 'text-emerald-200' : 'text-white/60'">
-            <i [class]="professional?.bio ? 'fas fa-check-circle' : 'far fa-circle'"></i>
-            <span>Descripción</span>
+          <div class="relative flex-shrink-0">
+             <div class="relative z-10">
+            <img src="assets/img/configurar.png" alt="editperfil"
+              class="w-auto h-32 md:h-50 object-contain drop-shadow-xl" loading="eager">
+            </div>
+            <div class="absolute inset-0 bg-cyan-400/30 rounded-full blur-2xl transform scale-75"></div>
           </div>
         </div>
-
-        <div class="flex justify-center md:justify-start gap-3 pt-2">
-          <button (click)="handleAction()"
-                  class="px-6 py-3 bg-white hover:bg-gray-100 text-emerald-600 font-bold rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
-            <i class="fas fa-user-edit"></i>
-            Editar Perfil
-          </button>
-        </div>
       </div>
+    </section>
+  }
 
-      <div class="relative flex-shrink-0">
-        <div class="relative z-10 flex items-center justify-center">
-          <div class="text-8xl opacity-90">✨</div>
+  @if (getHeroType() === 'profile') {
+    <section
+      class="bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 rounded-xl overflow-hidden my-4 shadow-lg relative animate-fadeIn">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-400/30 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-0 w-24 h-24 bg-teal-400/20 rounded-full blur-2xl"></div>
+      <div class="container-custom">
+        <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 py-6 px-5">
+          <div class="space-y-3 relative z-10 flex-1 text-center md:text-left">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
+              <span class="w-2 h-2 bg-emerald-300 rounded-full"></span>
+              <span class="text-white/90 text-xs font-bold uppercase tracking-wide">Recomendado</span>
+            </div>
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white">
+              Mejora tu perfil.
+              <span class="text-emerald-300 block md:inline">Gana más clientes.</span>
+            </h1>
+            <p class="text-sm text-white/90 max-w-md">
+              Los perfiles con foto y número de WhatsApp consiguen más clientes. ¡Mejora tu perfil!
+            </p>
+            <div class="flex flex-wrap justify-center md:justify-start gap-3 pt-1">
+              <div class="flex items-center gap-1.5 text-xs"
+                [ngClass]="professional?.avatarUrl ? 'text-emerald-200' : 'text-white/60'">
+                <i [class]="professional?.avatarUrl ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+                <span>Foto de perfil</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-xs"
+                [ngClass]="professional?.whatsappNumber ? 'text-emerald-200' : 'text-white/60'">
+                <i [class]="professional?.whatsappNumber ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+                <span>WhatsApp</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-xs"
+                [ngClass]="professional?.bio ? 'text-emerald-200' : 'text-white/60'">
+                <i [class]="professional?.bio ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+                <span>Descripción</span>
+              </div>
+            </div>
+            <div class="flex justify-center md:justify-start gap-3 pt-2">
+              <button (click)="handleAction()"
+                class="px-6 py-3 bg-white hover:bg-gray-100 text-emerald-600 font-bold rounded-xl transition-all hover:scale-105 shadow-lg flex items-center gap-2">
+                <i class="fas fa-user-edit"></i>
+                Editar Perfil
+              </button>
+            </div>
+          </div>
+          <div class="relative flex-shrink-0">
+            <div class="relative z-10">
+            <img src="assets/img/editar_perfil.png" alt="editperfil"
+              class="w-auto h-32 md:h-40 object-contain drop-shadow-xl" loading="eager">
+            </div>
+            <div class="absolute inset-0 bg-yellow-300/30 rounded-full blur-2xl transform scale-75"></div>
+          </div>
+            <div class="absolute inset-0 bg-emerald-400/30 rounded-full blur-2xl transform scale-75"></div>
+          </div>
         </div>
-        <div class="absolute inset-0 bg-emerald-400/30 rounded-full blur-2xl transform scale-75"></div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
+  }

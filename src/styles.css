@@ -76,9 +76,7 @@
   --shadow-soft: 0 5px 15px color-mix(in srgb, var(--palette-5) 8%, transparent);
 }
 
-/* ========================================
-   CONFIGURACIÓN TAILWIND V4
-   ======================================== */
+
 @theme {
   --color-background: #1A1618;
   --color-card-bg: #2A2528;
@@ -120,7 +118,6 @@
   --duration-500: 500ms;
 }
 
-/* Todo el resto del código permanece igual... */
 @layer base {
   body {
     background-color: var(--color-background);

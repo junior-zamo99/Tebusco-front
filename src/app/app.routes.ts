@@ -98,6 +98,18 @@ export const routes: Routes = [
             loadComponent: () => import('./pages/professional-home/professional-home').then(m => m.ProfessionalHome),
           },
           {
+            path: 'requests',
+            loadComponent: () => import('./pages/request/request-professional/request-professional').then(m => m.RequestProfessional)
+          },
+          {
+            path: 'request/:id',
+            loadComponent: () => import('./pages/request/request-professional-detail/request-professional-detail').then(m => m.RequestProfessionalDetail)
+          },
+          {
+            path: 'offers',
+            loadComponent: () => import('./pages/offers/my-offers/my-offers.component').then(m => m.MyOffersComponent)
+          },
+          {
             path: 'profile',
             loadComponent: () => import('./layouts/profile-professional-layout/profile-professional-layout').then(m => m.ProfileProfessionalLayout),
             children: [
@@ -121,7 +133,7 @@ export const routes: Routes = [
               {
                 path: 'documents',
                 loadComponent: () => import('./pages/professional-profile/documents/profile-documents.page').then(m => m.ProfileDocumentsPage)
-              }
+              },
             ]
           },
           /*{
@@ -181,6 +193,18 @@ export const routes: Routes = [
           {
             path: 'request/:id',
             loadComponent: () => import('./pages/request/request-view/request-view').then(m => m.RequestView)
+          },
+          {
+            path: 'request/:id/edit',
+            loadComponent: () => import('./pages/request/request-edit/request-edit').then(m => m.RequestEdit)
+          },
+          {
+            path: 'request/:id/candidates',
+            loadComponent: () => import('./pages/offers/candidates/candidates.component').then(m => m.CandidatesComponent)
+          },
+          {
+            path: 'search/result',
+            loadComponent: () => import('./pages/search-results-page/search-results-page').then(m => m.SearchResultsPage)
           },
         ]
       },
